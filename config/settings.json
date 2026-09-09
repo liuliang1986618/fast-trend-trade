@@ -3,7 +3,10 @@
   "market": "A-share",
   "data_source": {
     "_comment": "数据源自动检测+优雅降级链。按 order 顺序探测，每级做『存在性+真实调通』两级验证，第一个通过的被采用",
-    "order": ["westock", "akshare"],
+    "order": [
+      "westock",
+      "akshare"
+    ],
     "auto_install": true,
     "_note": "私有数据源参数（如 westock 的 CLI/工具路径）放 config/local.json（已 gitignore），启动时自动深合并覆盖本文件，勿在此提交任何机器相关路径"
   },
@@ -27,9 +30,25 @@
       "note": "接口侧市值条件可能不生效，需结果后筛"
     },
     "position_tiers": {
-      "startup": { "chg20d": [10, 25], "action": "建底仓" },
-      "rally": { "chg20d": [25, 60], "action": "只做缩量回踩买点" },
-      "high": { "chg20d_gt": 60, "bias20_gt": 25, "action": "只看不追" }
+      "startup": {
+        "chg20d": [
+          10,
+          25
+        ],
+        "action": "建底仓"
+      },
+      "rally": {
+        "chg20d": [
+          25,
+          60
+        ],
+        "action": "只做缩量回踩买点"
+      },
+      "high": {
+        "chg20d_gt": 60,
+        "bias20_gt": 25,
+        "action": "只看不追"
+      }
     }
   },
   "mainline": {
@@ -48,7 +67,10 @@
         "alt_60d_new_high": true,
         "_desc": "T3 贝塔宽度：对应主题 ETF 20 日涨幅≥8% 或收盘创 60 日新高，二满足一"
       },
-      "t4_midcap_leader_chg20d": [10, 60],
+      "t4_midcap_leader_chg20d": [
+        10,
+        60
+      ],
       "_t4_desc": "T4 中军结构：板块内百亿级市值个股 Chg20D 落入此区间（证明非小票独舞）",
       "t5_catalyst_human": true,
       "_t5_desc": "T5 催化可反复发酵（人判，不可自动化；必要条件）",
@@ -67,7 +89,12 @@
       "fund_flow_rank_top": 5,
       "etf_width_check": true
     },
-    "lifecycle_coef": { "预热": 0.8, "确认": 1.0, "扩散尾声": 0.5, "退潮": 0 }
+    "lifecycle_coef": {
+      "预热": 0.8,
+      "确认": 1.0,
+      "扩散尾声": 0.5,
+      "退潮": 0
+    }
   },
   "etf_funnel": {
     "_desc": "反向漏斗：ETF 阈值与个股不同",
@@ -75,7 +102,13 @@
     "chg20d_max": 30,
     "scale_min_yi": 5,
     "dedupe_by_index": true,
-    "exclude_broad_index": ["沪深300", "中证500", "上证50", "创业板指", "科创50"],
+    "exclude_broad_index": [
+      "沪深300",
+      "中证500",
+      "上证50",
+      "创业板指",
+      "科创50"
+    ],
     "top_n": 10
   },
   "score": {
@@ -88,8 +121,15 @@
       "distance_to_entry": 10
     },
     "resonance_bonus": "共振个股主线强度维直接满分",
-    "independent_pool_mainline_replacement": { "硬公告": 20, "传闻": 10, "未知": 0 },
-    "tiers": { "priority": 80, "watch": 60 }
+    "independent_pool_mainline_replacement": {
+      "硬公告": 20,
+      "传闻": 10,
+      "未知": 0
+    },
+    "tiers": {
+      "priority": 80,
+      "watch": 60
+    }
   },
   "species_hard_gate": {
     "_desc": "一票否决，直接出局不评分",
@@ -104,7 +144,10 @@
     "independent_cap_pct": 10,
     "r_unit": "单票目标仓位的 1/3",
     "add_on_profit_pct": 5,
-    "trail_stop": { "ma": "MA20", "drawdown_pct": 10 },
+    "trail_stop": {
+      "ma": "MA20",
+      "drawdown_pct": 10
+    },
     "time_stop_days": 10,
     "money_stop_pct_of_total": 1.5,
     "independent_extra": "无板块兜底，破位即走，止损更严"
@@ -129,5 +172,11 @@
     "dashboard": "output/dashboard.html",
     "funnel_meter_required": true,
     "name_lists": "只出终产物与探测层前5，中间层只出数量"
+  },
+  "tracking": {
+    "_desc": "观察池跨日追踪（状态机）：观察中→临近突破（蓄势分≥75 或 收盘距突破价≤1%）→已触发（收盘≥突破价，转稳做名单）/已触及·等回踩（盘中触价未站稳，涨停不追）/已失效（收盘≤认错价）。票入池后持续跟踪不消失。",
+    "near_break_pct": 1,
+    "invalid_keep_days": 5,
+    "history_keep_days": 90
   }
 }

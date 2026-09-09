@@ -1,0 +1,148 @@
+{
+  "_说明": "趋势策略历史台账：驾驶舱每天重建时由自动化追加当日快照、并据此渲染'历史轨迹'区。保留最近90天。",
+  "days": [
+    {
+      "date": "2026-09-09",
+      "note": "台账建立日（第1天，此前无历史）",
+      "funnel": {
+        "全市场约": 5400,
+        "站上所有均线": 712,
+        "终池合计": 12,
+        "稳做名单": 6,
+        "快打名单": 6
+      },
+      "mainlines": [
+        {
+          "name": "航运",
+          "type": "资金主线",
+          "stage": "刚起步",
+          "要点": "钱和巨头都到位，差ETF点火（船舶ETF 20日+6.3%未达8%）"
+        },
+        {
+          "name": "铜",
+          "type": "资金主线",
+          "stage": "刚起步",
+          "要点": "资金第3名先进场，价未动"
+        },
+        {
+          "name": "农业",
+          "type": "涨停主线",
+          "stage": "尾声",
+          "要点": "连板梯队在但大钱在撤，只可龙头快打"
+        }
+      ],
+      "watchlist": [
+        {
+          "name": "招商南油",
+          "code": "sh601975",
+          "xushi": 74.8,
+          "group": "主线内",
+          "first_seen": "2026-09-09",
+          "days_in": 1,
+          "status": "已触及·等回踩",
+          "dist_to_break_pct": 0.8,
+          "close": 4.81,
+          "day_high": 4.85,
+          "break_price": 4.85,
+          "invalid_price": 3.53,
+          "note": "盘中触及突破价，收盘未站稳"
+        },
+        {
+          "name": "中国船舶",
+          "code": "sh600150",
+          "xushi": 63.2,
+          "group": "主线内",
+          "first_seen": "2026-09-09",
+          "days_in": 1,
+          "status": "已触及·等回踩",
+          "dist_to_break_pct": 0.4,
+          "close": 39.53,
+          "day_high": 39.69,
+          "break_price": 39.69,
+          "invalid_price": 32.59,
+          "note": "盘中触及突破价，收盘未站稳"
+        },
+        {
+          "name": "招商轮船",
+          "code": "sh601872",
+          "xushi": 63.3,
+          "group": "主线内",
+          "first_seen": "2026-09-09",
+          "days_in": 1,
+          "status": "已触发",
+          "dist_to_break_pct": 0.0,
+          "close": 20.99,
+          "day_high": 20.99,
+          "break_price": 20.99,
+          "invalid_price": 16.81,
+          "note": "涨停封板，按纪律不追，等回踩突破价确认"
+        },
+        {
+          "name": "北方铜业",
+          "code": "sz000737",
+          "xushi": 60.6,
+          "group": "主线内",
+          "first_seen": "2026-09-09",
+          "days_in": 1,
+          "status": "已触及·等回踩",
+          "dist_to_break_pct": 4.2,
+          "close": 16.47,
+          "day_high": 17.2,
+          "break_price": 17.2,
+          "invalid_price": 13.41,
+          "note": "盘中触及突破价，收盘未站稳"
+        },
+        {
+          "name": "生益科技",
+          "code": "sh600183",
+          "xushi": 73.6,
+          "group": "主线外",
+          "first_seen": "2026-09-09",
+          "days_in": 1,
+          "status": "观察中",
+          "dist_to_break_pct": 5.8,
+          "close": 148.16,
+          "day_high": 151.88,
+          "break_price": 157.28,
+          "invalid_price": 122.05
+        },
+        {
+          "name": "大族激光",
+          "code": "sz002008",
+          "xushi": 73.3,
+          "group": "主线外",
+          "first_seen": "2026-09-09",
+          "days_in": 1,
+          "status": "观察中",
+          "dist_to_break_pct": 6.6,
+          "close": 94.85,
+          "day_high": 97.7,
+          "break_price": 101.58,
+          "invalid_price": 82.33
+        },
+        {
+          "name": "香农芯创",
+          "code": "sz300475",
+          "xushi": 73.3,
+          "group": "主线外",
+          "first_seen": "2026-09-09",
+          "days_in": 1,
+          "status": "观察中",
+          "dist_to_break_pct": 6.9,
+          "close": 174.52,
+          "day_high": 182.8,
+          "break_price": 187.52,
+          "invalid_price": 147.2
+        }
+      ],
+      "etf_top": [
+        "粮食 +20.4%",
+        "能源化工 +15.8%",
+        "豆粕 +15.4%",
+        "农牧 +12.3%",
+        "标普油气 +12.0%"
+      ]
+    }
+  ],
+  "_状态机规则": "观察中（默认）→ 临近突破（蓄势分≥75 或 距突破价≤1%）→ 已触发（收盘价≥突破价，转入稳做名单跟踪）/ 已触及·等回踩（盘中触价但涨停不追）/ 已失效（收盘价≤认错价，保留5天记录后移出）"
+}
