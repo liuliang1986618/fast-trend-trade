@@ -110,6 +110,7 @@
     "independent_extra": "无板块兜底，破位即走，止损更严"
   },
   "vcp": {
+    "_desc": "蓄势形态（专业名 VCP）：回调一次比一次浅、成交一次比一次少，涨之前憋的那口气。蓄势分≥75=接近完成买点临近；60~75=还在蓄势；lookback_bars=回看多少根日K",
     "forming_score": 60,
     "mature_score": 75,
     "lookback_bars": 120,
