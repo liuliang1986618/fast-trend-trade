@@ -17,7 +17,7 @@ class DataProvider(ABC):
     @abstractmethod
     def kline(self, code: str, limit: int = 120) -> "pd.DataFrame":
         """日 K 线（前复权），DataFrame 列名固定 open/high/low/close/volume，按日期升序。
-        code 统一用 6 位数字字符串（如 "600737"），适配层内部自行转换市场前缀。"""
+        code 统一用 6 位数字字符串（如 "600000"），适配层内部自行转换市场前缀。"""
         ...
 
     @abstractmethod

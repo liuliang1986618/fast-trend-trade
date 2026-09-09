@@ -1,10 +1,9 @@
 <!DOCTYPE html>
-<html lang="zh-CN" data-page-node-id="g9mxcJJTy7wv76ODs9pyuN">
-<head data-page-node-id="Q5fAZ6RqnfKv6tBTPSxS2v">
-<meta charset="UTF-8" data-page-node-id="8GF1yhWqTiaXdik2G1o2Pl">
-<meta name="viewport" content="width=device-width, initial-scale=1.0" data-page-node-id="vv50qsOi5LxwDaK2VR84uE">
-<title>双策略体系交易手册 v1.0 — 趋势策略 × 博弈策略</title>
-<script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>双策略体系交易手册 v2.0 — 趋势策略 × 博弈策略</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { font-family: "PingFang SC", "Microsoft YaHei", sans-serif; background: #f7f8fa; color: #1c2333; line-height: 1.75; }
@@ -47,104 +46,110 @@
   code { background: #eef2f8; border-radius: 4px; padding: 1px 6px; font-size: 12.5px; color: #b4232a; }
   .cmd { background: #1e2430; color: #d8e2f0; border-radius: 8px; padding: 12px 16px; font-family: Menlo, Consolas, monospace; font-size: 12px; margin: 10px 0; overflow-x: auto; white-space: pre; }
   footer { text-align: center; color: #8a94a8; font-size: 12px; margin-top: 32px; line-height: 1.8; }
-  .badge { display: inline-block; font-size: 11.5px; border-radius: 4px; padding: 1px 8px; margin-left: 6px; vertical-align: 2px; }
-  .badge.yes { background: #e8f6ee; color: #1e8449; }
-  .badge.no { background: #fdecea; color: #c0392b; }
 </style>
 </head>
-<body data-page-node-id="x1GpzGnNu4q0IwEK3Rf7FE">
-<div class="wrap" data-page-node-id="n2IdkYkZIDVAhcxH4nkhlx">
+<body>
+<div class="wrap">
 
-<header data-page-node-id="P97zqCHWIpCZJCPFWn8M5x">
-  <h1 data-page-node-id="nGrcHeSsgD4LI3ckiDr74C">双策略体系交易手册 <span style="font-size:15px;color:#8a94a8;" data-page-node-id="l4OJLEj77EVjpDqENyOYT7">v1.1</span></h1>
-  <div class="sub" data-page-node-id="CkH4yAqzufDnCuqrn8biPf">趋势策略（主力仓） × 博弈策略（机动仓） ｜ v1.1 增补：主线锁定算法 + 买入状态机 + 期望值账 ｜ 2026-09-09 由盘面讨论沉淀 ｜ 数据时点：2026-09-09 A 股盘中</div>
+<header>
+  <h1>双策略体系交易手册 <span style="font-size:15px;color:#8a94a8;">v2.0</span></h1>
+  <div class="sub">趋势策略（主力仓） × 博弈策略（机动仓） ｜ 含：双向锚定共振矩阵 + 三级火箭 + 买入状态机 + 期望值账 ｜ fast-trend-trade 框架方法论</div>
 </header>
 
 <!-- TL;DR -->
-<div class="tldr" data-page-node-id="Gn0MLV6AlRv4dB9YTEwbCz">
-  <div class="card trend" data-page-node-id="ND4Z4nYVwS79Cq9XhUQEsa">
-    <h2 data-page-node-id="cY42iGUWG3ugfENQ1fuUmV">趋势策略 — 主力仓</h2>
-    <p data-page-node-id="idfi2XB9IWzaTjpaUSOCEv">赚"题材主线中军票、趋势中段到尾段"的钱。三层漏斗选票 + 三级火箭提前介入 + 回踩/突破两类买点 + 移动止盈让利润奔跑。</p>
-    <span class="tag" data-page-node-id="vARq1nz6o2FlVPBWJQFhdl">资金占比 ~80%</span><span class="tag" data-page-node-id="TlE9Jdd3awn88ZEEVkXPsy">持有周期：数周</span><span class="tag" data-page-node-id="hilLKu57SWaoEdhJroq8be">代表：中粮糖业</span>
+<div class="tldr">
+  <div class="card trend">
+    <h2>趋势策略 — 主力仓</h2>
+    <p>赚"题材主线中军票、趋势中段到尾段"的钱。双向漏斗选票 + 三级火箭提前介入 + 回踩/突破两类买点 + 移动止盈让利润奔跑。</p>
+    <span class="tag">资金占比 ~80%</span><span class="tag">持有周期：数周</span>
   </div>
-  <div class="card game" data-page-node-id="5e3Y2WCchW2AsJNPmCVICC">
-    <h2 data-page-node-id="tpKYXOtb5QqffEXw0qf4Mz">博弈策略 — 机动仓</h2>
-    <p data-page-node-id="TuRcKPqbQCAfWde3BSOC7h">赚"情绪脉冲前后 48 小时"的钱。只做辨识度最高的龙头/老龙头，小仓赌分歧转一致，止损铁血。打得赢就打，打不赢立刻走。</p>
-    <span class="tag" data-page-node-id="VralmGZ2YhfM0fy6mIzA5R">资金占比 ≤20%</span><span class="tag" data-page-node-id="9K0dISRsm7qFkFPXlDZNUv">持有周期：1-3 天</span><span class="tag" data-page-node-id="oMwzWVXcKDJaRMWs4pny1r">代表：平潭发展（反面教材）</span>
+  <div class="card game">
+    <h2>博弈策略 — 机动仓</h2>
+    <p>赚"情绪脉冲前后 48 小时"的钱。只做辨识度最高的龙头/老龙头，小仓赌分歧转一致，止损铁血。打得赢就打，打不赢立刻走。</p>
+    <span class="tag">资金占比 ≤20%</span><span class="tag">持有周期：1-3 天</span>
   </div>
 </div>
 
 <!-- 第〇步 -->
-<section data-page-node-id="D6dGAuZE6ltIFt8HIcRSoX">
-  <h2 data-page-node-id="jiKgQ1elGb541GjGS4Ghhu">第〇步 · 物种判别：先定策略，再看盘</h2>
-  <p data-page-node-id="2rdX2R8G7na84IuqMV4tQD">任何候选票，先过 <b data-page-node-id="FoTRbIaEcQydUeIESdgH6e">30 秒三问</b>，决定它属于哪套策略。判别错物种 = 用错打法 = 亏钱的第一原因。</p>
-  <table data-page-node-id="Ies50HOHCirxu9kVZhqGtz">
-    <tr data-page-node-id="NaWcuYifJBG4CvBAdmxGGo"><th style="width:22%;" data-page-node-id="MPH51nTgnFxkxH8fAtaakc">自检项</th><th style="width:39%;" data-page-node-id="pDe4KXFLqvaz4S7UcFXFp1">趋势票特征</th><th style="width:39%;" data-page-node-id="owqqPHpBBhZlgdsGZ5HCvR">情绪票特征</th></tr>
-    <tr data-page-node-id="5pW6CMCApuLuDJZz3CFbzp"><td data-page-node-id="rzFNE0dlF3EX4mILE1mngw"><b data-page-node-id="XkUkhIsHB3RLJpIn6lNASk">① 近 10 根 K 线涨停数</b></td><td data-page-node-id="y85ZcWeRtdqPxgzZVEqKJ7">≤1 根，偶发涨停不连板</td><td data-page-node-id="p3UgDpc7qbimVEl8krvSwV">≥2 根（首板/二板/连板）→ 先按情绪票处理</td></tr>
-    <tr data-page-node-id="pvg8ac2TDDDrwds1gyRo5P"><td data-page-node-id="Q8qfBz5dBk2JHGIbZibRI1"><b data-page-node-id="mh29lcNrv2bAh0NRqV3DYE">② 单日振幅</b></td><td data-page-node-id="BImmZznvEaYLFr1vGurRej">常态 3~8%</td><td data-page-node-id="xkvMueaAFFnKzQcYeNezxs">反复 &gt;10%，巨量换手（换手率 &gt;15%）</td></tr>
-    <tr data-page-node-id="FpJaFSJhF9Pg7LXemTLK6s"><td data-page-node-id="j6UuVeH5YV8pVEZZDhmqEr"><b data-page-node-id="NumGGnAck7ZRqsQV4sFqDl">③ 资金连续性</b></td><td data-page-node-id="4OtmGijgM8uAJuiZjgL4s0">主力连续多日温和净流入（建仓）</td><td data-page-node-id="2OV0lxwGIbXdGnYZMiOLW4">单日巨量流入后转流出（脉冲 + 兑现）</td></tr>
+<section>
+  <h2>第〇步 · 物种判别：先定策略，再看盘</h2>
+  <p>任何候选票，先过 <b>30 秒三问</b>，决定它属于哪套策略。判别错物种 = 用错打法 = 亏钱的第一原因。</p>
+  <table>
+    <tr><th style="width:22%;">自检项</th><th style="width:39%;">趋势票特征</th><th style="width:39%;">情绪票特征</th></tr>
+    <tr><td><b>① 近 10 根 K 线涨停数</b></td><td>≤1 根，偶发涨停不连板</td><td>≥2 根（首板/二板/连板）→ 先按情绪票处理</td></tr>
+    <tr><td><b>② 单日振幅</b></td><td>常态 3~8%</td><td>反复 &gt;10%，巨量换手（换手率 &gt;15%）</td></tr>
+    <tr><td><b>③ 资金连续性</b></td><td>主力连续多日温和净流入（建仓）</td><td>单日巨量流入后转流出（脉冲 + 兑现）</td></tr>
   </table>
-  <div class="callout blue" data-page-node-id="dK5rjUM6BTBKWpSVvBMbjk">加一道<b data-page-node-id="6r62jo3QHGUR1WFZnttl5N">基本面闸</b>：PE-TTM 为负或 &gt;80、PB &gt;8、最新财报扣非亏损 → 一律不得按趋势票处理，无论涨得多好。案例：平潭发展（000592）中报扣非 -1.52 亿、PB 9.26，涨得再凶也不是趋势票。</div>
+  <div class="callout blue">加一道<b>基本面闸</b>：PE-TTM 为负或 &gt;80、PB &gt;8、最新财报扣非亏损 → 一律不得按趋势票处理，无论涨得多好。亏损股的暴涨只能按情绪脉冲对待，永不入趋势池。</div>
 </section>
 
 <!-- 趋势策略 -->
-<section data-page-node-id="HlFZLeio3BFlHIVyt0ABDu">
-  <h2 data-page-node-id="1CtF1J6SvjjcHnI2wMbJRJ">策略一 · 趋势策略（主力仓）</h2>
+<section>
+  <h2>策略一 · 趋势策略（主力仓）</h2>
 
-  <h3 data-page-node-id="5pbKUIr4z7PamGsjM6V2Km">1. 四维投票筛选（≥3 票入池）</h3>
-  <table data-page-node-id="oHuZ3glCMDCRGWfHEB67ui">
-    <tr data-page-node-id="WGC0G3W1NBrwiFgVF2g2Er"><th style="width:16%;" data-page-node-id="IjBCQbrAERRAEGP0vEH2CP">维度</th><th style="width:42%;" data-page-node-id="7gzT5HhqTXSy8yUS2Q89n2">指标与阈值</th><th data-page-node-id="WhlZmunFtjLy6LBUuDywXc">作用</th></tr>
-    <tr data-page-node-id="8HAOKsE2gGWJw8wSTWEhrF"><td data-page-node-id="J2Vdlb7MXdOjsgZT2HyIqC">趋势维</td><td data-page-node-id="oPEwsgWlKwKJXoCzCyrWD2">MA5&gt;MA10&gt;MA20&gt;MA60 且价格站上全部均线；或 ADX&gt;25</td><td data-page-node-id="MymNNH3KGGq9Kb4yFeNhv5">定方向</td></tr>
-    <tr data-page-node-id="WwW0ICqFoERMeCKBQdbJUA"><td data-page-node-id="FiCvrg8AICn2VjcWNIpqWq">动量维</td><td data-page-node-id="nE2lEx2kZeNkvnCERJTvSg">20 日涨幅 <b data-page-node-id="cTl2zZ37iLpmxXoUnbsLK8">15%~60%</b>（下限滤死票、上限滤妖股）</td><td data-page-node-id="MoU5GPC7yRxAFdJvs5FkZp">定强度</td></tr>
-    <tr data-page-node-id="qLulHRFiYSfq2jVKiNxeIK"><td data-page-node-id="viAJIJEWVT8qaOz1o7z8X9">量价维</td><td data-page-node-id="mv9rkQvkA0TrlnEIjzDmKX">上涨日量比&gt;1.5、回调日缩量至放量日 1/2 以下</td><td data-page-node-id="BEaqXuwFyeDdhpkolBrunI">排假趋势</td></tr>
-    <tr data-page-node-id="bB5tQzxuY3EmHG69DOqsl3"><td data-page-node-id="Qhck2rBjqIawRP1ib3jIZn">资金维</td><td data-page-node-id="HYh9Jrs8nPGBxIUCr4mLvX">主力 5 日净流入&gt;0、两融余额连增</td><td data-page-node-id="VrSNxCcj9k8O5IVP4Xvz26">确认真金白银</td></tr>
+  <h3>1. 四维投票筛选（≥3 票入池）</h3>
+  <table>
+    <tr><th style="width:16%;">维度</th><th style="width:42%;">指标与阈值</th><th>作用</th></tr>
+    <tr><td>趋势维</td><td>MA5&gt;MA10&gt;MA20&gt;MA60 且价格站上全部均线；或 ADX&gt;25</td><td>定方向</td></tr>
+    <tr><td>动量维</td><td>20 日涨幅 <b>15%~60%</b>（下限滤死票、上限滤妖股）</td><td>定强度</td></tr>
+    <tr><td>量价维</td><td>上涨日量比&gt;1.5、回调日缩量至放量日 1/2 以下</td><td>排假趋势</td></tr>
+    <tr><td>资金维</td><td>主力 5 日净流入&gt;0、两融余额连增</td><td>确认真金白银</td></tr>
   </table>
-  <div class="callout" data-page-node-id="qLzke0AdQlrCXHfn30r0AN">单条件无效：均线多头策略单跑命中 1206 只（2026-09-08）。必须四维叠加，且"<b data-page-node-id="LK84Kn1uPn8iD6ubFq8QOT">先选对主线，再用技术面挑票</b>"。</div>
+  <div class="callout">单条件无效：均线多头策略单独跑全市场可命中上千只，无筛选力。必须四维叠加，且"<b>先选对主线，再用技术面挑票</b>"。</div>
 
-  <h3 data-page-node-id="avFmkYiaiLbjmuYUc1iwzs">2. 三层漏斗</h3>
-  <div class="funnel" data-page-node-id="0EZfBB0x48IekDS3mGzyu1">
-    <div class="layer l1" data-page-node-id="MIcIeOAh21sxDfqbUoH3PR"><b data-page-node-id="4VzcPIZzFVz0A1InicYXRm">第一层 · 趋势池（四维投票）</b><span data-page-node-id="ajNWtznrRCmGEWYGD9G6rE">全市场 → 百余只，纯技术面</span></div>
-    <div class="arrow" data-page-node-id="h5L7RgmomyPWzmSCgZcglV">↓ 叠加</div>
-    <div class="layer l2" data-page-node-id="c5daWCavBCcCZHZLNWDIh7"><b data-page-node-id="Owt86YTsj0Ardr7cVWmUwj">第二层 · 主线收敛</b><span data-page-node-id="2PRLYUIc1Y2FgQHhVEbKS0">主线判据：涨停≥10 家连续≥3 天 ｜ 有≥3 板高度且有百亿中军 ｜ 板块成交占比放大 ｜ 催化可反复发酵</span></div>
-    <div class="arrow" data-page-node-id="8fVRvHP5f3puR2De4shGVf">↓ 取交集</div>
-    <div class="layer l3" data-page-node-id="JoTMEqzAuFTiIqUf1Sv5wi"><b data-page-node-id="cYH8qGNdLwZkRAZoKZyLl6">第三层 · 位置分档</b><span data-page-node-id="0NzJYffkrvPCfz2OM6FQn4">启动期建底仓 ｜ 主升期只做回踩 ｜ 高位期只看不追</span></div>
+  <h3>2. 双向漏斗与共振矩阵</h3>
+  <div class="funnel">
+    <div class="layer l1"><b>第一层 · 趋势池（四维投票）</b><span>全市场 → 百余只，纯技术面</span></div>
+    <div class="arrow">↓ 叠加</div>
+    <div class="layer l2"><b>第二层 · 主线收敛</b><span>正向：个股 → 主线五判据 ｜ 反向：ETF 榜 → 成分股锚定（双向锚定）</span></div>
+    <div class="arrow">↓ 取交集</div>
+    <div class="layer l3"><b>第三层 · 位置分档</b><span>启动期建底仓 ｜ 主升期只做回踩 ｜ 高位期只看不追</span></div>
   </div>
-  <table data-page-node-id="GYuePeCeQHHe8FSATZppD6">
-    <tr data-page-node-id="4eShJETxrc4IEmvx5DlkAV"><th data-page-node-id="tVAnggkRXqVQnvOrXO8aPq">位置档</th><th data-page-node-id="531LMSg8OPO6QNR1GbbGXe">特征</th><th data-page-node-id="nyQPfCyJfBfXn33ku50yeS">操作</th></tr>
-    <tr data-page-node-id="fIleOt96pRgshwyLiDGPdQ"><td data-page-node-id="DCC62paEDJuYnZRNoeemGa">启动期</td><td data-page-node-id="wylpgGuUzOOBkLGBvLJeUE">Chg20D 10~25%，刚出平台</td><td class="up" data-page-node-id="gof1hseqYLc5xkzVzXOTch">容错最高，可建底仓</td></tr>
-    <tr data-page-node-id="4g5U2EEQBQlAw3ZgqKsfAX"><td data-page-node-id="SWqaIqjkdjSsFAYxkGW7mO">主升期</td><td data-page-node-id="CRc09aqN863zjxApNxQoPU">Chg20D 25~60%，沿 20 日线上行</td><td class="up" data-page-node-id="ayoRtkoHKedd4TVBdqBlse">只做缩量回踩买点</td></tr>
-    <tr data-page-node-id="KzRHPhpOUKb1QAfbAUqcxa"><td data-page-node-id="QwlF9zgFL2qwDSqkGKdnUx">高位期</td><td data-page-node-id="789NdgbMHMigSpHBXQZw15">Chg20D &gt;60% 且乖离 20 日线 &gt;25%</td><td class="down" data-page-node-id="ufubZaTFOdPCWqniIkjsN4">只看不追，等反包或放弃</td></tr>
+  <table>
+    <tr><th>位置档</th><th>特征</th><th>操作</th></tr>
+    <tr><td>启动期</td><td>Chg20D 10~25%，刚出平台</td><td class="up">容错最高，可建底仓</td></tr>
+    <tr><td>主升期</td><td>Chg20D 25~60%，沿 20 日线上行</td><td class="up">只做缩量回踩买点</td></tr>
+    <tr><td>高位期</td><td>Chg20D &gt;60% 且乖离 20 日线 &gt;25%</td><td class="down">只看不追，等反包或放弃</td></tr>
   </table>
 
-  <h3>2b. 主线锁定：热度榜算法（v1.1 增补，漏斗第二层的机器化）</h3>
-  <p>80% 机器锁定 + 20% 人判。每天跑"连板梯队榜 + 板块资金榜"，按四条判据筛选：</p>
+  <h3>2b. 主线锁定：热度榜算法（80% 机器 + 20% 人判）</h3>
+  <p>每天跑"连板梯队榜 + 板块资金榜 + ETF 趋势榜"，按五条判据筛选：</p>
   <table>
     <tr><th>判据</th><th>量化标准</th><th>谁来做</th></tr>
-    <tr><td>① 连板高度</td><td>板块内最高连板 ≥3 板</td><td>机器（limitup_days 榜）</td></tr>
+    <tr><td>① 连板高度</td><td>板块内最高连板 ≥3 板</td><td>机器（连板梯队榜）</td></tr>
     <tr><td>② 涨停家数</td><td>板块涨停 ≥5 家且连续 ≥3 天在榜</td><td>机器</td></tr>
     <tr><td>③ 资金认可</td><td>板块 5 日主力净流入前 5</td><td>机器</td></tr>
     <tr><td>④ 催化成色</td><td>催化是否可反复发酵（有时间表的预期 &gt; 一次性消息脉冲）</td><td><b>人判（不可自动化）</b></td></tr>
+    <tr><td>⑤ ETF 宽度验证</td><td>龙头上涨时对应主题 ETF 是否同步走强：同步向上 = 真主线有宽度；滞涨 = 点状抱团；走弱 = 主线退潮</td><td>机器（反向 ETF 漏斗）</td></tr>
   </table>
-  <div class="callout blue">实证（2026-09-08 连板榜，全市场 74 只连板）：梯队头部 15 席中农业线占 3 席且占据最高度——亚盛集团 4 板、敦煌种业 3 板、金正大 2 板 → 机器一眼锁定主线 = 厄尔尼诺农业线，与人工分析一致。</div>
 
-  <h3 data-page-node-id="ODhAFW27a8FNM6Fgp6v6p3">3. 提前量三级火箭（解决"确认即滞后"）</h3>
-  <div class="steps" data-page-node-id="aSGxNYSloYDu6TjhYIIE0q">
-    <div class="box" data-page-node-id="WWpJGD0VjcWGsmBjUimElx"><b data-page-node-id="OvDmowBT8BP9JELgll7KEX">第一级 · 探测层（提前 2~6 周）</b>资金-价格背离：20 日涨幅 0~12% + 主力 5 日净流入&gt;0 + 换手&gt;2% + PE&gt;0。试错仓 <b data-page-node-id="aFilWPrtGx95PMYag63CAd">1/3</b>。注意区分"流入且没涨"（真潜伏）与"暴涨后高位流入残留"（游资兑现残留，如平潭发展 9/9）。</div>
-    <div class="box" data-page-node-id="5doXuB5RYCkj84Xu0sUAzj"><b data-page-node-id="Lb72eUyCSxqwAxgRF29Xzj">第二级 · 确认早期层（提前 1~2 周）</b>MA5 上穿 MA20 金叉初期；VCP 波缩（回调逐级变浅 + 量能萎缩，突破触发位入场）；更高的低点序列（HL）。加仓至 <b data-page-node-id="JqGHRftUiU56Yj9FWJvY3h">2/3</b>。</div>
-    <div class="box warn" data-page-node-id="wlsOa4R1veEDD2gDpOwF1A"><b data-page-node-id="nm0rSOogVe6fILpmQOtCBs">第三级 · 确认层（原四维）</b>用途改为<b data-page-node-id="EpAsA6Lyl2axKDBIKI2Lsx">持有判据</b>：四维全满足 = 拿住让利润奔跑；任一维掉（资金转流出/缩量失效/破 20 日线）= 减仓信号。</div>
+  <h3>2c. 共振矩阵（双向锚定的决策地图）</h3>
+  <p>正向漏斗（个股 → 主线）与反向漏斗（趋势 ETF → 成分股）交叉验证：</p>
+  <table>
+    <tr><th></th><th>正向主线 ✓</th><th>正向主线 ✗</th></tr>
+    <tr><td><b>反向趋势 ETF ✓</b></td><td class="up">共振区：最强信号，评分主线维直接满分，优先执行</td><td>预热区：ETF 先动、个股未浮出——未来主线预告，转观察池埋伏</td></tr>
+    <tr><td><b>反向趋势 ETF ✗</b></td><td>独立/抱团区：走独立趋势池规则（黄/红标，仓位减半）</td><td>噪音区：无视</td></tr>
+  </table>
+  <div class="callout blue"><b>反向漏斗要点</b>：ETF 阈值与个股不同（20 日涨幅 8~30%，无妖股概念，规模 ≥5 亿）；同一跟踪指数多只产品只留规模最大一只；剔除宽基仅留行业/主题 ETF。</div>
+
+  <h3>3. 提前量三级火箭（解决"确认即滞后"）</h3>
+  <div class="steps">
+    <div class="box"><b>第一级 · 探测层（提前 2~6 周）</b>资金-价格背离：20 日涨幅 0~12% + 主力 5 日净流入&gt;0 + 换手&gt;2% + PE&gt;0。试错仓 <b>1/3</b>。注意区分"流入且没涨"（真潜伏）与"暴涨后高位流入残留"（游资兑现残留）。</div>
+    <div class="box"><b>第二级 · 确认早期层（提前 1~2 周）</b>MA5 上穿 MA20 金叉初期；VCP 波缩（回调逐级变浅 + 量能萎缩，突破触发位入场）；更高的低点序列（HL）。加仓至 <b>2/3</b>。</div>
+    <div class="box warn"><b>第三级 · 确认层（原四维）</b>用途改为<b>持有判据</b>：四维全满足 = 拿住让利润奔跑；任一维掉（资金转流出/缩量失效/破 20 日线）= 减仓信号。</div>
   </div>
-  <div class="callout red" data-page-node-id="bclxmPepedOrYqyrmrhpmE">代价必须接受：探测层假信号率 50%+。对策 = 试错仓小 + 破吸筹区低点/波缩下沿立刻认错 + 对了按第三级拿大波段。用胜率换赔率，赚回整段主升。</div>
+  <div class="callout red">代价必须接受：探测层假信号率 50%+。对策 = 试错仓小 + 破吸筹区低点/波缩下沿立刻认错 + 对了按第三级拿大波段。用胜率换赔率，赚回整段主升。</div>
 
-  <h3 data-page-node-id="e9yycGjALJyWUx38eIqLAG">4. 买点与条件单参数模板（示例基准：中粮糖业 600737，2026-09-09 盘中 19.38 元）</h3>
-  <table data-page-node-id="3cIvNUf3MXiBakITno0xgc">
-    <tr data-page-node-id="LfHTlt67CClleSA675w9iu"><th data-page-node-id="PGg1xPAi4G9qoVptMsgeAl">买点类型</th><th data-page-node-id="kUwlvATdNzHN1ESFyTATvg">触发条件</th><th data-page-node-id="u7TP7iJDXYmlSXomjHrJqv">条件单参数（示例）</th></tr>
-    <tr data-page-node-id="jJVkbBhMtakJhp0gF9OWba"><td data-page-node-id="AZKZBxql2TNsB0kCDTFfC7"><b data-page-node-id="31irlDyLpiJDLBodPtfxF3">回踩买点（首选）</b></td><td data-page-node-id="wyQX1bUP7Bm7yPwRH23Obc">缩量回踩 10/20 日线（缩至前高放量日 1/2 以下）+ 次日阳线收复</td><td data-page-node-id="9LomjQJmFrqv5e36PdmHMw">触发价 17.30 ｜ 委托价 17.30 ｜ 止损 16.40（-5%）</td></tr>
-    <tr data-page-node-id="pTLlxaNika1TrmqYrsAEBM"><td data-page-node-id="FFsMmLepyNS7fJaGJCFFC6"><b data-page-node-id="iNCv5MFfxVv1dRYbwvuuEn">突破买点（次选）</b></td><td data-page-node-id="IYQIAEEVpkxP1QoF2LylQs">量能 ≥1.5~2 倍 5 日均量，突破平台前高且收盘站稳；理想前置 = VCP 波缩结构</td><td data-page-node-id="1XDqwVEWDu0CmiFGVpkP7E">触发价 20.00（新高+3%）｜ 委托价 20.10 ｜ 失效 = 跌回突破平台</td></tr>
+  <h3>4. 买点与条件单参数模板</h3>
+  <table>
+    <tr><th>买点类型</th><th>触发条件</th><th>条件单参数（比例模板）</th></tr>
+    <tr><td><b>回踩买点（首选）</b></td><td>缩量回踩 10/20 日线（缩至前高放量日 1/2 以下）+ 次日阳线收复</td><td>触发价 = 20 日线价位 ｜ 委托价同触发 ｜ 止损 = 触发价 ×(1−5%)</td></tr>
+    <tr><td><b>突破买点（次选）</b></td><td>量能 ≥1.5~2 倍 5 日均量，突破平台前高且收盘站稳；理想前置 = VCP 波缩结构</td><td>触发价 = 前高 ×(1+3%) ｜ 委托价 = 触发价 ×(1+0.5%) ｜ 失效 = 跌回突破平台</td></tr>
   </table>
-  <h3 data-page-node-id="hgcBzx1NhoaAEAeb6NqzSJ">5. 卖点与持有</h3>
-  <p data-page-node-id="fIjVKqxXtyOYc93ogqczG8">不设固定止盈。<b data-page-node-id="AtZRm5Us5ZXsdspz0ZvsDN">移动止盈</b>：跌破 20 日线，或自最高点回撤 8%~10% 才走。中军票拿得住才有肉 ——"让利润奔跑"是本策略的利润来源。</p>
+  <h3>5. 卖点与持有</h3>
+  <p>不设固定止盈。<b>移动止盈</b>：跌破 20 日线，或自最高点回撤 8%~10% 才走。中军票拿得住才有肉 ——"让利润奔跑"是本策略的利润来源。</p>
 
-  <h3>6. 买入状态机与仓位管理（v1.1 增补）</h3>
+  <h3>6. 买入状态机与仓位管理</h3>
   <p>R = 单票目标仓位的 1/3（单票满仓 = 总资金 20%，则 1R ≈ 总资金 6.6%）。</p>
   <table>
     <tr><th>阶段</th><th>触发条件</th><th>动作</th><th>仓位</th></tr>
@@ -159,87 +164,73 @@
 </section>
 
 <!-- 博弈策略 -->
-<section data-page-node-id="jfPcxBf1PwxWt4vtT3RK5s">
-  <h2 data-page-node-id="VTdoOEtmjuhyL79GGeH87x">策略二 · 博弈策略（机动仓，可选不强制）</h2>
-  <p data-page-node-id="WOkpHIaAxCYxiqFM74zZDN">适用对象：<b data-page-node-id="ZagYRAPLV5k3IXySOoHJCv">辨识度最高的龙头 / 老龙头 / 首板-二板情绪票</b>（如平潭发展这种历史总龙头股性 + 独家政策预期的票）。本质是和时间表/情绪对赌，不是投资。</p>
-  <div class="steps" data-page-node-id="bysCZqWYfhdfYK0ACiIwXb">
-    <div class="box warn" data-page-node-id="u7qJoHBr6g3wM1GPoWemxw"><b data-page-node-id="dv7ULQKl6GwqlFz4R27Z4u">铁律一 · 小仓试错</b>机动仓的 1/3 以内进场，绝不按趋势票仓位。波动率是中军票的 3 倍，仓位必须除以 3。</div>
-    <div class="box warn" data-page-node-id="23Mh8C8aVDVCZvn7Sv2xrP"><b data-page-node-id="F0d2tRGLftEHfKaaEfj0K0">铁律二 · 只赌分歧转一致</b>唯一买点 = 高位巨量分歧后，放量收复分歧日高点（例：平潭发展收复 8.60）。收复 = 情绪重启；收不复 = 直接放弃，不抄底。</div>
-    <div class="box warn" data-page-node-id="LH29CRSeoT8WletjFBizEs"><b data-page-node-id="1a4kuKn2RDkEXlYKPt99gS">铁律三 · 止损铁血</b>两级止损：破分歧日低点（7.64）减半；破启动涨停价（7.49）= 启动板失效，无条件清仓。</div>
+<section>
+  <h2>策略二 · 博弈策略（机动仓，可选不强制）</h2>
+  <p>适用对象：<b>辨识度最高的龙头 / 老龙头 / 首板-二板情绪票</b>——具备历史总龙头股性 + 独家事件预期的票。本质是和时间表/情绪对赌，不是投资。</p>
+  <div class="steps">
+    <div class="box warn"><b>铁律一 · 小仓试错</b>机动仓的 1/3 以内进场，绝不按趋势票仓位。波动率是中军票的 3 倍，仓位必须除以 3。</div>
+    <div class="box warn"><b>铁律二 · 只赌分歧转一致</b>唯一买点 = 高位巨量分歧后，放量收复分歧日高点。收复 = 情绪重启；收不复 = 直接放弃，不抄底。</div>
+    <div class="box warn"><b>铁律三 · 止损铁血</b>两级止损：破分歧日低点减半；破启动涨停价 = 启动板失效，无条件清仓。</div>
   </div>
-  <div class="callout red" data-page-node-id="tioK80EKa7iysDlJHpIsol"><b data-page-node-id="DXsJpwfiG6mBVqHHOO6mm7">禁用情形</b>：① 板块首板潮已过、题材进入补涨扩散阶段（高潮尾段）；② 龙头发异动公告自认"严重偏离基本面"；③ 大单持续净流出、散户净流入承接（兑现模式已启动）；④ 盘子 &lt;50 亿纯庄股。命中任一条 → 放弃。</div>
+  <div class="callout red"><b>禁用情形</b>：① 板块首板潮已过、题材进入补涨扩散阶段（高潮尾段）；② 龙头发异动公告自认"严重偏离基本面"；③ 大单持续净流出、散户净流入承接（兑现模式已启动）；④ 盘子 &lt;50 亿纯庄股。命中任一条 → 放弃。</div>
 </section>
 
-<!-- 案例对照 -->
-<section data-page-node-id="zxWBmQA2byXdf4EUC4XJ1K">
-  <h2 data-page-node-id="7IuHi8PlkatXZOCQXVMGln">今日实战对照：一正一反两个样本（2026-09-09 盘中）</h2>
-  <div id="chart1" style="width:100%;height:340px;" data-page-node-id="j1EBhGty9FtMgUUk1sYw4z"></div>
-  <table data-page-node-id="aTE2pAa8RFZd6ToBEjhXfT">
-    <tr data-page-node-id="DSHZs13g4FqhRFx4192cdh"><th data-page-node-id="uADw6nc7heAotsEFmBPgLc">指标（盘中快照）</th><th data-page-node-id="gLB6SLShtgUE6QVoeFKJgh">中粮糖业 600737（趋势正例）</th><th data-page-node-id="pV6PukBBbvE1qMlYTSrTnk">平潭发展 000592（博弈样本）</th></tr>
-    <tr data-page-node-id="apxRTZqBXMlbAtxiBX1nXd"><td data-page-node-id="ooe2OnjuMboQTX61ZDoN8O">PE-TTM</td><td class="up" data-page-node-id="CMs5x19z0RBQZZosfH7tsY">37.2（有盈利）</td><td class="down" data-page-node-id="oFOp6m3U2dFUza9gqYqBjK">-79.8（亏损）</td></tr>
-    <tr data-page-node-id="oDDUFPTNCSc4G4CudU8Pt3"><td data-page-node-id="jQ5Kh22QNLcsz9epmziMtE">总市值</td><td data-page-node-id="R1WZGOeMcGLrL4BJJOCnYq">414.5 亿</td><td data-page-node-id="RLfOMVPPmjBGBwgdFRQSWV">157.8 亿</td></tr>
-    <tr data-page-node-id="1p0yLbDVepc0b8kZoSy4KO"><td data-page-node-id="yX7sfTLAq3dErVyN3tE4KI">近 20 日涨幅</td><td class="up" data-page-node-id="dhyjEDGrZVIgoLenHgMGmq">+47.5%（主升期档）</td><td data-page-node-id="ErbprBJF8QSohQtvCGaCbf">+18.9%（脉冲堆积）</td></tr>
-    <tr data-page-node-id="K79cyT85OK87wwOZwvfZoE"><td data-page-node-id="eW9D9LVzWuMjsZOxKxWvuC">当日换手 / 振幅</td><td data-page-node-id="2L3dHCp6GBAHpi862ykcWT">9.9% / 8.5%</td><td data-page-node-id="tU18PaFdFi3KBHFjLpfcgl"><b data-page-node-id="L2mMBZrF69emjGnt45gBfh">23.7% / 12.2%</b>（极端分歧）</td></tr>
-    <tr data-page-node-id="sKTAXU0WHHb4HstBULIXBb"><td data-page-node-id="BEzcERaV5WfKQilEQKQFOk">资金结构</td><td data-page-node-id="tUAkXLxPmWIERlMEsI8LCz">主力持续流入，机构中军</td><td data-page-node-id="E6w8ao07rkbABnY62NyMCs">5 日流入 6.9 亿但近 3 日大单连续流出、散户承接</td></tr>
-    <tr data-page-node-id="ghdHHBe1OP3JCPgUHvbFq8"><td data-page-node-id="1dYGtTjSibPoXC6oCKzO4T">基本面锚</td><td class="up" data-page-node-id="Es5w5UBta1kIReyfY3HWFb">糖价上涨（商品锚）</td><td class="down" data-page-node-id="bTiyPmothIOH9JfaNDADpo">无（封关预期未落地，公司自认无免税业务）</td></tr>
-    <tr data-page-node-id="3tBUUkjwPoZAE9nnloOzBL"><td data-page-node-id="EPJjYzEYuapbTlincrbx7d"><b data-page-node-id="cpjQfNUncW18zESRgfcbwA">策略归属</b></td><td class="up" data-page-node-id="41yXi45iXEahJOcxoEfQKf">趋势策略标的</td><td data-page-node-id="JBBka2wHp1VFJAdzvyv26c">不属于趋势系统；仅博弈框架可碰</td></tr>
+<!-- 物种对照 -->
+<section>
+  <h2>双物种对照维度表（判别时逐项过）</h2>
+  <table>
+    <tr><th>维度</th><th>趋势票（正例形态）</th><th>情绪票（反向形态）</th></tr>
+    <tr><td>PE-TTM</td><td class="up">为正、有持续盈利</td><td class="down">为负或 &gt;80（基本面闸拦截）</td></tr>
+    <tr><td>市值</td><td>百亿级中军为主</td><td>小市值弹性票常见</td></tr>
+    <tr><td>近 20 日涨幅形态</td><td>沿均线阶梯抬升（主升期档）</td><td>脉冲堆积、跳空连板</td></tr>
+    <tr><td>换手 / 振幅</td><td>温和（如 5~10% / 3~8%）</td><td>极端（&gt;15% / &gt;10%，分歧巨大）</td></tr>
+    <tr><td>资金结构</td><td>主力持续流入，中军性质</td><td>5 日流入但近 3 日大单连续流出、散户承接（兑现模式）</td></tr>
+    <tr><td>基本面锚</td><td>有商品价格/业绩/订单等硬锚</td><td>无锚，纯预期且公司自认无相关业务</td></tr>
+    <tr><td><b>策略归属</b></td><td class="up">趋势策略标的</td><td>不属于趋势系统；仅博弈框架可碰</td></tr>
   </table>
-  <div class="callout" data-page-node-id="ntSpO3kP1ALkaL9P2CGAhP">数据来源：腾讯自选股/NeoData 行情快照，2026-09-09 盘中（10:47 / 14:11）。平潭发展中报：营收 -35%、扣非 -1.52 亿、资产减值 2.21 亿；中粮糖业为白糖全产业链央企。</div>
+  <div class="callout">使用方式：每只候选票把左列维度逐行对照——命中"反向形态"列越多，越倾向博弈池或弃；此表是物种判别的展开版，结论仍以 30 秒三问 + 基本面闸为准。</div>
 </section>
 
 <!-- 每日执行 -->
-<section data-page-node-id="DkIMy4niPEhgGFXlwMkOvW">
-  <h2 data-page-node-id="WOaDiTIlj2V5BDpZDLslpj">每日执行清单（盘后 15 分钟）</h2>
-  <div class="cmd" data-page-node-id="L9wWIRtNLaBNHC27mBcoQU">node westock-tool filter "intersect([Chg20D &gt;= 0, Chg20D &lt; 12, MainNetFlow5D &gt; 0, TurnoverRate &gt; 2, PE_TTM &gt; 0])" --orderby MainNetFlow5D --desc --limit 15   # 第一级·探测层
-node westock-tool filter "intersect([Chg20D &gt; 25, Chg20D &lt; 90, PE_TTM &gt; 0, PE_TTM &lt; 50, TurnoverRate &gt; 3])" --orderby Chg20D --desc --limit 20   # 第三级·确认层（市值≥100亿手动后筛）
-node westock-tool ranking cap_main_5d --within-strategy ma_long --limit 15   # 趋势+资金交叉验证
-node westock-tool strategy ma_long   # 均线多头池（仅作底池，单独无意义）
-node westock-tool ranking limitup_days --limit 20   # 连板梯队 → 主线锁定（v1.1）</div>
-  <div class="callout blue"><b>执行成本说明（v1.1）</b>：所有筛选为<b>服务端条件计算</b>（带参数查接口），非本地全量扫描——4~5 条命令全流程 &lt;30 秒。条件/策略选股每日收盘后更新，资金流盘中实时 → 正确姿势是<b>每交易日 15:30 跑一次</b>。本清单已配置为每日自动化执行（节假日自动跳过），产出报告落盘 daily-trend/ 目录。</div>
-  <table data-page-node-id="OwtOo5ZQKXBHkl7sMjigdw">
-    <tr data-page-node-id="cbBaA4ElAtEDfcSupMXCDO"><th style="width:12%;" data-page-node-id="FOm3xdIHnvLnpHEKGMvuYf">步骤</th><th data-page-node-id="zobp6w0TIxZgDgwEtWtrc3">动作</th></tr>
-    <tr data-page-node-id="F8vZ6SG7wjo1QLBQBZQjOP"><td data-page-node-id="Ft48xBr4Sj8YQxOLpivX5m">① 跑筛选</td><td data-page-node-id="9efeSfJhTCNNgXkZZ6lvJC">上述命令跑出探测层/确认层名单（注意：filter 市值条件需手动后筛）</td></tr>
-    <tr data-page-node-id="D1EkRXczDtiJh8XMOdEc2H"><td data-page-node-id="An33orZK7Pj7XFp1aRhPGD">② 定主线</td><td data-page-node-id="DaTGfQrO3b4Kd7D5dGIpkU">对照主线四判据，把名单归类到主线（今日 = 厄尔尼诺农业线 + 光模块算力线 + 福建国企改革线）</td></tr>
-    <tr data-page-node-id="8DCFOWnVj38bAEbGS4KfGm"><td data-page-node-id="ohbui0bBdiejXZKreXQoXW">③ 物种判别</td><td data-page-node-id="7GFfbAEsqx2NTT12vxkfqG">30 秒三问 + 基本面闸，分入"趋势池 / 博弈池 / 弃"</td></tr>
-    <tr data-page-node-id="yEmu90DgP6blJvEzmspm7M"><td data-page-node-id="3rVYWVi0PN1nLDMHkaToay">④ 挂条件单</td><td data-page-node-id="3A7ggbaAwd36E6Ssqud6A8">趋势票挂回踩/突破单；确认不挂的写入观察清单（VCP 结构用 vcp 引擎评分）</td></tr>
-    <tr data-page-node-id="c7EXMi4eRO5GDeduiUqvpz"><td data-page-node-id="bKUCNRIpzYIeyaJbHaUcl1">⑤ 复查持仓</td><td data-page-node-id="lERgNzCQ2JXLfFhZtezh1t">持有票过四维确认层，任一维掉 → 按移动止盈规则执行</td></tr>
+<section>
+  <h2>每日执行清单（盘后 15 分钟）</h2>
+  <div class="cmd"># 数据源无关的执行流程（经 DataProvider 接口，具体命令随所接数据源而定）
+
+provider.screen(probe)      # 第一级·探测层：Chg20D 0~12% + 主力5日净流入>0 + 换手>2% + PE>0
+provider.screen(confirm)    # 第三级·确认层：Chg20D 25~90% + PE 0~50 + 换手>3 + 市值≥100亿
+provider.ranking("ma_long + main_flow_5d")   # 趋势+资金交叉验证
+provider.ranking("limitup_days")             # 连板梯队 → 主线锁定
+provider.etf_rank("chg20d")                  # 反向漏斗：ETF 20日涨幅榜（8~30% 区间）</div>
+  <div class="callout blue"><b>执行成本说明</b>：所有筛选为<b>服务端条件计算</b>（带参数查接口），非本地全量扫描——全流程请求次数 ∝ 筛选命令数（个位数），&lt;30 秒。正确姿势是<b>每交易日 15:30 跑一次</b>（收盘后条件/策略选股更新，资金流当日定型）。严禁把全市场数据拉到本地逐票循环过滤——请求次数 ∝ 股票数（数千），必然被接口方封禁。</div>
+  <table>
+    <tr><th style="width:12%;">步骤</th><th>动作</th></tr>
+    <tr><td>① 跑筛选</td><td>上述流程跑出探测层/确认层/ETF 榜名单</td></tr>
+    <tr><td>② 定主线</td><td>对照主线五判据（含 ETF 宽度验证），把名单归类到主线，并标注主线生命周期（预热/确认/扩散尾声/退潮）</td></tr>
+    <tr><td>③ 物种判别</td><td>30 秒三问 + 基本面闸，分入"趋势池 / 独立趋势池 / 博弈池 / 弃"</td></tr>
+    <tr><td>④ 共振标注</td><td>正向终池 × 反向趋势 ETF 交叉：共振区优先、预热区转观察池</td></tr>
+    <tr><td>⑤ 挂条件单</td><td>趋势票按买点模板挂回踩/突破单；确认不挂的写入观察清单（VCP 结构评分：mature ≥75 买点临近 / forming 60~75 形成中）</td></tr>
+    <tr><td>⑥ 复查持仓</td><td>持有票过四维确认层，任一维掉 → 按移动止盈规则执行</td></tr>
   </table>
 </section>
 
 <!-- 失效条件 -->
-<section data-page-node-id="8yVQsKduv03cqKpHACkFkg">
-  <h2 data-page-node-id="2hcEVxLscQxqUWA00c2Zd2">风控底线与手册失效条件</h2>
-  <table data-page-node-id="xc3pgexN9d5lu4RzaDrH7N">
-    <tr data-page-node-id="aqbfXL1QGGX8WAdemRReCl"><th style="width:30%;" data-page-node-id="8d2VefLvJD0QgB9SwRiXFa">规则</th><th data-page-node-id="Yg37kLYcvP0yevhgas4j8f">内容</th></tr>
-    <tr data-page-node-id="kPWYuWZyO9LhC7X74kj9w8"><td data-page-node-id="RZA7YEni4bNvkUNAT7lKgX">单票仓位上限</td><td data-page-node-id="tRCvlTAZPkzvcANsoW5H9X">趋势票 ≤ 总资金 20%；博弈票 ≤ 总资金 5%（机动仓的 1/3）</td></tr>
-    <tr data-page-node-id="EzTsXCzCSFUvsJEMzjrBuc"><td data-page-node-id="r5XsCWXMA6YKdHHHsWuy3s">总敞口</td><td data-page-node-id="OFulTXoV0sxq1RoTHhJ7a3">题材高潮期（扩散补涨阶段）趋势新开仓减半——此时筛选器捞到的天然偏高位</td></tr>
-    <tr data-page-node-id="7jTZO2AyUU3OVFrGwmrcrc"><td data-page-node-id="KbsJa0vFOUpVkNnVDT63JV">认错纪律</td><td data-page-node-id="hnx5SkeM6PiVCbBHYyZJ24">跌破买点结构（回踩买点破 20 日线 / 博弈票破启动板）当日执行，不等解释</td></tr>
-    <tr data-page-node-id="bJB6SiocvfbgI5yJeh6Owy"><td data-page-node-id="JbrP3hJa5RodUeSdDuTLsP">手册失效信号</td><td data-page-node-id="R8qnpZMFsVhzrSPqvP9TPS">① 全市场连续缩量、主线缺失 → 趋势策略停用；② 高位人气股批量负反馈 → 博弈策略停用；③ 探测层假信号率连续 &gt;70% → 探测层阈值需要重校</td></tr>
-    <tr data-page-node-id="2uP6mZXLHQzuUjEarNf2AN"><td data-page-node-id="n60HC2Wt842CzZbQetAkpI">版本修订</td><td data-page-node-id="5Ufwn4vKEDyRpRr6xXITRo">v1.0（2026-09-09）：初版，由厄尔尼诺主线实盘讨论沉淀。每次大亏或框架失效应记录并升级版本</td></tr>
+<section>
+  <h2>风控底线与手册失效条件</h2>
+  <table>
+    <tr><th style="width:30%;">规则</th><th>内容</th></tr>
+    <tr><td>单票仓位上限</td><td>趋势票 ≤ 总资金 20%；独立趋势票 ≤ 10%；博弈票 ≤ 总资金 5%（机动仓的 1/3）</td></tr>
+    <tr><td>总敞口</td><td>题材高潮期（扩散补涨阶段）趋势新开仓减半——此时筛选器捞到的天然偏高位</td></tr>
+    <tr><td>认错纪律</td><td>跌破买点结构（回踩买点破 20 日线 / 博弈票破启动板）当日执行，不等解释</td></tr>
+    <tr><td>手册失效信号</td><td>① 全市场连续缩量、主线缺失 → 趋势策略停用；② 高位人气股批量负反馈 → 博弈策略停用；③ 探测层假信号率连续 &gt;70% → 探测层阈值需要重校；④ 终池 ≥20 只（情绪过热）新开仓减半 / 终池 = 0（无主线期）仅观察</td></tr>
+    <tr><td>版本修订</td><td>v1.0/v1.1：初版与增补（内部版）。v2.0：开源框架版——剥离实盘案例，沉淀为纯方法论。每次大亏或框架失效应记录并升级版本</td></tr>
   </table>
 </section>
 
-<footer data-page-node-id="GdSFHenYSaxa4jjzDmBI0M">
-  数据来源：腾讯自选股（westock）选股与行情接口、NeoData、公开财经资讯（每日经济新闻 / 证券时报 / 香港商报等，2026-09-08~09）。<br data-page-node-id="P0YJOjiljn0Sx5z4vEIw9D">
+<footer>
+  本手册为 fast-trend-trade 开源框架的方法论文档，全部参数与 config/settings.json 对应。<br>
   ⚠️ 免责声明：本手册为基于公开数据和量化分析的交易框架整理，仅供参考，不构成投资建议。市场有风险，投资需谨慎。任何投资决策应结合个人风险承受能力、资金状况和投资目标独立判断，必要时咨询持牌专业机构。过往表现不预示未来收益。
 </footer>
 
 </div>
-
-<script>
-var ctx = {
-  title: { text: '正反样本关键指标对比（2026-09-09 盘中，单位：%）', left: 'center', textStyle: { color: '#1a3a6b', fontSize: 15 } },
-  tooltip: { trigger: 'axis' },
-  legend: { data: ['中粮糖业(趋势正例)', '平潭发展(博弈样本)'], top: 30 },
-  grid: { top: 80, left: 50, right: 30, bottom: 40 },
-  xAxis: { type: 'category', data: ['当日换手率', '当日振幅', '近20日涨幅'] },
-  yAxis: { type: 'value', name: '%' },
-  series: [
-    { name: '中粮糖业(趋势正例)', type: 'bar', data: [9.9, 8.5, 47.5], itemStyle: { color: '#c0392b' }, label: { show: true, position: 'top' } },
-    { name: '平潭发展(博弈样本)', type: 'bar', data: [23.7, 12.2, 18.9], itemStyle: { color: '#2e6da4' }, label: { show: true, position: 'top' } }
-  ]
-};
-echarts.init(document.getElementById('chart1')).setOption(ctx);
-</script>
 </body>
 </html>
