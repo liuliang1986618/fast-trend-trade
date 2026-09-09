@@ -4,6 +4,8 @@
 
 > ⚠️ **免责声明（请先阅读）**：本项目仅为量化筛选框架与个人研究工具，不构成任何投资建议。市场有风险，投资需谨慎。任何投资决策应结合个人风险承受能力、资金状况和投资目标独立判断。过往表现不预示未来收益。
 
+> 🚧 **当前状态 v0.1**：数据源自动检测降级链、参数配置、策略手册已就绪；每日主循环 `run_daily.py` 开发中（见 `src/README.md` 路线图）。在此之前自检命令 `python3 src/check_provider.py` 可完整运行。
+
 ## 它解决什么问题
 
 动量策略的经典困境是"确认即滞后"：等四维指标（均线多头/涨幅/量价/资金）全部确认，趋势已经走完一半。本框架的解法：
@@ -59,6 +61,12 @@ python3 src/run_daily.py --config config/settings.json
 # 建议每交易日 15:30 定时执行（crontab: 30 15 * * 1-5）
 ```
 
+> 🚧 run_daily.py 开发中，上述命令将在 v0.2 可用。数据源部分现在即可自检：
+> `python3 src/check_provider.py`
+
+**私有配置**：机器相关参数（私有数据源路径等）放 `config/local.json`
+（已 gitignore），启动时与 settings.json 深合并、本地键优先——开源仓库保持零机器路径。
+
 ### 4. 阅读
 
 - `docs/strategy-handbook.html`：完整策略手册（物种判别 / 漏斗 / 三级火箭 / 状态机 / 评分 / 失效条件）
@@ -78,7 +86,7 @@ python3 src/run_daily.py --config config/settings.json
 fast-trend-trade/
 ├── config/settings.json    # 全部策略参数（阈值/权重/状态机/风控开关）
 ├── docs/                   # 策略手册等文档
-├── src/                    # 数据源适配层 + 运行入口（providers 可插拔）
+├── src/                    # 运行入口 + 数据源适配层（自动检测/降级，providers 可插拔）
 ├── output/                 # 每日产物（日报/驾驶舱），gitignore
 └── README.md
 ```

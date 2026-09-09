@@ -1,6 +1,12 @@
 {
   "_comment": "fast-trend-trade 全部可调参数。改这里 = 改策略，不要改代码。",
   "market": "A-share",
+  "data_source": {
+    "_comment": "数据源自动检测+优雅降级链。按 order 顺序探测，每级做『存在性+真实调通』两级验证，第一个通过的被采用",
+    "order": ["westock", "akshare"],
+    "auto_install": true,
+    "_note": "私有数据源参数（如 westock 的 CLI/工具路径）放 config/local.json（已 gitignore），启动时自动深合并覆盖本文件，勿在此提交任何机器相关路径"
+  },
   "funnel": {
     "probe": {
       "_desc": "三级火箭·探测层：资金-价格背离（趋势萌芽潜伏）",
