@@ -33,13 +33,40 @@
     }
   },
   "mainline": {
-    "_desc": "主线判定五判据",
-    "limitup_min": 5,
-    "max_board_min": 3,
-    "consecutive_days_min": 3,
-    "fund_flow_rank_top": 5,
-    "etf_width_check": true,
-    "lifecycle": ["预热", "确认", "扩散尾声", "退潮"],
+    "_desc": "主线判定双轨制：趋势主线（资金宽度型）与情绪主线（连板潮型）独立判定。共振矩阵的正向主线 = 两轨并集（标注轨别）。连板潮是情绪主线的体温计，不是趋势主线的——趋势主线看资金宽度，不需要连板潮。",
+    "trend_lane": {
+      "_desc": "趋势主线判据（服务趋势策略）。成立规则：T2 资金、T5 催化为必要条件；T1/T3/T4 至少一条为真 → 主线成立，阶段=预热；T1 与 T3 同时为真 → 阶段升=确认。",
+      "t1_pool_width": {
+        "confirm_pool_min": 3,
+        "startup_count_min": 5,
+        "_desc": "T1 个股宽度（双口径满足其一）：确认口径=板块内四维趋势池个股≥3家（计数不含被基本面闸拦截者）；启动口径=板块内 Chg5D>5% 且量比>1.5 的个股≥5家（周期主线启动初期的主度量）"
+      },
+      "t2_fund_flow_rank_top": 5,
+      "_t2_desc": "T2 板块 5 日主力净流入全市场排名（必要条件；20 日排名作辅助抗噪）",
+      "t3_etf_width": {
+        "chg20d_min": 8,
+        "alt_60d_new_high": true,
+        "_desc": "T3 贝塔宽度：对应主题 ETF 20 日涨幅≥8% 或收盘创 60 日新高，二满足一"
+      },
+      "t4_midcap_leader_chg20d": [10, 60],
+      "_t4_desc": "T4 中军结构：板块内百亿级市值个股 Chg20D 落入此区间（证明非小票独舞）",
+      "t5_catalyst_human": true,
+      "_t5_desc": "T5 催化可反复发酵（人判，不可自动化；必要条件）",
+      "lifecycle": {
+        "预热": "T2✓ 且 T5✓，但 T1/T3 未同时满足（资金先行，价格未确认）",
+        "确认": "T1 与 T3 同时✓（资金与价格共振）",
+        "扩散尾声": "百亿中军 Chg20D>60% 或 ETF 乖离 20 日线>25%",
+        "退潮": "板块 5 日资金转流出 或 ETF 破 20 日线"
+      }
+    },
+    "emotion_lane": {
+      "_desc": "情绪主线判据（原五判据原样降级保留）。服务对象：博弈策略选场、情绪周期定位、龙头识别。不再是趋势策略的主线门槛。",
+      "limitup_min": 5,
+      "max_board_min": 3,
+      "consecutive_days_min": 3,
+      "fund_flow_rank_top": 5,
+      "etf_width_check": true
+    },
     "lifecycle_coef": { "预热": 0.8, "确认": 1.0, "扩散尾声": 0.5, "退潮": 0 }
   },
   "etf_funnel": {
