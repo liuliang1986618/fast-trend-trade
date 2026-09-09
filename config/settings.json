@@ -1,0 +1,99 @@
+{
+  "_comment": "fast-trend-trade 全部可调参数。改这里 = 改策略，不要改代码。",
+  "market": "A-share",
+  "funnel": {
+    "probe": {
+      "_desc": "三级火箭·探测层：资金-价格背离（趋势萌芽潜伏）",
+      "chg20d_min": 0,
+      "chg20d_max": 12,
+      "main_net_flow_5d_min": 0,
+      "turnover_rate_min": 2,
+      "pe_ttm_min": 0
+    },
+    "confirm": {
+      "_desc": "确认层：主升期趋势中军",
+      "chg20d_min": 25,
+      "chg20d_max": 90,
+      "pe_ttm_min": 0,
+      "pe_ttm_max": 50,
+      "turnover_rate_min": 3,
+      "marketcap_min_yi": 100,
+      "note": "接口侧市值条件可能不生效，需结果后筛"
+    },
+    "position_tiers": {
+      "startup": { "chg20d": [10, 25], "action": "建底仓" },
+      "rally": { "chg20d": [25, 60], "action": "只做缩量回踩买点" },
+      "high": { "chg20d_gt": 60, "bias20_gt": 25, "action": "只看不追" }
+    }
+  },
+  "mainline": {
+    "_desc": "主线判定五判据",
+    "limitup_min": 5,
+    "max_board_min": 3,
+    "consecutive_days_min": 3,
+    "fund_flow_rank_top": 5,
+    "etf_width_check": true,
+    "lifecycle": ["预热", "确认", "扩散尾声", "退潮"],
+    "lifecycle_coef": { "预热": 0.8, "确认": 1.0, "扩散尾声": 0.5, "退潮": 0 }
+  },
+  "etf_funnel": {
+    "_desc": "反向漏斗：ETF 阈值与个股不同",
+    "chg20d_min": 8,
+    "chg20d_max": 30,
+    "scale_min_yi": 5,
+    "dedupe_by_index": true,
+    "exclude_broad_index": ["沪深300", "中证500", "上证50", "创业板指", "科创50"],
+    "top_n": 10
+  },
+  "score": {
+    "_desc": "百分制五维评分。评分用于分层（≥80优先/60-79观察/<60不入），同层内不迷信分差",
+    "weights": {
+      "mainline_strength": 25,
+      "position_in_sector": 20,
+      "technical_structure": 25,
+      "fund_verification": 20,
+      "distance_to_entry": 10
+    },
+    "resonance_bonus": "共振个股主线强度维直接满分",
+    "independent_pool_mainline_replacement": { "硬公告": 20, "传闻": 10, "未知": 0 },
+    "tiers": { "priority": 80, "watch": 60 }
+  },
+  "species_hard_gate": {
+    "_desc": "一票否决，直接出局不评分",
+    "limitup_in_10d_max": 1,
+    "amplitude_alert_pct": 10,
+    "pe_ttm_reject": "negative_or_gt_80",
+    "pb_reject_gt": 8,
+    "deduct_nonrecurring_loss_reject": true
+  },
+  "state_machine": {
+    "position_cap_pct": 20,
+    "independent_cap_pct": 10,
+    "r_unit": "单票目标仓位的 1/3",
+    "add_on_profit_pct": 5,
+    "trail_stop": { "ma": "MA20", "drawdown_pct": 10 },
+    "time_stop_days": 10,
+    "money_stop_pct_of_total": 1.5,
+    "independent_extra": "无板块兜底，破位即走，止损更严"
+  },
+  "vcp": {
+    "forming_score": 60,
+    "mature_score": 75,
+    "lookback_bars": 120,
+    "windows": 4
+  },
+  "risk_switches": {
+    "_desc": "手册失效条件",
+    "pool_bloat_limit": 20,
+    "pool_bloat_action": "情绪过热，新开仓减半",
+    "pool_empty_action": "无主线期，趋势策略仅观察",
+    "probe_false_signal_rate_limit": 0.7,
+    "probe_false_signal_action": "重校探测层阈值"
+  },
+  "output": {
+    "daily_dir": "output/daily",
+    "dashboard": "output/dashboard.html",
+    "funnel_meter_required": true,
+    "name_lists": "只出终产物与探测层前5，中间层只出数量"
+  }
+}
