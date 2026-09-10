@@ -178,5 +178,41 @@
     "near_break_pct": 1,
     "invalid_keep_days": 5,
     "history_keep_days": 90
+  },
+  "execution": {
+    "_desc": "次日执行规则（收盘后选股、次日挂条件单的闭环）：高开超过 skip_gap_pct 放弃追价、等回踩突破价确认；已触发状态的票若次日回踩跌破突破价则撤单重等。",
+    "skip_gap_pct": 3
+  },
+  "tracking_score": {
+    "_desc": "主线趋势强度分（0~100，驱动驾驶舱折线图）：动量40%＝min(20日涨幅,25%)/25%；均线30%＝min(MA20乖离,15%)/15%（0下限）；量能30%＝min(5日中位量/20日中位量,2)/2。由每条主线的锚定ETF日K计算，逐日追加一点形成折线。",
+    "weights": {
+      "momentum": 0.4,
+      "ma_bias": 0.3,
+      "volume": 0.3
+    },
+    "momentum_cap_pct": 25,
+    "ma_bias_cap_pct": 15,
+    "volume_ratio_cap": 2
+  },
+  "score_alert": {
+    "_desc": "主线趋势强度分两级预警（回放验证：航运45天，08-10骗炮被量比前置拦截降级L1，09-07真启动保留L2并3日确认；量价同涨才可信，缩量涨价=反弹噪音）",
+    "L1_watch": {
+      "desc": "放量关注：当日量>=20日中位量1.8倍 且 分数<40 → 进异动观察，当晚查板块个股资金是否同向",
+      "vol_ratio": 1.8,
+      "score_ceiling": 40
+    },
+    "L2_start": {
+      "desc": "启动预警：分数日环比Δ>=+12 且 分数<60 且 当日量比(当日量/前20日中位量)>=1.2 → 升级检查；缩量跳升(量比<1.2)直接降级L1只观察（验证：08-10骗炮量比0.77、09-07真启动1.48）。次日起3日内 分数不跌破预警日-5 且 量能项>=20 → 确认转「刚起步（分数确认）」并给突破价；3日内跌破预警前8分 → 假信号作废记台账",
+      "delta": 12,
+      "score_ceiling": 60,
+      "confirm_days": 3,
+      "confirm_floor": 5,
+      "confirm_vol": 20,
+      "fail_floor": 8,
+      "vol_ratio_min": 1.2
+    },
+    "note": "L1是弱提示只观察不动仓位；L2确认后才可挂条件单埋伏。快启动（单日暴涨>60分）归涨停主线通道，不归本预警管。",
+    "retention_note": "rotation.score_dates/score_series 保留250个交易日≈一年；SVG 横轴自适应刻度",
+    "slider_note": "细节图=全历史滑动长卷：SVG宽=交易日数×13px+92，每日刻度+周一路径线+月份分隔虚线；外层 overflow-x:auto 容器 + 一行原生JS默认scrollLeft到最右（最新）；悬停title保留；全貌图保持每月刻度不动"
   }
 }

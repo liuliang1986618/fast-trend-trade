@@ -8,3 +8,4 @@ __pycache__/
 # 本地数据源凭证
 .env
 config/local.json
+.workbuddy/
