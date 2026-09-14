@@ -1,11 +1,12 @@
-# 每日产物不入库（本地生成）
-output/daily/
-output/dashboard.html
+# 每日产物：v0.2 起**入库**（跨机器同步需要历史日报与驾驶舱——另一台设备 clone 后即可查看）
+# 若日后仓库体积成为问题，再改为：仅保留最近 N 天 / 或迁移到 git-lfs
+# output/daily/
+# output/dashboard.html
 __pycache__/
 *.pyc
 .DS_Store
 *.log
-# 本地数据源凭证
+# 本地数据源凭证（机器私有，不入库；已由 resolver 的自动发现兜底，缺失也能跑）
 .env
 config/local.json
 .workbuddy/
