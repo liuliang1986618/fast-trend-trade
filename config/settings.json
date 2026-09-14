@@ -22,32 +22,54 @@
     "confirm": {
       "_desc": "确认层：主升期趋势中军",
       "chg20d_min": 25,
-      "chg20d_max": 90,
+      "chg20d_max": 60,
       "pe_ttm_min": 0,
       "pe_ttm_max": 50,
       "turnover_rate_min": 3,
       "marketcap_min_yi": 100,
-      "note": "接口侧市值条件可能不生效，需结果后筛"
+      "note": "买入筛选收敛为 25~60（v0.2 裁决 §1.2）；60+ 一律归高位档只看不追；持有判据不设区间。接口侧市值条件可能不生效，需结果后筛"
     },
     "position_tiers": {
-      "startup": {
-        "chg20d": [
-          10,
-          25
-        ],
-        "action": "建底仓"
-      },
-      "rally": {
-        "chg20d": [
-          25,
-          60
-        ],
-        "action": "只做缩量回踩买点"
-      },
-      "high": {
-        "chg20d_gt": 60,
-        "bias20_gt": 25,
-        "action": "只看不追"
+      "_desc": "统一仓位阶梯（v0.2 裁决 §1.1）：与 funnel.probe / funnel.confirm 对齐，取消 chg20d 区间重叠（原 probe[0,12] 与 startup[10,25] 在 10~12 双命中，语义冲突）。",
+      "tiers": [
+        {
+          "name": "试错仓",
+          "trigger": "探测层信号（资金-价格背离）",
+          "chg20d": [
+            0,
+            12
+          ],
+          "position": "1/3"
+        },
+        {
+          "name": "底仓",
+          "trigger": "同票出现二级确认（金叉/蓄势分≥60）或 chg20d∈[10,25] 且四维≥3",
+          "chg20d": [
+            10,
+            25
+          ],
+          "position": "2/3（含试错仓）"
+        },
+        {
+          "name": "满仓",
+          "trigger": "主升档 + 四维全绿",
+          "chg20d": [
+            25,
+            60
+          ],
+          "position": "3/3（≤总资金20%）"
+        },
+        {
+          "name": "只看不追",
+          "trigger": "高位",
+          "chg20d_gt": 60,
+          "position": "0"
+        }
+      ],
+      "position_pct": {
+        "try": 0.3333,
+        "base": 0.6667,
+        "full": 1.0
       }
     }
   },
@@ -94,6 +116,26 @@
       "确认": 1.0,
       "扩散尾声": 0.5,
       "退潮": 0
+    },
+    "lifecycle": {
+      "_desc": "主线生命周期四阶段（v0.2 起为唯一正式词汇）。台账/dashboard/自动化 prompt 已统一使用；读取层对历史数据做旧词映射。",
+      "stages": [
+        "刚起步",
+        "主升",
+        "尾声",
+        "退潮"
+      ],
+      "_map_legacy": {
+        "预热": "刚起步",
+        "确认": "主升",
+        "扩散尾声": "尾声"
+      },
+      "_stage_rules": {
+        "刚起步": "钱进价未涨（主线成立但 ETF 未点火）",
+        "主升": "钱价齐涨（ETF 20日≥8% 或创60日新高）",
+        "尾声": "百亿中军 chg20d>60% 或 ETF 乖离20日线>25%",
+        "退潮": "板块5日资金转流出 或 ETF 破20日线"
+      }
     }
   },
   "etf_funnel": {
@@ -135,14 +177,21 @@
     "_desc": "一票否决，直接出局不评分",
     "limitup_in_10d_max": 1,
     "amplitude_alert_pct": 10,
-    "pe_ttm_reject": "negative_or_gt_80",
+    "pe_ttm_reject": {
+      "pe_ttm_min": 0,
+      "pe_ttm_max": 80,
+      "_desc": "PE-TTM 越界即一票否决：<0（亏损）或 >80"
+    },
     "pb_reject_gt": 8,
     "deduct_nonrecurring_loss_reject": true
   },
   "state_machine": {
     "position_cap_pct": 20,
     "independent_cap_pct": 10,
-    "r_unit": "单票目标仓位的 1/3",
+    "r_unit": {
+      "value": 0.3333,
+      "_desc": "单票目标仓位的 1/3（R 单位，数值化）"
+    },
     "add_on_profit_pct": 5,
     "trail_stop": {
       "ma": "MA20",
