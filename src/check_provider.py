@@ -20,7 +20,8 @@ def main():
             print("  ·", n)
         print("-" * 46)
         print(f"✅ 数据源就绪：{provider.name}")
-        print("   可以运行：python3 src/run_daily.py")
+        print("   下一步：每日自动化见 docs/automation-daily.md")
+        print("   （src/run_daily.py 属 v0.2 待开发项，见 docs/TODO-optimization-roadmap.md §7）")
         return 0
     except ProviderUnavailable as e:
         print("  ·", e)

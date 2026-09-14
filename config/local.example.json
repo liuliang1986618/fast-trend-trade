@@ -1,0 +1,13 @@
+{
+  "_comment": "私有/机器相关配置【示例】。使用方法：复制本文件为 config/local.json 再按本机情况修改。local.json 已 gitignore，不会入库；启动时与 settings.json 深合并，local.json 的键优先。",
+
+  "_comment_data_source": "数据源顺序（按此顺序探测，第一个真实调通者被采用）；auto_install=true 时 akshare 缺失会自动 pip 安装",
+  "data_source": {
+    "order": ["westock", "akshare"],
+    "auto_install": true,
+
+    "_comment_westock": "westock 数据源参数。两项都可以留空——留空时会自动发现 WorkBuddy 插件目录下的 westock-tool 脚本（glob 匹配 ~/.workbuddy/plugins/cache/*/finance-data/*/skills/westock-tool/scripts/index.js，取版本最高者）。只有自动发现失败时才需要在这里手填绝对路径。",
+    "westock_cli": "",
+    "westock_tool_js": ""
+  }
+}

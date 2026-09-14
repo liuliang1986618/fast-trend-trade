@@ -18,14 +18,33 @@ class ProviderUnavailable(Exception):
     pass
 
 
+def discover_westock_tool_js() -> str:
+    """自动发现 westock-tool 脚本（WorkBuddy 插件缓存目录）。
+
+    插件目录含版本号（如 finance-data/1.5.0），换机器/升级插件后路径会变，
+    因此不要在 local.json 里写死——留空时按 glob 匹配并取版本最高者。
+    匹配失败再回退到 local.json 的手填路径。
+    """
+    from pathlib import Path
+    pattern = ".workbuddy/plugins/cache/*/finance-data/*/skills/westock-tool/scripts/index.js"
+    hits = sorted(Path.home().glob(pattern))
+    return str(hits[-1]) if hits else ""
+
+
 def _probe_westock(settings: dict) -> bool:
-    """westock 双级探测：CLI 存在 + 真实调通一次。"""
+    """westock 双级探测：脚本存在 + 真实调通一次。
+
+    脚本定位优先级：local.json 手填 → 自动发现（跨机器免配置的关键）。
+    """
     import shutil
     from pathlib import Path
     ds = settings.get("data_source", {})
     cli = shutil.which("westock") or ds.get("westock_cli", "")
-    tool_js = ds.get("westock_tool_js", "")
+    tool_js = ds.get("westock_tool_js", "") or discover_westock_tool_js()
     if not cli and not (tool_js and Path(tool_js).exists()):
+        return False
+    if tool_js and Path(tool_js).exists() and not shutil.which("node"):
+        print("[resolver] westock 脚本已找到，但缺少 node 运行时（请安装 Node.js ≥18）")
         return False
     try:
         if tool_js and Path(tool_js).exists():

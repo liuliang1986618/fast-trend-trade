@@ -1,0 +1,89 @@
+# 每日自动化配置（本工程的实际运行入口）
+
+> ⚠️ 本工程的每日流程**不由 `src/run_daily.py` 驱动**（那是 v0.2 待开发项，见 `docs/TODO-optimization-roadmap.md` §7）。
+> 实际入口是 **WorkBuddy 定时自动化**——它调用 westock MCP 工具 + 本地脚本，产出日报/驾驶舱/台账。
+> 本文档是自动化的**唯一事实源**：换机器时照此重建，不要凭记忆重写 prompt。
+
+## 一、自动化任务事实
+
+| 项 | 值 |
+|---|---|
+| 名称 | 每日盘后趋势候选扫描（双策略体系·趋势策略执行器） |
+| 任务 ID | `880e6067-8bbd-4137-96de-079100af9452` |
+| 调度 | 每个交易日（周一~周五）15:30 |
+| 工作目录 | `<仓库根>`（本机为 `/Users/liuliang19/Desktop/fast-trend-trade`） |
+| 休市处理 | prompt 首句已含"休市日直接结束、不产出报告" |
+
+## 二、换机器重建步骤
+
+1. 新设备安装 WorkBuddy 桌面端，并完成 **westock 连接器授权**（`腾讯自选股`，connected 状态）
+2. 仓库 clone 到本地（建议路径与旧机一致，或按下方"路径替换表"改 prompt）
+3. 用本机工具创建定时任务（告诉 WorkBuddy：「按 docs/automation-daily.md 重建每日自动化」），或在自动化界面新建：
+   - 频率：每周一至周五 15:30
+   - 工作目录：仓库根
+   - prompt：粘贴下方第三节全文，并**按路径替换表**替换机器相关路径
+4. 验证：临时把调度时间改到当前时间 +1 分钟，看是否产出 `output/daily/<今日>.html`；通过后改回 15:30
+
+### 路径替换表（换机器时必改）
+
+| prompt 中的旧路径 | 新设备取值方法 |
+|---|---|
+| `/Users/liuliang19/.workbuddy/plugins/cache/cb_teams_marketplace/finance-data/1.5.0/skills/westock-tool/scripts/index.js` | 自动发现模式：`~/.workbuddy/plugins/cache/*/finance-data/*/skills/westock-tool/scripts/index.js`（版本号会变，取存在的那个） |
+| `/Users/liuliang19/.workbuddy/binaries/python/envs/default/bin/python` | 新机 WorkBuddy 的托管 Python：`~/.workbuddy/binaries/python/envs/default/bin/python`；不存在则先建 venv 并 pip install -r requirements.txt |
+| `/Users/liuliang19/.workbuddy/plugins/cache/cb_teams_marketplace/finance-data/1.5.0/skills/wb-finance-skill/scripts/run_signal.py` | 同插件缓存目录：`~/.workbuddy/plugins/cache/*/finance-data/*/skills/wb-finance-skill/scripts/run_signal.py` |
+| `/Users/liuliang19/Desktop/fast-trend-trade` | 新机仓库实际路径（本机用 `~/Desktop/fast-trend-trade`） |
+
+> 提示：`src/providers/resolver.py` 已支持 westock 脚本**自动发现**（glob 取版本最高者），
+> 因此本地自检脚本无需手写路径；但自动化 prompt 是纯文本、由模型执行，仍需显式写明路径。
+
+## 三、prompt 全文（复制即用）
+
+```text
+【每日盘后趋势候选扫描】若当天为 A 股休市日（周末或法定节假日）则直接结束，不产出任何报告。
+
+语言规范（铁律，优先级最高）：报告是写给普通读者的，禁止黑话。统一用语对照——A轨→「资金主线」（整个行业被大钱持续买入）；B轨→「涨停主线」（游资连板炒起来的热点）；预热→「刚起步」（钱进了价没涨）；确认→「主升」（钱价一起涨）；扩散尾声→「尾声」（开始炒补涨股）；共振→「互证」（股票和它的ETF同时涨）；共振矩阵→「互证对照表」；正向漏斗→「选股漏斗」；反向漏斗→「ETF反查」；探测层→「早期埋伏名单」（大钱进了还没涨）；确认层→「主升名单」；VCP→「蓄势形态」（回调一次比一次浅、成交一次比一次少，涨之前憋的那口气）；forming→「蓄势中」；mature→「蓄势完成」；触发价→「突破价」（涨过它=真启动）；失效价→「认错价」（跌破它=看错了）；趋势池→「稳做名单」；博弈池→「快打名单」（纯情绪票快进快出）；独立趋势池→「单飞名单」；多头池→「站上所有主要均线的股票」。技术代号首次出现时括号保留原词。日报开头固定放「名词小词典」区块（照抄既有词典文案），驾驶舱顶部也要有同款名词小词典。写完自查：正文不得残留 A轨/B轨/VCP/预热区/共振区/左翼/右翼 这类词（"蓄势形态（VCP）"括号注记允许）。
+
+执行步骤：
+1. 用 Bash 依次运行以下选股命令（可执行文件：node ~/.workbuddy/plugins/cache/*/finance-data/*/skills/westock-tool/scripts/index.js，下称 wt）：
+   a. wt filter "intersect([Chg20D >= 0, Chg20D < 12, MainNetFlow5D > 0, TurnoverRate > 2, PE_TTM > 0])" --orderby MainNetFlow5D --desc --limit 15   # 早期埋伏名单：大钱进了还没涨
+   b. wt filter "intersect([Chg20D > 25, Chg20D < 90, PE_TTM > 0, PE_TTM < 50, TurnoverRate > 3])" --orderby Chg20D --desc --limit 20   # 主升名单候选（市值≥100亿条件接口侧可能不生效，需手动剔除总市值<100亿的票）
+   c. wt ranking cap_main_5d --within-strategy ma_long --limit 15   # 均线多头池内按主力5日净流入排序
+   d. wt ranking limitup_days --limit 20   # 连板梯队榜
+2. 主线判定（两条线独立体检，输出 1~3 条，每条标注【类型：资金主线/涨停主线】与【阶段：刚起步/主升/尾声/退潮】）：
+   资金主线（成立规则：②⑤为必要条件；①③④至少一条为真 → 成立且阶段=刚起步；①与③同时为真 → 阶段升=主升）：
+   - ①涨的票够多（双口径满足其一）：主升口径=板块内四维趋势池个股≥3家（不含基本面红线拦截者）；启动口径=板块内 Chg5D>5% 且量比>1.5 的个股≥5家
+   - ②板块被大钱买（必要）：板块个股主力 5 日净流入合计居全市场板块前列（无板块级接口时以头部个股集中度佐证，需列明细）
+   - ③ETF也涨：对应主题 ETF 20 日涨幅≥8% 或收盘创 60 日新高，二满足一
+   - ④大块头领涨：板块内百亿级市值个股 Chg20D∈[10%,60%]
+   - ⑤题材有后劲：可反复发酵（人判，可 WebSearch 辅助；必要）
+   - 阶段续：百亿中军 Chg20D>60% 或 ETF 乖离 20 日线>25% = 尾声；板块 5 日资金转流出或 ETF 破 20 日线 = 退潮
+   涨停主线：①最高连板≥3板 ②涨停≥5家连续≥3天 ③板块5日主力净流入前列 ④题材有后劲 ⑤板块ETF同步向上=真主线；滞涨=点状抱团只可龙头快打；走弱=退潮。
+   候选票归类：个股趋势✓+主线✓→稳做名单；个股趋势✓+板块/ETF✗→单飞名单（A 硬公告=黄标小仓 / B 无催化板块冷=疑似独角戏弃或快打 / C 探测层资金同板块扎堆=埋伏候选进观察池）。一票否决红线：近10根K线涨停≥2根→快打名单；PE-TTM为负或>80、PB>8、最新财报扣非亏损→不得进稳做/单飞名单。
+3. ETF反查：a. wt ranking qt_chg_interval --asset etf --orderby ChgPct20D --min-ChgPct20D 8 --limit 40；b. 剔除宽基；c. 同指数只留规模最大；d. 规模≥5亿；e. 前 10（代码/名称/主题/规模/近20日涨幅），标注与主线重合（互证）。
+4. 主线 ETF 通道：每条主线（含刚起步的）筛选主题贴合、规模≥5亿的前 3 只写"这只主线的 ETF 搭档"；单飞名单无板块 ETF 须明示。
+5. 互证对照表：主线×ETF 主题交叉。主线✓+ETF✓=互证成功（最强）；✗✓=值得期待进观察名单；✓✗=成立但缺印证；✗✗=没信号。个股级互证=稳做名单个股属某上涨 ETF 成分主题，主线强度满分 25。
+6. 蓄势形态精判（稳做+单飞+早期埋伏前5共≤10只）：运行 <托管python> <wb-finance-skill>/scripts/run_signal.py --engine vcp --source westock --code <代码> --limit 120 --pretty。score≥75=快憋满；60~75=还在压；<60=没形态（不得配突破价/认错价）。每票必须：蓄势分＋档位标签＋突破价＋认错价＋"现在该干嘛"一句话。禁止裸分数。
+7. 稳做名单综合评分（百分制）：红线一票否决。软分五维：主线强度 25（资金主线主升×1.0/刚起步×0.8/涨停主线主升×1.0/刚起步×0.8/尾声×0.5；互证个股满分；单飞替换为催化强度 硬公告20+/传闻10/未知0）+ 板块内地位 20 + 蓄势形态 25 + 资金验证 20 + 距买点距离 10。≥80 优先档、60~79 观察档、<60 不入池。单飞单票仓位减半。
+8. 生成浅底深字研报风 HTML 落盘 <仓库根>/output/daily/YYYY-MM-DD.html。结构：①选股漏斗计量行②名词小词典③主线体检（两条线分别记分明细）④互证对照表⑤稳做名单（评分降序+入选理由）+早期埋伏前5⑥ETF反查榜前10+各主线ETF搭档⑦连板梯队⑧蓄势观察清单（上方两段固定说明：「蓄势分是怎么打的」压弹簧原理；「分数怎么看、该干嘛」75+快憋满盯突破价可挂单/60~75还在压只观察/60以下没形态别硬套；按主线内/主线外分组）⑨跨日追踪台·今日变化（主线升级/降级、票状态变化、新面孔）⑩免责声明固定文案："免责声明：以上内容基于公开数据和量化分析，仅供参考，不构成投资建议。市场有风险，投资需谨慎。任何投资决策应结合个人风险承受能力、资金状况和投资目标独立判断，必要时咨询持牌专业机构。过往表现不预示未来收益。"。数据标注来源与时点。图表用纯 HTML/CSS/SVG（禁止 ECharts 等 JS 图表库；仅允许一行原生 JS 设置滚动位置）。
+9. 历史台账维护与驾驶舱（核心设计：连续性）：
+   a. 拉价格：读取 <仓库根>/output/history.json（不存在则新建 {"days":[]}），把昨日 watchlist 全部票代码用 mcp__westock-mcp__data_quote 拉当日收盘价(price)/盘中最高价(high)/涨跌幅——状态机推进的必要输入。
+   b. 观察票状态机（用收盘价推进）：「观察中」→「临近突破」（蓄势分≥75 或 收盘距突破价≤1%）→「已触发」（收盘≥突破价，转稳做名单跟踪，涨停封板注明"不追等回踩"）/「已触及·等回踩」（盘中最高价≥突破价但收盘＜突破价）/「已失效」（收盘≤认错价，保留5天后移出）。连续在榜天数按名字跨日连续计数；票某日无蓄势分也保留状态行。
+   c. 写入 history.json：days 数组追加当日快照（date/funnel/mainlines含阶段/watchlist含name,code,xushi,group,status,close,day_high,break_price,invalid_price,dist_to_break_pct,first_seen,days_in,note/etf_top，保留90天）；维护 rotation 主线轮动时间线——dates 数组追加当日日期，lines 每条主线写当日阶段（启动/主升/尾声/退潮/蓄势/刚起步/埋伏/退出），主线消失标"退出"；并追加 rotation 分数序列——每条活跃主线当天一个"趋势强度分"，公式见 config/settings.json 的 tracking_score（动量40%+均线30%+量能30%，用主线锚定 ETF 的 data_kline 日K 序列计算，尽量拉250根K线以覆盖一年回溯）。rotation.score_dates 用完整日期 YYYY-MM-DD（跨年安全），score_series 为各主线分数数组（横轴以最长序列主线为准），某主线 ETF 数据不足的存 score_series_partial（dates+scores）。rotation 保留 250 个交易日≈一年（rotation.retention），days 快照维持 90 天。python json 读写，写完校验 JSON 合法。
+   c2. 主线预警（按 config/settings.json 的 score_alert 规则执行，两级）：L1放量关注=当日成交量≥20日中位量1.8倍且分数<40（量比=当日量/前20日中位量，数据来自算分用的同一份日K）；L2启动预警=趋势强度分日环比Δ≥+12 且 分数<60 且 当日量比≥1.2（关键：缩量跳升即量比<1.2 直接降级L1只观察——量价同涨才可信，缩量涨价=反弹骗炮，历史验证08-10量比0.77是假信号、09-07量比1.48是真启动）。触发时：写入 rotation.alert_events（line/date/level/delta/score/vol_ratio）；日报加「主线异动预警」段落（说明触发档位+当晚要查什么：板块个股主力资金是否同向/有无消息催化/板块内涨的票够不够多）；L2 主线若 3 日确认（分数不跌破预警日-5且量能项≥20）则在日报明示"预警确认，可纳入埋伏跟踪并计算突破价"，若 3 日内跌破预警前8分则明示"预警作废（假信号）"。摘要中预警必须高亮提示。
+   d. 重建驾驶舱 output/dashboard.html（注明"每天收盘后自动重建"），必须包含且按序：①名词小词典（顶部）②「主线趋势强度曲线」区——滑动细节图+全貌图两件套（均为纯静态 SVG，viewBox 高420，60分主升参考线，禁止 JS 图表库）：滑动细节长卷（上，output/trend-lines.svg）：覆盖全部可得历史，每天固定 13px 像素宽（SVG宽=交易日数×13+92），横轴每个交易日一个刻度标签（日号，每月首日写MM-DD加粗+月份分隔虚线，周一画浅竖线）；含全部预警标记（L1=空心圆○放量关注、L2=实心圆+▲启动预警Δ分、缩量骗炮=灰空心圆+✕）与事件标注（点火/蓄势开始/退潮判定中/主升·互证/数据起点）；外层包 <div id="trendScroll" style="overflow-x:auto;..."> 容器并在其后加一行原生 JS（document.getElementById("trendScroll").scrollLeft=ts.scrollWidth）默认滚到最右最新，容器下方加一行"可左右滑动"提示文字；一年全貌图（下，output/trend-lines-annual.svg）：全部可得点数缩放至1300宽（>120点用每月首日标签MM-DD加粗+月份分隔虚线，61~120每周一标签，≤60每日标签），标注年初高位、粮食ETF数据起点等长周期事件；两张图共同要求：每条主线一条折线不同颜色（>150点线宽降2）、每个数据点带 SVG 原生 <title> 悬停提示（如"2026-09-10 航运 64.4"）、附图例与"曲线怎么读+预警标记怎么看"说明（含骗炮区分原理：量价同涨才可信）；数据来自 rotation.score_series/score_series_partial 与 alert_events。③「主线轮动时间线」区：横向 日期×主线 的阶段色块热力表（新日期在右；启动蓝/主升红/尾声橙/退潮绿/蓄势浅蓝/刚起步蓝/埋伏灰/退出灰），下方"轮动叙事"三段——老主线怎么走完（点火日→主升→冲顶滞涨→退潮确认，带日期与数字）、新主线怎么接棒（蓄势/资金先行→ETF点火→互证）、轮动规律一句话（资金是搬家不是离场，盯住老主线尾声时谁在蓄势）；④「观察池·跨日追踪台」：每行=观察票 | 入池日 | 连续在榜 | 状态药丸（观察中蓝/临近突破红/已触发绿/已触及·等回踩橙/已失效灰） | 今日蓄势分+档位 | 距突破价进度条 | 较昨日▲▼ | 近5日色条序列。
+   e. 轮动叙事的数据依据：当日主线阶段变化（升级/降级）+ 涉及 ETF 的关键行情（点火日涨幅/破位日跌幅，用 data_kline 查证），叙事必须给日期和数字，不写空话。
+10. 用 present_files 展示日报，给简版摘要（漏斗计量+主线记分与阶段+稳做名单+互证要点+ETF搭档+蓄势观察项+追踪台与趋势曲线的变化要点+当日是否有主线预警），摘要同样遵守语言规范。
+```
+
+> 注：为便于跨机器阅读，上文已把三处机器绝对路径改成 `<托管python>` / `<wb-finance-skill>` / `<仓库根>` 占位符。
+> 本机正在运行的版本中这三处为实际路径（见第二节替换表）。
+
+## 四、自动化产物清单
+
+| 产物 | 路径 | 是否入库 |
+|---|---|---|
+| 每日日报 | `output/daily/YYYY-MM-DD.html` | ❌ 本地生成（gitignore） |
+| 驾驶舱 | `output/dashboard.html` | ❌ 本地生成（gitignore） |
+| 观察池台账 | `output/history.json` | ✅ 入库（跨日状态机的数据源） |
+| 趋势曲线（滑卷/全貌） | `output/trend-lines.svg`、`output/trend-lines-annual.svg` | ✅ 入库 |
+| 驾驶舱重建脚本 | `output/scripts/build_dashboard.py` | ✅ 入库 |

@@ -6,6 +6,10 @@
 
 > 🚧 **当前状态 v0.1**：数据源自动检测降级链、参数配置、策略手册已就绪；每日主循环 `run_daily.py` 开发中（见 `src/README.md` 路线图）。在此之前自检命令 `python3 src/check_provider.py` 可完整运行。
 
+> 🧭 **定位**：本系统是**半自动决策支持系统**——机器筛漏斗、算分、盯状态机；人做终审与催化判断（T5 催化成色、物种三问、探测层真伪终审）。这不是待修复的缺陷，是设计定位。完整人机分工表见 `docs/TODO-optimization-roadmap.md` §0。
+
+> 🔁 **换机器/新设备**：直接看 `docs/setup-new-machine.md`（clone 后 5 分钟跑通 + 已知坑速查）；每日自动化的重建见 `docs/automation-daily.md`（含 prompt 全文与路径替换表）。
+
 ## 它解决什么问题
 
 动量策略的经典困境是"确认即滞后"：等四维指标（均线多头/涨幅/量价/资金）全部确认，趋势已经走完一半。本框架的解法：
@@ -87,10 +91,17 @@ python3 src/run_daily.py --config config/settings.json
 ```
 fast-trend-trade/
 ├── config/settings.json    # 全部策略参数（阈值/权重/状态机/跨日追踪/风控开关）
-├── docs/                   # 策略手册等文档
+├── config/local.example.json # 私有配置示例（复制为 local.json 用，local.json 不入库）
+├── docs/
+│   ├── strategy-handbook.html      # 策略手册（物种判别 / 漏斗 / 三级火箭 / 状态机 / 评分）
+│   ├── TODO-optimization-roadmap.md # 优化路线图 v0.2（语义裁决 / 验证体系 / 共振增强）
+│   ├── setup-new-machine.md        # 新设备上手指南（clone 后 5 分钟跑通 + 已知坑速查）
+│   └── automation-daily.md         # 每日自动化配置（本工程实际运行入口 + prompt 全文）
 ├── src/                    # 运行入口 + 数据源适配层（自动检测/降级，providers 可插拔）
-├── output/history.json     # 观察池历史台账（跨日状态机数据源，唯一入库的产物）
-├── output/                 # 每日产物（日报/驾驶舱不入库，本地生成）
+├── output/scripts/         # 驾驶舱重建脚本 build_dashboard.py（读 history.json 渲染）
+├── output/history.json     # 观察池历史台账 + 主线轮动时间线 + 趋势强度分序列（唯一入库的产物）
+├── output/*.svg            # 趋势曲线：滑动细节长卷 + 一年全貌（每日自动化重建）
+├── output/                 # 其余每日产物（日报/驾驶舱不入库，本地生成）
 └── README.md
 ```
 
