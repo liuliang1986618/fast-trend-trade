@@ -13,7 +13,12 @@ class WestockProvider(DataProvider):
     def __init__(self, settings: dict):
         ds = settings.get("data_source", {})
         self.cli = shutil.which("westock") or ds.get("westock_cli", "westock")
+        # 路径解析顺序：local.json 手填 → 自动发现（跨机器免配置）
+        # 与 resolver._probe_westock 保持一致，避免"探测通过但实例化后不可用"的降级链断层（工程债 E2）。
         tool = ds.get("westock_tool_js")
+        if not (tool and Path(tool).exists()):
+            from .resolver import discover_westock_tool_js
+            tool = discover_westock_tool_js()
         self.tool_js = tool if tool and Path(tool).exists() else None
         if not self.cli:
             raise RuntimeError("westock CLI 未找到")
