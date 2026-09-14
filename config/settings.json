@@ -209,12 +209,41 @@
     "windows": 4
   },
   "risk_switches": {
-    "_desc": "手册失效条件",
-    "pool_bloat_limit": 20,
-    "pool_bloat_action": "情绪过热，新开仓减半",
-    "pool_empty_action": "无主线期，趋势策略仅观察",
-    "probe_false_signal_rate_limit": 0.7,
-    "probe_false_signal_action": "重校探测层阈值"
+    "_desc": "失效条件与重校触发器（v0.2 §2.2）。原则：每个参数块都必须有可观测的失效信号 + 明确的补救动作；任一触发 → 该块**隔离回滚**，不影响其他块。配套验收标准见 docs/validation-plan.md。",
+    "portfolio_level": {
+      "_desc": "组合层面的宏观闸（不针对单个参数块）",
+      "pool_bloat_limit": 20,
+      "pool_bloat_action": "情绪过热，新开仓减半",
+      "pool_empty_action": "无主线期，趋势策略仅观察"
+    },
+    "param_block_triggers": {
+      "probe": {
+        "signal": "滚动 20 笔假信号率 > 0.70",
+        "action": "重校探测层阈值",
+        "baseline": "0.50（手册基准）"
+      },
+      "vcp": {
+        "signal": "蓄势分≥75 的票中，突破成功率 < 0.40",
+        "action": "调 mature_score 或 windows",
+        "baseline": "待建立（需 ≥10 个样本）"
+      },
+      "score_alert_L2": {
+        "signal": "确认后 3 日内假信号率 > 0.50",
+        "action": "收紧 L2_start.vol_ratio_min（当前 1.2）",
+        "baseline": "以现值 1.2 为起点"
+      },
+      "state_machine": {
+        "signal": "单笔期望值连续 10 笔 < 0",
+        "action": "冻结新开仓，全量复盘",
+        "baseline": "0（期望为正）"
+      },
+      "etf_funnel": {
+        "signal": "互证区信号 20 日后 ETF 回撤 >15% 的占比 > 0.50",
+        "action": "收紧 etf_funnel.chg20d_max",
+        "baseline": "待建立"
+      }
+    },
+    "_rollback_rule": "任一触发器命中 → 该参数块回滚至上一版并记录原因；其他块不受影响（隔离回滚，防止一次误判拖垮全系统）。"
   },
   "output": {
     "daily_dir": "output/daily",

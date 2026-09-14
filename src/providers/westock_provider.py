@@ -73,13 +73,33 @@ class WestockProvider(DataProvider):
         return df.dropna(subset=["close"]).reset_index(drop=True)
 
     def fund_flow(self, code: str, days: int = 5) -> dict:
+        """主力资金流向（单位：元；与 MCP `data_fund_flow` 同源同口径）。
+
+        实测 `westock fund flow <code>` 返回英文表头的一行全字段，含：
+        MainNetFlow(当日) / MainNetFlow5D / MainNetFlow10D / MainNetFlow20D。
+        `days` 仅用于调用方语义，接口一次返回全部窗口。
+        校准证据见 docs/sector-data-integration.md 第三节（CLI 万元口径 → 此处 ×10000 已由接口直接给元）。
+        """
         out = self._cli("fund", "flow", self._normalize_code(code))
-        for line in out.splitlines():
-            if "MainNetFlow5D" in line and "|" in line:
-                cells = [c.strip() for c in line.split("|")]
-                # 列名行与数据行成对出现，取数据行
-        # 简化：直接返回原始文本交给上层容错解析（结构随接口版本变动）
-        return {"_raw": out, "main_net_flow_5d": None, "main_net_flow_20d": None}
+        rows = self._parse_md(out)
+        if not rows:
+            raise RuntimeError(f"fund_flow 解析失败（原始输出前 200 字符）：{out[:200]}")
+
+        def _f(key):
+            v = rows[0].get(key)
+            try:
+                return float(str(v).replace(",", ""))
+            except (TypeError, ValueError):
+                return None
+
+        r = rows[0]
+        return {
+            "code": r.get("code"), "name": r.get("name"),
+            "main_net_flow": _f("MainNetFlow"),
+            "main_net_flow_5d": _f("MainNetFlow5D"),
+            "main_net_flow_10d": _f("MainNetFlow10D"),
+            "main_net_flow_20d": _f("MainNetFlow20D"),
+        }
 
     def etf_rank(self, metric: str = "chg20d", limit: int = 40) -> list:
         out = self._tool("ranking", "qt_chg_interval", "--asset", "etf",
