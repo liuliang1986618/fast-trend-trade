@@ -358,6 +358,14 @@ td{{padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:middle}}
 with open(OUT, "w") as f2:
     f2.write(html)
 
+# 快照交付机制：dashboard.html 是会被反复覆盖的"活文件"（预览面板对其存在缓存/覆盖窗口问题），
+# 因此每次重建同时产出带日期戳的快照（output/snapshots/），**交付给人看的永远用快照文件**。
+SNAP_DIR = os.path.join(BASE, "snapshots")
+os.makedirs(SNAP_DIR, exist_ok=True)
+SNAP = os.path.join(SNAP_DIR, "dashboard-%s.html" % today["date"])
+with open(SNAP, "w", encoding="utf-8") as f3:
+    f3.write(html)
+
 # 同步落盘独立 SVG（细节长卷）
 with open(os.path.join(BASE, "trend-lines.svg"), "w") as f3:
     f3.write(detail_svg().replace('<svg ', '<svg ', 1))
