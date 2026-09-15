@@ -230,35 +230,65 @@ for w0 in today["watchlist"]:
 watch_html = (f'<div class="rot"><h3>观察池 · 跨日追踪台（收盘价口径推进 · 数据日期 {today["date"]}）</h3>'
               f'<table><tr><th>观察票</th><th>入池日</th><th>连续在榜</th><th>状态</th><th>今日蓄势分</th><th>距突破价</th><th>较上次</th><th>近5日</th><th>备注</th></tr>{"".join(rows)}</table></div>')
 
-# 三张锚定卡片
+# 三段式双向锚定：第一段 ▶ 个股趋势→ETF 趋势；第二段 ◀ ETF 趋势→龙头个股；第三段 ⇄ 互证
 f = today["funnel"]
 chain = (f'<div class="chain">约 <b>{f["全市场约"]}</b> 全市场 → <b>{f["站上所有均线"]}</b> 站上所有主要均线 → '
          f'<b>{f["早期埋伏"]}</b> 早期埋伏（大钱进了还没涨） → <b>{f["主升候选(剔小市值后)"]}</b> 主升候选（合格{f["主升候选(市值≥100亿合格)"]}） → '
          f'<b>{f["多头池资金强"]}</b> 多头池×资金交叉 → <b>稳做 {f["稳做名单"]}</b> ＋ <b>快打 {f["快打名单"]}</b>'
          f'<span class="anchor-sub">（数据日期 {today["date"]}）</span></div>')
 stable_rows = "".join(f'<tr><td class="nm">{s["name"]}</td><td>{s["code"]}</td><td>{s["mainline"]}</td><td class="num"><b>{s["score"]}</b></td><td>{s["tier"]}</td><td class="muted">{s["reason"]}</td></tr>' for s in today["stable_list"])
-pos_card = (f'<div class="anchor-card pos"><div class="anchor-head"><span class="anchor-tag">▶ 正向漏斗 · 个股方向</span>'
-            f'<span class="anchor-sub">全市场约 {f["全市场约"]} 只 → 终池 {f["稳做名单"]+f["快打名单"]} 只（{today["date"]}）</span></div>'
-            f'{chain}<table class="mini"><tr><th>股票</th><th>代码</th><th>所属主线</th><th>综合分</th><th>档位</th><th>要点</th></tr>{stable_rows}</table>'
-            f'<div class="note">稳做名单全部为 60~79 观察档，无≥80优先档——今日大票普跌+红线票扎堆，按纪律只观察不出手。</div></div>')
 
+# —— 第一段 ▶ 个股趋势 → ETF 趋势（正向通道）——
+pos_card = (f'<div class="anchor-card pos"><div class="anchor-head"><span class="anchor-tag">第一段 ▶ 个股趋势 → ETF 趋势</span>'
+            f'<span class="anchor-sub">自下而上：个股筛选汇聚成主线，再映射到 ETF 层（{today["date"]}）</span></div>'
+            f'{chain}<table class="mini"><tr><th>稳做名单（按主线分组）</th><th>代码</th><th>所属主线</th><th>综合分</th><th>档位</th><th>要点</th></tr>{stable_rows}</table>')
+
+# 主线 → 锚定 ETF 流向表（数据：cross_matrix + rotation.etf_flow_check）
+flow_check = rot.get("etf_flow_check") or []
+latest_fc = flow_check[-1] if flow_check else None
+flow_rows = ""
+for c in today["cross_matrix"]:
+    fc = ""
+    if latest_fc and latest_fc.get("mainline") == c["line"]:
+        fc = latest_fc.get("quadrant", "")
+    gate = '<span class="p-green">✅通过</span>' if c["overlap"] else '<span class="p-red">❌深跌</span>'
+    flow_rows += (f'<tr><td class="nm">{c["line"]}（{c["stage"]}）</td><td class="arrow">→</td>'
+                  f'<td class="etf">{c["etf_theme"]}</td><td>{c["etf_chg20d"]}</td><td>{gate}</td>'
+                  f'<td><b>{fc or "—"}</b></td></tr>')
+flow_tbl = (f'<h3 class="flow-h">主线 → 锚定 ETF 流向（个股趋势汇聚后，在 ETF 层的样子）</h3>'
+            f'<table class="mini flowtbl"><tr><th>主线（阶段）</th><th></th><th>锚定 ETF</th><th>20日</th><th>方向闸</th><th>资金四象限</th></tr>{flow_rows}</table>'
+            f'<div class="note">读法：回答「个股选出来的主线，ETF 层跟上了吗」——方向闸拦深跌反弹；资金四象限看钱进钱走（衰竭预警在此亮牌）。</div>')
+pos_card += flow_tbl + '</div>'
+
+# —— 第二段 ◀ ETF 趋势 → 龙头个股（反向通道）——
 etf_rows = "".join(f'<tr><td>{i+1}</td><td class="nm">{e["name"]}</td><td>{e["code"]}</td><td>{e["theme"]}</td>'
                    f'<td><span class="bar" style="width:{min(e["chg20d"],20)/20*120:.0f}px"></span>{e["chg20d"]}%</td>'
                    f'<td>{e["overlap"] or "—"}</td><td>{(_TAG_WARN_OPEN + e["mark"] + _TAG_CLOSE) if e["mark"] else "—"}</td></tr>'
                    for i, e in enumerate(today["etf_reverse"]))
-neg_card = (f'<div class="anchor-card neg"><div class="anchor-head"><span class="anchor-tag">◀ 反向漏斗 · ETF 方向</span>'
-            f'<span class="anchor-sub">20日涨幅≥8% · 同一指数只留一只 · 共 3 只达标（其余为跌破8%线的观察位）</span></div>'
+holdings = rot.get("etf_holdings") or []
+h_rows = ""
+for h in holdings[-3:]:
+    tops = h.get("top3") or []
+    tops_str = "｜".join(f'<b>{t.get("name")}</b> {t.get("ratio")}%（{t.get("chg_pct") or "—"}）' for t in tops)
+    h_rows += f'<tr><td class="nm">{h.get("mainline")}</td><td class="arrow">→</td><td class="etf">{h.get("etf_code")}</td><td>{tops_str or "—"}</td></tr>'
+reverse_tbl = (f'<h3 class="flow-h">重点 ETF → 龙头个股反查（前三大权重 + 当日涨跌）</h3>'
+               f'<table class="mini flowtbl"><tr><th>主线</th><th></th><th>ETF</th><th>前三大权重（当日涨跌）</th></tr>{h_rows}</table>'
+               if h_rows else '<div class="note">ETF 持仓快照待生成（rotation.etf_holdings，由每日自动化写入后显示）。</div>')
+neg_card = (f'<div class="anchor-card neg"><div class="anchor-head"><span class="anchor-tag">第二段 ◀ ETF 趋势 → 龙头个股</span>'
+            f'<span class="anchor-sub">自上而下：ETF 涨幅榜反查成分龙头</span></div>'
             f'<table class="mini"><tr><th>#</th><th>ETF</th><th>代码</th><th>主题</th><th>近20日涨幅</th><th>与主线重合</th><th>标记</th></tr>{etf_rows}</table>'
-            f'<div class="note">重要信号：上周还有 8+ 只主题ETF≥8%，今日仅剩能源化工/巴西/油气 3 只——粮食、豆粕、船舶、农牧全线跌破8%线，主题行情热度明显收缩。</div></div>')
+            f'{reverse_tbl}'
+            f'<div class="note">重要信号：主题 ETF 热度收缩期，用「ETF → 龙头个股反查」看钱的去向——权重越高，ETF 资金流入对该股的被动买盘越大。</div></div>')
 
+# —— 第三段 ⇄ 双向交叉验证 ——
 cross_rows = "".join(f'<tr><td class="nm">{c["line"]}</td><td>{c["type"]}</td><td>{c["stage"]}</td><td>{c["etf_theme"]}({c["etf_chg20d"]})</td>'
                      f'<td>{"✓" if c["overlap"] else "✗"}×{"✓" if c["overlap"] else "✗"}</td><td class="muted">{c["conclusion"]}</td></tr>'
                      for c in today["cross_matrix"])
-cross_card = (f'<div class="anchor-card cross"><div class="anchor-head"><span class="anchor-tag">⇄ 互证对照 · 双向交叉</span>'
-              f'<span class="anchor-sub">主线✓ × ETF✓ = 最强信号</span></div>'
+cross_card = (f'<div class="anchor-card cross"><div class="anchor-head"><span class="anchor-tag">第三段 ⇄ 双向交叉验证</span>'
+              f'<span class="anchor-sub">两路结论互相印证（主线✓ × ETF✓，且通过方向闸）</span></div>'
               f'<table class="mini"><tr><th>主线</th><th>类型</th><th>今日阶段</th><th>对应ETF主题(20日涨幅)</th><th>重合</th><th>结论</th></tr>{cross_rows}</table>'
               f'<div class="quad"><div><b>主线✓ ETF✓</b>互证成功 · 最强信号</div><div><b>✗ ✓</b>值得期待 · 进观察名单</div><div><b>✓ ✗</b>成立但缺印证</div><div><b>✗ ✗</b>没信号</div></div>'
-              f'<div class="note">今日无互证成功组合，全部主线处于"缺印证"状态——指数环境档位：<b>谨慎</b>（上证 3885.33 -0.07%，主线锚定ETF普跌）。</div></div>')
+              f'<div class="note">交叉时叠加 ETF 资金通道（价×钱）：主线✓但资金通道为「价涨钱走」→ 互证结论打折扣；刚起步且「价跌钱进」→ 资金面支持，但须等方向闸解除才升级。今日无互证成功组合——指数环境档位：<b>谨慎</b>（主线锚定ETF普跌）。</div></div>')
 
 html = f'''<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>趋势观察驾驶舱 · 每日收盘后自动重建</title><style>
 :root{{--ink:#1c2330;--sub:#5b6472;--line:#e3e7ee;--bg:#f7f8fa;--up:#d43a3a;--down:#1a9e6b;--blue:#2b5fad;--orange:#d97b1c;--gold:#b8860b}}
