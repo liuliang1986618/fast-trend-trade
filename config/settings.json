@@ -94,6 +94,11 @@
           "etf_ma20_desc": "ETF 收盘须站上 20 日线",
           "etf_chg60d_min": -10,
           "etf_chg60d_min_desc": "且 60 日涨幅不低于 -10%（深跌中的资金流入/反弹不构成印证）"
+        },
+        "anchor_validation": {
+          "_desc": "锚定有效性（v0.2 新增）：T3 成立的前提是「锚定 ETF 真正代表该板块」。用 data_etf aspect=holdings 比对 ETF 前十大权重股与板块成分股的重合度；不达标时 T3 结论标注「锚定无效，不参与互证」——实证：2026-09-14 元件(PCB)板块资金第1，但算力主题ETF成分偏光模块/芯片（错配），其『✗』不能否定 PCB 的主线成立。",
+          "check_top_n": 10,
+          "min_overlap": 3
         }
       },
       "t4_midcap_leader_chg20d": [
@@ -143,6 +148,48 @@
         "尾声": "百亿中军 chg20d>60% 或 ETF 乖离20日线>25%",
         "退潮": "板块5日资金转流出 或 ETF 破20日线"
       }
+    },
+    "etf_flow_channel": {
+      "_desc": "ETF 资金通道（v0.2 新增，独立于 T3 的四象限分析）。原理：ETF 价格 ≈ 成分股加权涨幅（与 T1 同源、滞后）；而 ETF 资金净流入/份额变化才是「钱通过 ETF 进场」的直接证据，独立且领先。数据源 mcp data_etf aspect=overview。",
+      "fields": {
+        "etfInFlow": "资金净流入（当日，另有 WAvg/QAvg/YAvg 多口径）",
+        "etfSizeMChg": "份额月变化%",
+        "etfSizeWChg": "份额周变化%",
+        "etfSize": "规模（亿）"
+      },
+      "price_up_rule": "ETF 20日涨幅>0 或 收盘站上 MA20",
+      "flow_in_rule": "etfInFlow>0 或 etfSizeMChg>0 或 etfSizeWChg>0（任一即计为钱进）",
+      "quadrants": {
+        "healthy": {
+          "price": "涨",
+          "flow": "进",
+          "label": "健康主升",
+          "action": "互证最强态，正常跟踪"
+        },
+        "exhaustion": {
+          "price": "涨",
+          "flow": "走",
+          "label": "价涨钱走 → 衰竭预警",
+          "action": "对已有主线输出健康度预警（比价格降级更早，实证：船舶ETF 09-15 价+4.12%但资金净流出/份额月-6%）"
+        },
+        "ambush": {
+          "price": "跌",
+          "flow": "进",
+          "label": "价跌钱进 → 资金型埋伏",
+          "action": "输出埋伏观察（实证：通信ETF 价-8.62%但月均净流入+1.4万手口径），配合板块体检，不追"
+        },
+        "no_signal": {
+          "price": "跌",
+          "flow": "走",
+          "label": "价跌钱走",
+          "action": "无信号，不动"
+        }
+      },
+      "small_etf_degrade": {
+        "min_scale_yi": 2,
+        "rule": "规模<2亿的 ETF 资金信号降权（一笔申赎即可扭曲份额，实证：粮食ETF 0.65亿规模下份额月+16.07%）"
+      },
+      "coverage": "每条主线（含刚起步/候补）检查其锚定 ETF；已成立主线每周至少输出一次健康度结论"
     }
   },
   "etf_funnel": {
