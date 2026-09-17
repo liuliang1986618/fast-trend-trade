@@ -185,9 +185,11 @@ for line in rot["lines"]:
     heat_rows.append(f'<tr><td class="nm">{line["name"]}</td>{"".join(cells)}</tr>')
 dates_head = "".join(f'<th>{d}</th>' for d in rot["dates"])
 
-story = f'''<div class="story"><b>老主线怎么走完（农业/粮食）</b>：08-18 粮食ETF点火（+52分跳升）→ 08-19~09-07 主升（20日涨幅一度+20.4%）→ 09-08 尾声 → 09-10 退潮确认（中粮糖业天地板、梯队晋级失败）→ 09-14 退潮第3日：敦煌种业跌停-10%，粮食ETF 20日涨幅滑落至+6.9%跌破8%线，趋势强度分 62.1→38.4（3日-23.7）。<br>
-<b>新主线怎么接棒（算力硬件·PCB/覆铜板）</b>：09-10 候补入册（探测层15席占12席，资金先行）→ 09-14 转正"刚起步"：元件板块5日主力净流入145.4亿全市场第1、玻璃玻纤46.5亿第2、上涨家数占比73.8%、百亿中军结构达标（超声电子20日+44%/金安国纪+15.6%/博敏电子+28.3%）；但通信ETF 20日-8.6%未点火——目前是"钱进了价没涨"的标准蓄势段，等ETF点火才有"主升·互证"。<br>
-<b>轮动规律一句话</b>：资金是搬家不是离场——农业退潮撤出的钱正趴在元件板块（5日145亿）。盯住老主线尾声时谁在蓄势，接力棒交接处（曲线交叉）就是布局窗口。</div>'''
+story = f'''<div class="story"><b>老主线怎么走完（农业/粮食）</b>：08-18 粮食ETF点火（+52分跳升）→ 08-19~09-07 主升（20日涨幅一度+20.4%）→ 09-08 尾声 → 09-10 退潮确认（中粮糖业天地板、梯队晋级失败）→ 09-14 退潮第3日（敦煌种业跌停-10%）→ <b>09-15 退潮第4日：种植业-4.65%（0/20上涨）、敦煌种业再跌停、粮食ETF 4连阴（今日-3.93%），20日涨幅滑落至-6.7%（今日口径），趋势强度分 38.4→30.4。彻底退场，只可龙头快打或不碰。</b><br>
+<b>新主线怎么接棒（算力硬件·PCB/覆铜板）</b>：09-10 候补入册（探测层15席占12席，资金先行）→ 09-14 转正"刚起步"（元件5日145.4亿第1）→ <b>09-15 刚起步第2日：元件5日136.4亿维持第1、玻璃玻纤64.9亿第2；元件当日主力-17.6亿高位换手、玻璃玻纤当日+15.4亿接棒；板块内连板梯队仍在晋级（澳弘电子3板、双星新材3板、华正新材2连板涨停踩到突破价251.57）。但通信ETF方向闸仍未过（20日-8.0%、60日-27.4%深跌通道），且前十大权重无PCB股（锚定错配）——仍是"钱进了价没涨"，等ETF点火才有"主升·互证"。</b><br>
+<b>航运船舶（刚起步第7日）预警亮牌</b>：09-11 主升降级回刚起步后，09-15 ETF资金通道确认「价涨钱走=衰竭预警」——船舶ETF当日净流出480万、份额月-6.0%/周-3.7%，与20日+4.3%的涨幅背离；板块资金第7（未转流出）暂保刚起步，份额续缩则降级退潮。<br>
+<b>候补更替</b>：医疗服务候补一夜证伪（5日资金第11→第100）；新候补=<b>风电设备</b>（09-15 涨幅第2+5日资金第3+上涨家数80%，海力风电+12.84%）。<br>
+<b>轮动规律一句话</b>：资金是搬家不是离场——农业退潮撤出的钱正趴在元件板块（5日136亿），并已开始试水风电设备。盯住老主线尾声时谁在蓄势，接力棒交接处（曲线交叉）就是布局窗口。</div>'''
 
 heat_html = (f'<div class="rot"><h3>主线轮动时间线 · 阶段热力表（新日期在右；带*为ETF日K回溯推算）</h3>'
              f'<table><tr><th class="nm">主线</th>{dates_head}</tr>{"".join(heat_rows)}</table>{story}</div>')
@@ -290,6 +292,31 @@ cross_card = (f'<div class="anchor-card cross"><div class="anchor-head"><span cl
               f'<div class="quad"><div><b>主线✓ ETF✓</b>互证成功 · 最强信号</div><div><b>✗ ✓</b>值得期待 · 进观察名单</div><div><b>✓ ✗</b>成立但缺印证</div><div><b>✗ ✗</b>没信号</div></div>'
               f'<div class="note">交叉时叠加 ETF 资金通道（价×钱）：主线✓但资金通道为「价涨钱走」→ 互证结论打折扣；刚起步且「价跌钱进」→ 资金面支持，但须等方向闸解除才升级。今日无互证成功组合——指数环境档位：<b>谨慎</b>（主线锚定ETF普跌）。</div></div>')
 
+# —— 第六区：形态分布 · 个股资格（v0.2 pattern_check；形态标签 ≠ 交易资格，两层合并输出）——
+pc = rot.get("pattern_check") or []
+pe = pc[-1] if pc else None
+if pe:
+    d_ = pe.get("dist", {})
+    chips = " · ".join(f'{k} <b>{v}</b> 只' for k, v in d_.items() if v)
+    rows_p = ""
+    for s in pe.get("stocks", []):
+        e = s.get("eligibility", "—")
+        cls = "p-green" if e.startswith("✅") else ("p-gray" if e.startswith("观察") else "p-red")
+        rows_p += (f'<tr><td class="nm">{s.get("name","")}</td><td>{s.get("pattern","")}</td>'
+                   f'<td class="num">{s.get("chg60d","—")}</td><td class="num">{s.get("chg20d","—")}</td>'
+                   f'<td class="num">{s.get("chg5d","—")}</td><td class="num">{s.get("today","—")}</td>'
+                   f'<td><span class="pill {cls}">{e}</span></td><td class="muted">{s.get("elig_note","")}</td></tr>')
+    t1 = pe.get("t1_count_issue")
+    pattern_card = (f'<div class="anchor-card" style="border-left:5px solid #8e44ad">'
+        f'<div class="anchor-head"><span class="anchor-tag">形态分布 · 个股资格</span>'
+        f'<span class="anchor-sub">形态标签（走势长什么样）≠ 交易资格（能不能做）· 两层合并输出 · {pe.get("date","")}</span></div>'
+        f'<div class="chain">形态分布：{chips}　<span class="anchor-sub">（{pe.get("mainline","")}主线内逐票）</span></div>'
+        f'<table class="mini"><tr><th>个股</th><th>形态</th><th>60日</th><th>20日</th><th>5日</th><th>今日</th><th>系统资格</th><th>依据</th></tr>{rows_p}</table>'
+        + (f'<div class="tip">⚠️ <b>T1 计数复核</b>：{t1}</div>' if t1 else '')
+        + f'<div class="note">{pe.get("note","")}</div></div>')
+else:
+    pattern_card = '<div class="note">形态分布数据待生成（rotation.pattern_check，由每日自动化写入）。</div>'
+
 html = f'''<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>趋势观察驾驶舱 · 每日收盘后自动重建</title><style>
 :root{{--ink:#1c2330;--sub:#5b6472;--line:#e3e7ee;--bg:#f7f8fa;--up:#d43a3a;--down:#1a9e6b;--blue:#2b5fad;--orange:#d97b1c;--gold:#b8860b}}
 *{{box-sizing:border-box;margin:0;padding:0}}
@@ -353,6 +380,7 @@ td{{padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:middle}}
 {watch_html}
 <h2>双向锚定 · 正反两路交叉验证</h2>
 {pos_card}{neg_card}{cross_card}
+{pattern_card}
 </div></body></html>'''
 
 with open(OUT, "w") as f2:
