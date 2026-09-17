@@ -25,6 +25,22 @@ LINE_COLORS = {"航运": "#2b5fad", "算力(PCB/光通信)": "#c0392b", "粮食"
 # 因此需要内嵌引号的片段一律预先定义成常量，勿在 {} 里写 \" 转义。
 _TAG_WARN_OPEN = '<span class="tag warn">'
 _TAG_CLOSE = '</span>'
+
+# —— 跳转链接：每个标的可点击打开行情详情页（腾讯自选股，与 westock 生态一致）——
+def to_full(code: str) -> str:
+    """裸码/带前缀码 → 带市场前缀。"""
+    c = (code or "").strip()
+    if c.startswith(("sh", "sz", "bj")):
+        return c
+    c = c.zfill(6)
+    return ("sh" if c.startswith(("6", "9")) else "sz") + c
+
+def qlink(code: str, text: str, cls: str = "q") -> str:
+    """生成可点击的行情详情链接；无 code 时返回纯文本。"""
+    full = to_full(code)
+    if not full:
+        return text
+    return '<a class="%s" href="https://gu.qq.com/%s" target="_blank" rel="noopener" title="打开 %s 行情详情">%s</a>' % (cls, full, full, text)
 #粮食线从 partial 序列展开为 {date: score}
 grain = dict(zip(rot["score_series_partial"]["粮食"]["dates"], rot["score_series_partial"]["粮食"]["scores"]))
 
@@ -226,7 +242,7 @@ for w0 in today["watchlist"]:
                 seq.append(ww["xushi"])
     bars = "".join(f'<div class="sp" style="height:{max(3,int(s/3))}px" title="{s}"></div>' for s in seq[-5:]) or '<span class="muted">—</span>'
     gate = ' <span class="pill p-gold">红线</span>' if "红线" in (w0.get("note") or "") else ""
-    rows.append(f'<tr><td class="nm">{w0["name"]}{gate}</td><td>{w0["first_seen"][5:]}</td><td class="num">{w0["days_in"]}</td>'
+    rows.append(f'<tr><td class="nm">{qlink(w0.get("code",""), w0["name"])}{gate}</td><td>{w0["first_seen"][5:]}</td><td class="num">{w0["days_in"]}</td>'
                 f'<td>{pill(w0["status"])}</td><td>{xushi_cell(w0["xushi"])}</td><td>{dist_cell(w0["dist_to_break_pct"])}</td>'
                 f'<td>{d}</td><td><div class="spark">{bars}</div></td><td class="muted">{w0["note"][:38]}…</td></tr>')
 watch_html = (f'<div class="rot"><h3>观察池 · 跨日追踪台（收盘价口径推进 · 数据日期 {today["date"]}）</h3>'
@@ -238,7 +254,7 @@ chain = (f'<div class="chain">约 <b>{f["全市场约"]}</b> 全市场 → <b>{f
          f'<b>{f["早期埋伏"]}</b> 早期埋伏（大钱进了还没涨） → <b>{f["主升候选(剔小市值后)"]}</b> 主升候选（合格{f["主升候选(市值≥100亿合格)"]}） → '
          f'<b>{f["多头池资金强"]}</b> 多头池×资金交叉 → <b>稳做 {f["稳做名单"]}</b> ＋ <b>快打 {f["快打名单"]}</b>'
          f'<span class="anchor-sub">（数据日期 {today["date"]}）</span></div>')
-stable_rows = "".join(f'<tr><td class="nm">{s["name"]}</td><td>{s["code"]}</td><td>{s["mainline"]}</td><td class="num"><b>{s["score"]}</b></td><td>{s["tier"]}</td><td class="muted">{s["reason"]}</td></tr>' for s in today["stable_list"])
+stable_rows = "".join(f'<tr><td class="nm">{qlink(s["code"], s["name"])}</td><td class="muted">{s["code"]}</td><td>{s["mainline"]}</td><td class="num"><b>{s["score"]}</b></td><td>{s["tier"]}</td><td class="muted">{s["reason"]}</td></tr>' for s in today["stable_list"])
 
 # —— 第一段 ▶ 个股趋势 → ETF 趋势（正向通道）——
 pos_card = (f'<div class="anchor-card pos"><div class="anchor-head"><span class="anchor-tag">第一段 ▶ 个股趋势 → ETF 趋势</span>'
@@ -263,7 +279,7 @@ flow_tbl = (f'<h3 class="flow-h">主线 → 锚定 ETF 流向（个股趋势汇�
 pos_card += flow_tbl + '</div>'
 
 # —— 第二段 ◀ ETF 趋势 → 龙头个股（反向通道）——
-etf_rows = "".join(f'<tr><td>{i+1}</td><td class="nm">{e["name"]}</td><td>{e["code"]}</td><td>{e["theme"]}</td>'
+etf_rows = "".join(f'<tr><td>{i+1}</td><td class="nm">{qlink(e["code"], e["name"], "q etf")}</td><td class="muted">{e["code"]}</td><td>{e["theme"]}</td>'
                    f'<td><span class="bar" style="width:{min(e["chg20d"],20)/20*120:.0f}px"></span>{e["chg20d"]}%</td>'
                    f'<td>{e["overlap"] or "—"}</td><td>{(_TAG_WARN_OPEN + e["mark"] + _TAG_CLOSE) if e["mark"] else "—"}</td></tr>'
                    for i, e in enumerate(today["etf_reverse"]))
@@ -271,7 +287,7 @@ holdings = rot.get("etf_holdings") or []
 h_rows = ""
 for h in holdings[-3:]:
     tops = h.get("top3") or []
-    tops_str = "｜".join(f'<b>{t.get("name")}</b> {t.get("ratio")}%（{t.get("chg_pct") or "—"}）' for t in tops)
+    tops_str = "｜".join(f'<b>{qlink(t.get("code",""), t.get("name",""))}</b> {t.get("ratio")}%（{t.get("chg_pct") or "—"}）' for t in tops)
     h_rows += f'<tr><td class="nm">{h.get("mainline")}</td><td class="arrow">→</td><td class="etf">{h.get("etf_code")}</td><td>{tops_str or "—"}</td></tr>'
 reverse_tbl = (f'<h3 class="flow-h">重点 ETF → 龙头个股反查（前三大权重 + 当日涨跌）</h3>'
                f'<table class="mini flowtbl"><tr><th>主线</th><th></th><th>ETF</th><th>前三大权重（当日涨跌）</th></tr>{h_rows}</table>'
@@ -302,7 +318,7 @@ if pe:
     for s in pe.get("stocks", []):
         e = s.get("eligibility", "—")
         cls = "p-green" if e.startswith("✅") else ("p-gray" if e.startswith("观察") else "p-red")
-        rows_p += (f'<tr><td class="nm">{s.get("name","")}</td><td>{s.get("pattern","")}</td>'
+        rows_p += (f'<tr><td class="nm">{qlink(s.get("code",""), s.get("name",""))}</td><td>{s.get("pattern","")}</td>'
                    f'<td class="num">{s.get("chg60d","—")}</td><td class="num">{s.get("chg20d","—")}</td>'
                    f'<td class="num">{s.get("chg5d","—")}</td><td class="num">{s.get("today","—")}</td>'
                    f'<td><span class="pill {cls}">{e}</span></td><td class="muted">{s.get("elig_note","")}</td></tr>')
@@ -351,6 +367,10 @@ td{{padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:middle}}
 .rot .c-蓄势{{background:#eef4fb;color:#5b7bb2}} .rot .c-刚起步{{background:#eef4fb;color:#33559a;font-weight:600}}
 .rot .c-埋伏{{background:#f4f6fa;color:#7f8fb3}} .rot .c-退出{{background:#f0f1f3;color:#95a5a6}}
 .rot .c-blank{{color:#d8dee8}}
+a.q{{color:#2b5fad;text-decoration:none;border-bottom:1px dashed #b9c9e2;cursor:pointer}}
+a.q:hover{{color:#c0392b;border-bottom-color:#c0392b}}
+a.q::after{{content:"↗";font-size:9px;margin-left:2px;color:#8a94a8;vertical-align:top}}
+a.q.etf{{color:#8e44ad;border-bottom-color:#d9c7ea}}
 .rot .story{{font-size:12.5px;color:#4a5568;margin:8px 0 0;line-height:1.7}}
 .anchor-card{{background:#fff;border:1px solid #e4eaf2;border-radius:12px;padding:18px 20px;margin-top:18px;box-shadow:0 1px 3px rgba(26,58,107,.05)}}
 .anchor-card.pos{{border-left:5px solid #33559a}} .anchor-card.neg{{border-left:5px solid #1e8449}} .anchor-card.cross{{border-left:5px solid #c0392b}}
