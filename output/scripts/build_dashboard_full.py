@@ -19,7 +19,8 @@ score_dates = rot["score_dates"]           # YYYY-MM-DD 全轴
 idx_of = {d: i for i, d in enumerate(score_dates)}
 N = len(score_dates)
 
-LINE_COLORS = {"航运": "#2b5fad", "算力(PCB/光通信)": "#c0392b", "粮食": "#b8860b"}
+LINE_COLORS = {"航运": "#2b5fad", "算力(PCB/光通信)": "#c0392b", "粮食": "#b8860b", "半导体": "#7b3fa0"}
+_LINE_FALLBACK = "#7b3fa0"          # 新主线未登记颜色时的兜底，避免 KeyError 中断重建
 
 # 兼容 Python 3.9+：f-string 表达式内禁止出现反斜杠（PEP 701 是 3.12+ 才放宽），
 # 因此需要内嵌引号的片段一律预先定义成常量，勿在 {} 里写 \" 转义。
@@ -74,7 +75,7 @@ def polyline(pts, x_of, color):
     return f'<polyline points="{p}" fill="none" stroke="{color}" stroke-width="2" stroke-linejoin="round"/>'
 
 def dots(pts, x_of, name):
-    return "".join(f'<circle cx="{x_of(i)}" cy="{y_of(s)}" r="2.4" fill="{LINE_COLORS[name]}"><title>{score_dates[i]} {name} {s}</title></circle>'
+    return "".join(f'<circle cx="{x_of(i)}" cy="{y_of(s)}" r="2.4" fill="{LINE_COLORS.get(name, _LINE_FALLBACK)}"><title>{score_dates[i]} {name} {s}</title></circle>'
                    for i, s in pts)
 
 def alert_marks(x_of, ytop_scale=1):
@@ -128,10 +129,10 @@ def detail_svg():
     for name, series in rot["score_series"].items():
         d2s = dict(zip(score_dates, series))
         pts = build_series_points(score_dates, d2s, x_of)
-        parts.append(polyline(pts, x_of, LINE_COLORS[name]))
+        parts.append(polyline(pts, x_of, LINE_COLORS.get(name, _LINE_FALLBACK)))
         parts.append(dots(pts, x_of, name))
     pts = build_series_points(score_dates, grain, x_of)
-    parts.append(polyline(pts, x_of, LINE_COLORS["粮食"]))
+    parts.append(polyline(pts, x_of, LINE_COLORS.get("粮食", "#b8860b")))
     parts.append(dots(pts, x_of, "粮食"))
     parts.append(event_marks(x_of))
     parts.append(alert_marks(x_of))
@@ -154,10 +155,10 @@ def annual_svg():
         d2s = dict(zip(score_dates, series))
         pts = build_series_points(score_dates, d2s, x_of)
         sw = 1.6 if len(pts) > 150 else 2
-        parts.append(f'<polyline points="{" ".join(f"{x_of(i)},{y_of(s)}" for i, s in pts)}" fill="none" stroke="{LINE_COLORS[name]}" stroke-width="{sw}" stroke-linejoin="round"/>')
+        parts.append(f'<polyline points="{" ".join(f"{x_of(i)},{y_of(s)}" for i, s in pts)}" fill="none" stroke="{LINE_COLORS.get(name, _LINE_FALLBACK)}" stroke-width="{sw}" stroke-linejoin="round"/>')
         parts.append(dots(pts, x_of, name))
     pts = build_series_points(score_dates, grain, x_of)
-    parts.append(f'<polyline points="{" ".join(f"{x_of(i)},{y_of(s)}" for i, s in pts)}" fill="none" stroke="{LINE_COLORS["粮食"]}" stroke-width="1.6" stroke-linejoin="round"/>')
+    parts.append(f'<polyline points="{" ".join(f"{x_of(i)},{y_of(s)}" for i, s in pts)}" fill="none" stroke="{LINE_COLORS.get("粮食", "#b8860b")}" stroke-width="1.6" stroke-linejoin="round"/>')
     parts.append(dots(pts, x_of, "粮食"))
     parts.append(event_marks(x_of))
     parts.append(alert_marks(x_of))
@@ -250,9 +251,9 @@ watch_html = (f'<div class="rot"><h3>观察池 · 跨日追踪台（收盘价口
 
 # 三段式双向锚定：第一段 ▶ 个股趋势→ETF 趋势；第二段 ◀ ETF 趋势→龙头个股；第三段 ⇄ 互证
 f = today["funnel"]
-chain = (f'<div class="chain">约 <b>{f["全市场约"]}</b> 全市场 → <b>{f["站上所有均线"]}</b> 站上所有主要均线 → '
-         f'<b>{f["早期埋伏"]}</b> 早期埋伏（大钱进了还没涨） → <b>{f["主升候选(剔小市值后)"]}</b> 主升候选（合格{f["主升候选(市值≥100亿合格)"]}） → '
-         f'<b>{f["多头池资金强"]}</b> 多头池×资金交叉 → <b>稳做 {f["稳做名单"]}</b> ＋ <b>快打 {f["快打名单"]}</b>'
+chain = (f'<div class="chain">约 <b>{f.get("全市场约","—")}</b> 全市场 → <b>{f.get("站上所有均线","—")}</b> 站上所有主要均线 → '
+         f'<b>{f.get("早期埋伏","—")}</b> 早期埋伏（大钱进了还没涨） → <b>{f.get("主升候选(剔小市值后)","—")}</b> 主升候选（合格{f.get("主升候选(市值≥100亿合格)","—")}） → '
+         f'<b>{f.get("多头池资金强","—")}</b> 多头池×资金交叉 → <b>稳做 {f.get("稳做名单","—")}</b> ＋ <b>快打 {f.get("快打名单","—")}</b>'
          f'<span class="anchor-sub">（数据日期 {today["date"]}）</span></div>')
 stable_rows = "".join(f'<tr><td class="nm">{qlink(s["code"], s["name"])}</td><td class="muted">{s["code"]}</td><td>{s["mainline"]}</td><td class="num"><b>{s["score"]}</b></td><td>{s["tier"]}</td><td class="muted">{s["reason"]}</td></tr>' for s in today["stable_list"])
 
