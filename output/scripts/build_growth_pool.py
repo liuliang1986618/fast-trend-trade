@@ -27,6 +27,24 @@ LOCAL = BP["local_check"]
 GATES = BP["reject_gates"]
 
 
+
+def data_day() -> str:
+    """数据日期 = 台账最后一个快照日期。
+
+    ⚠️ 不能用 datetime.date.today()：若在收盘后跨零点运行（如 9/19 凌晨跑 9/18 的数据），
+    系统日期会与数据日期错位，导致产物文件名与台账不一致。
+    """
+    import json as _json
+    try:
+        h = _json.loads((ROOT / "output" / "history.json").read_text(encoding="utf-8"))
+        d = (h.get("days") or [{}])[-1].get("date")
+        if d:
+            return d
+    except Exception:
+        pass
+    import datetime as _dt
+    return _dt.date.today().isoformat()
+
 def num(v):
     try:
         return float(str(v).replace(",", ""))
@@ -65,7 +83,7 @@ def sh(*args, timeout=180):
 
 def main() -> int:
     import datetime
-    day = datetime.date.today().isoformat()
+    day = data_day()
 
     # ---------- 1. 入口：全市场财务筛选 ----------
     expr = (f"intersect([TORGrowRate > {ENTRY['revenue_growth_min']}, "
@@ -164,6 +182,66 @@ def main() -> int:
                 why.append(f"PB {pb:.2f} > 8")
             b_pool.append({**base, "moved_from": "PE/PB 不合格：" + "；".join(why)})
 
+    # ---------- 4.5 技术面：均线 + 蓄势形态（B 池买点）----------
+    # 设计原则：成长性放宽的是「准入」，**价格确认永不让步** → 买点仍由技术面给出
+    print(f"[4.5/5] 计算 B 池技术面（{len(b_pool)} 只，均线 + 蓄势形态）...")
+    import sys as _sys
+    _sys.path.insert(0, str(Path(__file__).resolve().parent))
+    import westock_cli as _W
+
+    def _tech(code):
+        df = _W.kline(code, 120)
+        if len(df) < 60:
+            return None
+        import pandas as pd
+        d = pd.DataFrame(df).rename(columns={"last": "close"})   # ⚠️ kline 的收盘价列名是 last
+        for c in ("high", "low", "close", "volume"):
+            d[c] = pd.to_numeric(d[c], errors="coerce")
+        d = d.dropna(subset=["high", "low", "close"]).reset_index(drop=True)
+        last = float(d["close"].iloc[-1])
+        mas = {n: round(float(d["close"].rolling(n).mean().iloc[-1]), 2) for n in (5, 10, 20, 60)}
+        # 蓄势形态（run_signal vcp 引擎同源公式：4 段收缩 40 + 量能收缩 35 + 贴近高点 25）
+        seg = d.tail(80)
+        bounds = [round(i * len(seg) / 4) for i in range(5)]
+        dd, vv = [], []
+        for i in range(4):
+            ch = seg.iloc[bounds[i]:bounds[i + 1]]
+            hi, lo = float(ch["high"].max()), float(ch["low"].min())
+            dd.append(abs((lo / hi - 1) * 100) if hi else 0.0)
+            vv.append(float(ch["volume"].mean()))
+        dd_score = sum(1 for a, b in zip(dd, dd[1:]) if b <= a) / 3
+        vol_score = sum(1 for a, b in zip(vv, vv[1:]) if b <= a) / 3 if all(vv) else 0
+        recent_high = float(d["high"].tail(20).max())
+        invalid = float(d["low"].tail(20).min())
+        near = last / recent_high if recent_high else 0
+        score = round(dd_score * 40 + vol_score * 35 + min(near, 1) * 25, 1)
+        grade = "快憋满" if score >= 75 else ("还在压" if score >= 60 else "没形态")
+        dist = round((recent_high / last - 1) * 100, 2)
+        # 状态四档（细分：「蓄势分高」不等于「买点近」）
+        if last >= recent_high * 0.999:
+            status = "已触发"            # 收盘已站上突破价 → 可跟进
+        elif dist <= 2:
+            status = "临近突破"          # 距突破价 ≤2% → 盯盘挂单
+        elif score >= 75:
+            status = "蓄势充分"          # 形态已憋满，但离买点还远 → 等
+        else:
+            status = "观察中"
+        return {"ma5": mas[5], "ma10": mas[10], "ma20": mas[20], "ma60": mas[60],
+                "above_ma20": last >= mas[20], "above_ma60": last >= mas[60],
+                "ma_aligned": mas[5] > mas[10] > mas[20] > mas[60],
+                "vcp_score": score, "vcp_grade": grade,
+                "break_price": round(recent_high, 2), "invalid_price": round(invalid, 2),
+                "dist_to_break_pct": dist, "status": status, "last_close": round(last, 2)}
+
+    for item in b_pool:
+        try:
+            item["tech"] = _tech(item["code"])
+        except Exception as e:
+            item["tech"] = None
+            item["tech_error"] = str(e)[:60]
+    ok_n = sum(1 for x in b_pool if x.get("tech"))
+    print(f"  → {ok_n}/{len(b_pool)} 只技术面计算成功")
+
     result = {
         "date": day,
         "entry_expr": expr,
@@ -175,7 +253,10 @@ def main() -> int:
         "assigned_to_a": to_a,
         "rejected": rejected,
         "stats": {"entry": len(codes), "b_pool": len(b_pool),
-                  "assigned_to_a": len(to_a), "rejected": len(rejected)},
+                  "assigned_to_a": len(to_a), "rejected": len(rejected),
+                  "tech_ok": sum(1 for x in b_pool if x.get("tech")),
+                  "buy_signals": sum(1 for x in b_pool
+                                     if x.get("tech") and x["tech"]["status"] in ("已触发", "临近突破"))},
     }
     out = TMP / f"growth_pool_{day}.json"
     out.write_text(json.dumps(result, ensure_ascii=False, indent=1), encoding="utf-8")

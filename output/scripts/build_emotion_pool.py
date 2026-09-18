@@ -23,6 +23,24 @@ CFG = json.loads((ROOT / "config" / "settings.json").read_text(encoding="utf-8")
 EP = CFG["emotion_pool"]
 
 
+
+def data_day() -> str:
+    """数据日期 = 台账最后一个快照日期。
+
+    ⚠️ 不能用 datetime.date.today()：若在收盘后跨零点运行（如 9/19 凌晨跑 9/18 的数据），
+    系统日期会与数据日期错位，导致产物文件名与台账不一致。
+    """
+    import json as _json
+    try:
+        h = _json.loads((ROOT / "output" / "history.json").read_text(encoding="utf-8"))
+        d = (h.get("days") or [{}])[-1].get("date")
+        if d:
+            return d
+    except Exception:
+        pass
+    import datetime as _dt
+    return _dt.date.today().isoformat()
+
 def parse_md(text: str):
     """解析 CLI 的 markdown 表 → (header, rows)。"""
     header, rows = None, []
@@ -98,7 +116,7 @@ def fetch_quotes(codes: list) -> dict:
 
 def main() -> int:
     import datetime
-    day = datetime.date.today().isoformat()
+    day = data_day()
 
     print("[1/5] 拉连板梯队 ...")
     hdr_lu, rows_lu = parse_md(cli("ranking", "limitup_days", "--limit", "80"))

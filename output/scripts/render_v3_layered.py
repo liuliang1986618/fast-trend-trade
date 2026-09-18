@@ -174,7 +174,7 @@ def render() -> str:
             ("早期埋伏", f['早期埋伏']),
             ("主升候选（剔小市值后）", f['主升候选(剔小市值后)']),
             ("主升候选（市值≥100亿）", f['主升候选(市值≥100亿合格)']),
-            ("站上主要均线·资金强", f['站上主要均线·资金强']),
+            ("站上主要均线·资金强", f['多头池资金强']),
             ("稳做名单", f['稳做名单']), ("快打名单", f['快打名单'])])
     probe_rows = "".join(
         f'<tr><td>{link(p[0], p[1])}</td><td>{sector_cell(p[0])}</td><td class="num">{pct(p[2])}</td>'
@@ -288,21 +288,29 @@ def render() -> str:
 
     b_rows = ""
     for x in bp[:20]:
-        pe_s = f"{x['pe']:.0f}" if x.get("pe") is not None else "—"
+        t = x.get("tech") or {}
+        st_cls = {"已触发": "st-fire", "临近突破": "st-near",
+                  "蓄势充分": "st-ready"}.get(t.get("status"), "st-watch")
+        tech_cells = (
+            f'<td class="num">{t.get("vcp_score", "—")}</td>'
+            f'<td><span class="{st_cls}">{t.get("status", "—")}</span></td>'
+            f'<td class="num">{t.get("break_price", "—")}</td>'
+            f'<td class="num">{t.get("invalid_price", "—")}</td>'
+        ) if t else '<td colspan="4" class="muted">技术面缺失</td>'
         b_rows += (f'<tr><td>{link(x["code"], x["name"])}</td>'
                    f'<td class="muted">{H_(x.get("sector") or "—")}</td>'
                    f'<td class="num"><b>{x["torg"]:.1f}%</b></td>'
                    f'<td class="num">{x["gross"]:.1f}%</td>'
                    f'<td class="num">{x["rd_ratio"]:.1f}%</td>'
-                   f'<td class="num">{x["cap_yi"]:.0f}亿</td>'
-                   f'<td class="num">{pe_s}</td></tr>')
+                   + tech_cells + '</tr>')
     b_block = (
         '<div class="layer bpool"><div class="layer-title">B 池详情 · 预期驱动'
         '<span class="layer-sub">被 A 池 PE/PB 硬闸拦下、但成长性可验证的标的 —— '
-        '⚠️ 买点与 A 池相同（价格确认不让步）；仓位减半、独立账本</span></div>'
+        '⚠️ 买点与 A 池相同（价格确认永不让步）；仓位减半、独立账本。买点状态：已触发＝收盘站上突破价 ｜ 临近突破＝距突破价 ≤2% ｜ 蓄势充分＝形态憋满但离买点还远</span></div>'
         '<table class="bp-table"><thead><tr>'
-        '<th>标的</th><th>板块</th><th>营收增速</th><th>毛利率</th><th>研发占比</th><th>市值</th><th>PE</th>'
-        f'</tr></thead><tbody>{b_rows or "<tr><td colspan=7 class=\"muted\">（今日无）</td></tr>"}</tbody></table>'
+        '<th>标的</th><th>板块</th><th>营收增速</th><th>毛利率</th><th>研发占比</th>'
+        '<th>蓄势分</th><th>买点状态</th><th>突破价</th><th>认错价</th>'
+        f'</tr></thead><tbody>{b_rows or "<tr><td colspan=9 class=\"muted\">（今日无）</td></tr>"}</tbody></table>'
         f'<div class="bp-note">入口：{gp.get("entry_expr", "—")}　｜　'
         f'入口 {gp.get("stats", {}).get("entry", 0)} 只 → 反闸剔除 {gp.get("stats", {}).get("rejected", 0)} 只 '
         f'→ B 池 {len(bp)} 只　｜　依据：CANSLIM + Rule of 40 + 创业板第四套标准</div></div>')
@@ -379,6 +387,10 @@ def render() -> str:
  .bp-table{{width:100%;border-collapse:collapse;font-size:11.5px}}
  .bp-table th{{text-align:left;color:#8a94a8;font-weight:500;font-size:10.5px;padding:5px 6px;border-bottom:1px solid #eef2f8;background:#fafcfe;white-space:nowrap}}
  .bp-table td{{padding:6px;border-bottom:1px solid #f4f7fb;vertical-align:top}}
+ .st-fire{{background:#e6f5ee;color:#0f6e56;border-radius:999px;padding:1px 7px;font-size:11px;font-weight:500}}
+ .st-near{{background:#fdf1e2;color:#d97b1c;border-radius:999px;padding:1px 7px;font-size:11px;font-weight:500}}
+ .st-ready{{background:#eef2f7;color:#5b6472;border-radius:999px;padding:1px 7px;font-size:11px}}
+ .st-watch{{background:#f4f7fb;color:#a8b2c0;border-radius:999px;padding:1px 7px;font-size:11px}}
  .bp-note{{font-size:11px;color:#8a94a8;margin-top:8px;padding-top:7px;border-top:1px dashed #e8eef6;line-height:1.6}}
  .sec{{font-size:10.5px;background:#eef2f7;border-radius:4px;padding:1px 6px;color:#5b6472;white-space:nowrap}}
  .sec-strong{{background:#e6f5ee;color:#0f6e56}}
