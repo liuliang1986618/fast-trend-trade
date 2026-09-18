@@ -132,7 +132,7 @@ def render() -> str:
 
     # ---------- ② 汇合层：交叉验证表（正向侧 × 反向侧 → 判定） ----------
     def _cls(concl):
-        if "互证" in concl or "共振" in concl:
+        if "互证" in concl or "互证" in concl:
             return "q-strong", "✓✓ 互证"
         if "缺印证" in concl:
             return "q-miss", "✓✗ 缺印证"
@@ -206,11 +206,11 @@ def render() -> str:
         '<div class="layer-title fwd">③ 正向通道 ▶'
         '<span class="layer-sub">自下而上：个股 → 汇聚成主线 → 选票</span></div>'
         + card("漏斗计量", table(["环节", "数量"], funnel_rows), sub="漏斗宽窄＝市场温度计")
-        + card("主线体检", "".join(ml_blocks), sub="T1–T5 判据 · 板块资金 × 上涨广度 × ETF 印证")
+        + card("主线体检", "".join(ml_blocks), sub="判据：板块资金 × 上涨广度 × ETF 印证")
         + card("早期埋伏前 5", table(["标的", "板块 · 主线", "20日", "现价", "换手"], probe_rows),
-               sub="大钱进了还没涨（探测层）")
+               sub="大钱进了还没涨（早期埋伏名单）")
         + card("主升候选", table(["标的", "板块 · 主线", "20日", "现价", "PE"], confirm_rows),
-               sub="确认层 25~60%")
+               sub="主升名单 25~60%")
         + card("稳做名单", table(["标的", "板块 · 主线", "评分", "形态", "资格"], stable_rows),
                sub="五维评分降序 · 形态描述≠交易资格")
         + card("蓄势观察", table(["标的", "板块 · 主线", "蓄势分", "档位", "突破价", "认错价", "距突破"], vcp_rows),
@@ -239,7 +239,7 @@ def render() -> str:
         + card("主线锚定 ETF 通道", table(["ETF", "主线", "20日", "60日", "方向闸", "规模"], anchor_rows),
                sub="方向闸拦深跌反弹 · 资金四象限当日申赎数据未出", cls="rev")
         + card("板块联动强度", table(["板块", "主力5日", "上涨家数", "联动", "说明"], link_rows),
-               sub="业内等价于「共振」：板块资金方向 × 上涨广度", cls="rev")
+               sub="业内等价于「互证」：板块资金方向 × 上涨广度", cls="rev")
         + card("ETF 持仓龙头反查",
                _render_etf_holdings(),
                sub="精确=跟踪指数成分 ｜ 近似=板块市值前列（ETF 实际持仓接口上游故障）", cls="rev")
@@ -307,6 +307,24 @@ def render() -> str:
         f'入口 {gp.get("stats", {}).get("entry", 0)} 只 → 反闸剔除 {gp.get("stats", {}).get("rejected", 0)} 只 '
         f'→ B 池 {len(bp)} 只　｜　依据：CANSLIM + Rule of 40 + 创业板第四套标准</div></div>')
 
+    # ---------- 名词小词典（项目铁律：日报开头固定放，禁黑话）----------
+    DICT_ITEMS = [
+        ("资金主线", "整个行业被大钱持续买入"), ("涨停主线", "游资连板炒起来的热点"),
+        ("刚起步", "钱进了、价还没涨"), ("主升", "钱和价一起涨"),
+        ("尾声", "开始炒补涨股"), ("退潮", "大钱在撤"),
+        ("互证", "股票和它对应的 ETF 同时走强——最强的确认信号"),
+        ("蓄势形态", "回调一次比一次浅、成交一次比一次少，涨之前憋的那口气"),
+        ("突破价", "涨过它说明真启动"), ("认错价", "跌破它说明看错了"),
+        ("A 趋势池", "基本面合格 + 技术趋势确认（原「稳做名单」）"),
+        ("B 预期驱动池", "眼下不盈利或微利，但营收高增长、研发重投入"),
+        ("C 情绪池", "涨停/连板票，纯博弈，不进趋势账本"),
+        ("早期埋伏名单", "大钱已经进了、股价还没涨的票"),
+        ("主升名单", "已涨 25%~60%、趋势确认中的票"),
+    ]
+    dict_html = ('<div class="dictbar"><b>名词小词典</b>'
+                 + "".join(f'<span class="di"><b>{k}</b>{v}</span>' for k, v in DICT_ITEMS)
+                 + '</div>')
+
     guide_strip = (f'<div class="strip">{guide}</div>' if guide else "")
     return f'''<!DOCTYPE html>
 <html lang="zh-CN"><head><meta charset="utf-8">
@@ -337,6 +355,11 @@ def render() -> str:
  .cv-res.q-strong{{color:#1a9e6b}} .cv-res.q-miss{{color:#d97b1c}}
  .cv-res.q-weak{{color:#d43a3a}} .cv-res.q-none{{color:#8a94a8}}
  .cv-note{{font-weight:400;font-size:10.5px;color:#8a94a8;white-space:normal;margin-top:2px;line-height:1.5}}
+ .dictbar{{background:#fffdf5;border:1px dashed #e0cfa0;border-radius:9px;padding:9px 12px;margin-top:8px;
+   font-size:11px;color:#5b5233;line-height:1.8}}
+ .dictbar>b{{color:#8a6a3a;margin-right:8px}}
+ .di{{margin-right:14px;display:inline-block}}
+ .di>b{{color:#1a3a6b;font-weight:500}}
  .etfh{{width:100%;border-collapse:collapse;font-size:11.5px}}
  .etfh th{{text-align:left;color:#8a94a8;font-weight:500;font-size:10.5px;padding:5px 6px;border-bottom:1px solid #eef2f8;background:#fafcfe}}
  .etfh td{{padding:6px;border-bottom:1px solid #f4f7fb;vertical-align:top}}
@@ -426,6 +449,7 @@ def render() -> str:
 <span class="guide-emotion"><span class="badge-emotion">情绪</span> 阶段 {emo["thermometer"]["stage"] if emo else '—'} → 仅强联动可看</span>
 <span class="guide-meta">活跃主线 {len(emo["active_lines"]) if emo else 0} 条 / 退潮 {len(emo["retired_lines"]) if emo else 0} 条</span></div></div>
 {wx}
+{dict_html}
 </div>
 
 {merge_layer}
