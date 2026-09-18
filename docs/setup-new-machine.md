@@ -76,3 +76,18 @@ cp config/local.example.json config/local.json
 | westock-tool 脚本 | `~/.workbuddy/plugins/cache/cb_teams_marketplace/finance-data/1.5.0/skills/westock-tool/scripts/index.js` |
 | 蓄势形态引擎 | `~/.workbuddy/plugins/cache/cb_teams_marketplace/finance-data/1.5.0/skills/wb-finance-skill/scripts/run_signal.py` |
 | 每日自动化 | 每交易日 15:30（任务 ID `880e6067`，见 `docs/automation-daily.md`） |
+
+
+---
+
+## 环境坑补充（2026-09-18 实测，5 条）
+
+| # | 坑 | 表现 | 解法 |
+|---|---|---|---|
+| 1 | 托管 Python 环境缺包 | run_signal.py 报 No module named numpy | 手动建 venv + pip install numpy pandas |
+| 2 | westock-data CLI 缺装 | FileNotFoundError: westock-data | 跑官方 setup.sh -d ~/.local/bin（装出 westock v0.0.4） |
+| 3 | MCP 限频 | data_kline/data_quote 反复失败 | 走 CLI（westock_cli.py 统一封装） |
+| 4 | 本地代理阻断 github.com | git push 全失败（502/SSL error） | 走 push_via_api.py（Git Data API，SHA 一致无分叉） |
+| 5 | 市值单位陷阱 | total_market_cap 是「元」不是「亿」 | to_yi() 自动判断；否则「≥100亿」校验静默失效 |
+
+详细背景见 changelog-2026-09-18.md 第五节。

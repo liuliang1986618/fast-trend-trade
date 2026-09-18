@@ -114,3 +114,25 @@
 
 > **为什么必须同步**：prompt 只存在于 WorkBuddy 客户端，不在仓库。若只改客户端不导出，
 > 换机器时无法复现，且「仓库是事实源」的原则被破坏（2026-09-17 发现的缺口）。
+
+
+---
+
+## v0.3 增补（2026-09-18/19）：三池分诊 + 数据通道变更 —— 待合并进下次 prompt 更新
+
+### 每日流程新增步骤（在现有 run_daily 之后按序执行）
+1. `build_growth_pool.py` —— B 预期驱动池（全市场财务筛 + 技术面买点，产出 growth_pool_<date>.json）
+2. `build_etf_holdings.py` —— ETF 持仓反查（双来源：指数成分精确 / 板块市值近似）
+3. `build_emotion_pool.py` —— 情绪票池（温度计 + 梯队 + 红旗）
+4. `track_pools.py` —— 三池跟踪台账（record + price + backfill + stats，**20 日数据裁决的数据来源**）
+5. `render_v3_layered.py` —— 四层架构日报（末尾自动跑术语自检）
+
+### 数据通道变更（重要）
+- **统一走 CLI**（westock / westock-tool），MCP 仅兜底——MCP 当日反复限频，CLI 全程顺畅且数值一致
+  （详见 sector-data-integration.md 第七节）
+- 脚本日期用 `data_day()`（台账最后快照日），**禁止用 today()**（跨零点运行会错位）
+
+### ⚠️ 硬性原则
+- **术语自检不过 = 不能提交**（黑话 / T1~T5 编号 / 缺名词小词典都会被抓，清单见 lint_report.py）
+- B 池买点状态四档：已触发 / 临近突破（≤2%）/ 蓄势充分（形态憋满但离买点远）/ 观察中
+- 台账 `pool_tracking` 为 append-only，不覆盖历史

@@ -120,3 +120,24 @@
 | 观察池台账 | `output/history.json` | ✅ 入库（跨日状态机的数据源） |
 | 趋势曲线（滑卷/全貌） | `output/trend-lines.svg`、`output/trend-lines-annual.svg` | ✅ 入库 |
 | 驾驶舱重建脚本 | `output/scripts/build_dashboard.py` | ✅ 入库 |
+
+
+---
+
+## 五、v0.3 增补（2026-09-18/19）：新增产物清单与运行顺序
+
+### 新增产物（按运行顺序）
+| 顺序 | 脚本 | 产物 | 说明 |
+|---|---|---|---|
+| 1 | run_daily.py（已有） | 日报 + 台账快照 | 最小闭环 |
+| 2 | build_growth_pool.py | growth_pool_<date>.json | B 预期驱动池（含买点四档） |
+| 3 | build_etf_holdings.py | etf_holdings_<date>.json | ETF 持仓反查（双来源） |
+| 4 | build_emotion_pool.py | emotion_pool_<date>.json | 情绪池（温度计+梯队） |
+| 5 | track_pools.py | history.json pool_tracking | 三池跟踪台账（20 日裁决数据源） |
+| 6 | render_v3_layered.py | <date>-layered.html | 四层架构日报（内含术语自检） |
+
+### 数据通道
+统一走 CLI（westock_cli.py 封装）；MCP 仅兜底。详见 sector-data-integration.md 第七节。
+
+### 环境坑（换机必读）
+见 changelog-2026-09-18.md 第五节（5 条：numpy 兼容 / CLI 装机 / MCP 限频 / 代理阻断 / 市值单位）。
