@@ -96,7 +96,7 @@ def render() -> str:
     emo = json.loads(EP.read_text(encoding="utf-8")) if EP.exists() else None
     guide = render_guide(emo["thermometer"], emo["active_lines"], emo["retired_lines"]) if emo else ""
     wx = render_thermometer(emo) if emo else ""
-    tier = render_tier_list(emo) if emo else ""
+    tier = render_tier_list(emo, "情绪梯队名册 · 非趋势（原「快打名单」）") if emo else ""
     f = D.FUNNEL
 
     # ---------- 个股 → 板块 → 主线 的显性关联 ----------
@@ -171,11 +171,13 @@ def render() -> str:
     funnel_rows = "".join(
         f'<tr><td>{k}</td><td class="num"><b>{v}</b></td></tr>' for k, v in [
             ("全市场约", f['全市场约']), ("站上所有均线", f['站上所有均线']),
-            ("早期埋伏", f['早期埋伏']),
-            ("主升候选（剔小市值后）", f['主升候选(剔小市值后)']),
-            ("主升候选（市值≥100亿）", f['主升候选(市值≥100亿合格)']),
-            ("站上主要均线·资金强", f['多头池资金强']),
-            ("稳做名单", f['稳做名单']), ("快打名单", f['快打名单'])])
+            ("早期埋伏（大钱进了还没涨）", f['早期埋伏']),
+            ("主升候选 · 剔除市值＜50亿后", f['主升候选(剔小市值后)']),
+            ("主升候选 · 其中市值≥100亿", f['主升候选(市值≥100亿合格)']),
+            ("站上主要均线 · 资金强", f['多头池资金强']),
+            ("A 趋势池", f['A趋势池']),
+            ("B 预期驱动池", f['B预期驱动池']),
+            ("C 情绪池（原快打名单）", f['C情绪池'])])
     probe_rows = "".join(
         f'<tr><td>{link(p[0], p[1])}</td><td>{sector_cell(p[0])}</td><td class="num">{pct(p[2])}</td>'
         f'<td class="num">{p[3]}</td><td class="num">{p[4]:.1f}%</td></tr>' for p in D.PROBE)

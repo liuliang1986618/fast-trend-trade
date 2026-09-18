@@ -21,6 +21,7 @@ ROOT = Path(__file__).resolve().parents[2]
 DAY = "2026-09-18"
 HIST = ROOT / "output" / "history.json"
 OUT = ROOT / "output" / "daily" / f"{DAY}.html"
+D_TMP = ROOT / "output" / "tmp"
 
 DISCLAIMER = (
     "免责声明：以上内容基于公开数据和量化分析，仅供参考，不构成投资建议。"
@@ -35,10 +36,13 @@ def lk(code, name):
 
 
 # ---------------------------------------------------------------- 今日数据
+# 漏斗计量（当日实测值；两版日报共用此口径）
+# 注：「稳做名单」= A 趋势池，「快打名单」= C 情绪池（显示时用新名称）
 FUNNEL = {
     "全市场约": 5577, "站上所有均线": 517, "早期埋伏": 15,
-    "主升候选(剔小市值后)": 3, "主升候选(市值≥100亿合格)": 3,
-    "多头池资金强": 15, "稳做名单": 11, "快打名单": 9,
+    "主升候选(剔小市值后)": 15, "主升候选(市值≥100亿合格)": 3,
+    "多头池资金强": 15,
+    "A趋势池": 8, "B预期驱动池": 31, "C情绪池": 12,
 }
 
 PROBE = [  # 早期埋伏前 5（早期埋伏名单按主力5日净流入降序前5）
@@ -61,6 +65,12 @@ CONFIRM = [  # 主升候选（主升名单 25~60）
     ("sh600059", "古越龙山", 35.79, 10.70, 43.6, 8.63),
     ("sz002443", "金洲管道", 34.84, 12.50, 39.3, 0.40),
     ("sh605258", "协和电子", 34.09, 37.45, 49.9, 0.19),
+    ("sh688799", "华纳药厂", 28.52, 56.10, 32.35, 6.84),
+    ("sz002734", "利民股份", 27.71, 18.62, 18.11, 1.53),
+    ("sh605580", "恒盛能源", 27.60, 22.70, 34.93, -2.95),
+    ("sh601218", "吉鑫科技", 26.71, 5.55, 31.13, -3.31),
+    ("sh600163", "中闽能源", 26.12, 6.18, 23.79, 4.22),
+    ("sh603236", "移远通信", 26.07, 72.54, 30.37, -1.52),
 ]
 
 MAINLINES = [
@@ -217,13 +227,35 @@ def render() -> str:
     def card(title, body, cls="pos"):
         return f'<div class="card {cls}"><h2>{title}</h2>{body}</div>'
 
-    # ① 漏斗计量行
+    # ① 漏斗计量行 —— 数量全部由数据运行时计算（禁止手工填写，避免与页面不一致）
     f = FUNNEL
+
+    def _pool_count(fname, key):
+        try:
+            d = json.loads((D_TMP / fname).read_text(encoding="utf-8"))
+            return len(d.get(key, []))
+        except Exception:
+            return 0
+
+    b_cnt = _pool_count(f"growth_pool_{DAY}.json", "b_pool")
+    c_cnt = _pool_count(f"emotion_pool_{DAY}.json", "core")
+    # 确认层：按实际市值分档（剔小市值 = 剔除 <50 亿；合格 = ≥100 亿）
+    _codes = [c[0] for c in CONFIRM]
+    try:
+        import westock_cli as _W
+        _q = _W.quote(_codes)
+        _caps = {c: (_W.to_yi(_q.get(c, {}).get("total_market_cap")) or 0) for c in _codes}
+        conf_all = len(_codes)
+        conf_mid = sum(1 for c in _codes if _caps[c] >= 50)
+        conf_big = sum(1 for c in _codes if _caps[c] >= 100)
+    except Exception:
+        conf_all, conf_mid, conf_big = len(_codes), len(_codes), 0
     funnel_html = (
         f'<div class="meter">全市场约 <b>{f["全市场约"]}</b> → 站上所有均线 <b>{f["站上所有均线"]}</b> '
-        f'→ 早期埋伏 <b>{f["早期埋伏"]}</b> → 主升候选 17 只（剔小市值后 <b>{f["主升候选(剔小市值后)"]}</b>，'
-        f'其中市值≥100亿 <b>{f["主升候选(市值≥100亿合格)"]}</b> 只） '
-        f'→ 站上主要均线·资金强 <b>{f["多头池资金强"]}</b> → <b>稳做 {f["稳做名单"]} / 快打 {f["快打名单"]}</b>'
+        f'→ 早期埋伏 <b>{f["早期埋伏"]}</b> → 主升候选 <b>{conf_all}</b> 只（剔除市值＜50亿后 <b>{conf_mid}</b>，'
+        f'其中市值≥100亿 <b>{conf_big}</b> 只） '
+        f'→ 站上主要均线·资金强 <b>{f["多头池资金强"]}</b> → '
+        f'<b>A 趋势池 {f["A趋势池"]} ／ B 预期驱动池 {f["B预期驱动池"]} ／ C 情绪池 {f["C情绪池"]}</b>'
         f'<span class="muted">（漏斗宽窄＝市场温度计）</span></div>'
     )
 
