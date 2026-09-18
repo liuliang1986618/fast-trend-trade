@@ -5903,5 +5903,779 @@
     }
    ]
   }
+ },
+ "pool_tracking": {
+  "entries": [
+   {
+    "date": "2026-09-18",
+    "pool": "A",
+    "code": "sh600522",
+    "name": "中天科技",
+    "entry_price": 35.98,
+    "note": "稳做名单 82 分 · ✅稳做·优先档",
+    "follow": {
+     "t3": null,
+     "t5": null,
+     "t10": null,
+     "t20": null
+    }
+   },
+   {
+    "date": "2026-09-18",
+    "pool": "A",
+    "code": "sz300398",
+    "name": "飞凯材料",
+    "entry_price": 38.35,
+    "note": "稳做名单 80 分 · ✅稳做·优先档",
+    "follow": {
+     "t3": null,
+     "t5": null,
+     "t10": null,
+     "t20": null
+    }
+   },
+   {
+    "date": "2026-09-18",
+    "pool": "A",
+    "code": "sz002080",
+    "name": "中材科技",
+    "entry_price": 60.22,
+    "note": "稳做名单 78 分 · ✅稳做·观察档",
+    "follow": {
+     "t3": null,
+     "t5": null,
+     "t10": null,
+     "t20": null
+    }
+   },
+   {
+    "date": "2026-09-18",
+    "pool": "A",
+    "code": "sz002436",
+    "name": "兴森科技",
+    "entry_price": 42.88,
+    "note": "稳做名单 76 分 · ✅稳做·观察档",
+    "follow": {
+     "t3": null,
+     "t5": null,
+     "t10": null,
+     "t20": null
+    }
+   },
+   {
+    "date": "2026-09-18",
+    "pool": "A",
+    "code": "sz002008",
+    "name": "大族激光",
+    "entry_price": 99.6,
+    "note": "稳做名单 74 分 · ✅稳做·观察档",
+    "follow": {
+     "t3": null,
+     "t5": null,
+     "t10": null,
+     "t20": null
+    }
+   },
+   {
+    "date": "2026-09-18",
+    "pool": "A",
+    "code": "sz300570",
+    "name": "太辰光",
+    "entry_price": 229.35,
+    "note": "稳做名单 72 分 · ✅稳做·观察档",
+    "follow": {
+     "t3": null,
+     "t5": null,
+     "t10": null,
+     "t20": null
+    }
+   },
+   {
+    "date": "2026-09-18",
+    "pool": "A",
+    "code": "sh600105",
+    "name": "永鼎股份",
+    "entry_price": 46.47,
+    "note": "稳做名单 70 分 · ✅稳做·观察档",
+    "follow": {
+     "t3": null,
+     "t5": null,
+     "t10": null,
+     "t20": null
+    }
+   },
+   {
+    "date": "2026-09-18",
+    "pool": "A",
+    "code": "sh603256",
+    "name": "宏和科技",
+    "entry_price": 148.79,
+    "note": "稳做名单 68 分 · ❌红线拦截(PE272)",
+    "follow": {
+     "t3": null,
+     "t5": null,
+     "t10": null,
+     "t20": null
+    }
+   },
+   {
+    "date": "2026-09-18",
+    "pool": "B",
+    "code": "sh688806",
+    "name": "泰诺麦博-U",
+    "entry_price": 22.7,
+    "note": "营收623% · 研发118% · PE -20.48",
+    "follow": {
+     "t3": null,
+     "t5": null,
+     "t10": null,
+     "t20": null
+    }
+   },
+   {
+    "date": "2026-09-18",
+    "pool": "B",
+    "code": "sh688266",
+    "name": "泽璟制药-U",
+    "entry_price": 111.8,
+    "note": "营收221% · 研发17% · PE 53.82",
+    "follow": {
+     "t3": null,
+     "t5": null,
+     "t10": null,
+     "t20": null
+    }
+   },
+   {
+    "date": "2026-09-18",
+    "pool": "B",
+    "code": "sz300765",
+    "name": "石药创新",
+    "entry_price": 43.88,
+    "note": "营收209% · 研发20% · PE 60.26",
+    "follow": {
+     "t3": null,
+     "t5": null,
+     "t10": null,
+     "t20": null
+    }
+   },
+   {
+    "date": "2026-09-18",
+    "pool": "B",
+    "code": "sh688382",
+    "name": "益方生物-U",
+    "entry_price": 18.72,
+    "note": "营收178% · 研发346% · PE -32.43",
+    "follow": {
+     "t3": null,
+     "t5": null,
+     "t10": null,
+     "t20": null
+    }
+   },
+   {
+    "date": "2026-09-18",
+    "pool": "B",
+    "code": "sh688795",
+    "name": "摩尔线程-U",
+    "entry_price": 410.0,
+    "note": "营收147% · 研发44% · PE -259.93",
+    "follow": {
+     "t3": null,
+     "t5": null,
+     "t10": null,
+     "t20": null
+    }
+   },
+   {
+    "date": "2026-09-18",
+    "pool": "B",
+    "code": "sz301536",
+    "name": "星宸科技",
+    "entry_price": 125.77,
+    "note": "营收89% · 研发18% · PE 50.45",
+    "follow": {
+     "t3": null,
+     "t5": null,
+     "t10": null,
+     "t20": null
+    }
+   },
+   {
+    "date": "2026-09-18",
+    "pool": "B",
+    "code": "sz300672",
+    "name": "国科微",
+    "entry_price": 185.49,
+    "note": "营收86% · 研发25% · PE -698.44",
+    "follow": {
+     "t3": null,
+     "t5": null,
+     "t10": null,
+     "t20": null
+    }
+   },
+   {
+    "date": "2026-09-18",
+    "pool": "B",
+    "code": "sz300474",
+    "name": "景嘉微",
+    "entry_price": 51.17,
+    "note": "营收73% · 研发85% · PE -144.59",
+    "follow": {
+     "t3": null,
+     "t5": null,
+     "t10": null,
+     "t20": null
+    }
+   },
+   {
+    "date": "2026-09-18",
+    "pool": "B",
+    "code": "sh688536",
+    "name": "思瑞浦",
+    "entry_price": 353.2,
+    "note": "营收69% · 研发22% · PE 117.5",
+    "follow": {
+     "t3": null,
+     "t5": null,
+     "t10": null,
+     "t20": null
+    }
+   },
+   {
+    "date": "2026-09-18",
+    "pool": "B",
+    "code": "sz300604",
+    "name": "长川科技",
+    "entry_price": 279.73,
+    "note": "营收60% · 研发17% · PE 96.67",
+    "follow": {
+     "t3": null,
+     "t5": null,
+     "t10": null,
+     "t20": null
+    }
+   },
+   {
+    "date": "2026-09-18",
+    "pool": "B",
+    "code": "sz002653",
+    "name": "海思科",
+    "entry_price": 63.54,
+    "note": "营收55% · 研发19% · PE 76.37",
+    "follow": {
+     "t3": null,
+     "t5": null,
+     "t10": null,
+     "t20": null
+    }
+   },
+   {
+    "date": "2026-09-18",
+    "pool": "B",
+    "code": "sh688796",
+    "name": "百奥赛图",
+    "entry_price": 134.27,
+    "note": "营收52% · 研发28% · PE 163.82",
+    "follow": {
+     "t3": null,
+     "t5": null,
+     "t10": null,
+     "t20": null
+    }
+   },
+   {
+    "date": "2026-09-18",
+    "pool": "B",
+    "code": "sh688828",
+    "name": "国仪公司-U",
+    "entry_price": 96.1,
+    "note": "营收51% · 研发28% · PE -10862.77",
+    "follow": {
+     "t3": null,
+     "t5": null,
+     "t10": null,
+     "t20": null
+    }
+   },
+   {
+    "date": "2026-09-18",
+    "pool": "B",
+    "code": "sz300302",
+    "name": "同有科技",
+    "entry_price": 28.67,
+    "note": "营收50% · 研发15% · PE 61.45",
+    "follow": {
+     "t3": null,
+     "t5": null,
+     "t10": null,
+     "t20": null
+    }
+   },
+   {
+    "date": "2026-09-18",
+    "pool": "B",
+    "code": "sz300033",
+    "name": "同花顺",
+    "entry_price": 207.2,
+    "note": "营收49% · 研发25% · PE 42.66",
+    "follow": {
+     "t3": null,
+     "t5": null,
+     "t10": null,
+     "t20": null
+    }
+   },
+   {
+    "date": "2026-09-18",
+    "pool": "B",
+    "code": "sh688192",
+    "name": "迪哲医药-U",
+    "entry_price": 57.45,
+    "note": "营收47% · 研发77% · PE -44.76",
+    "follow": {
+     "t3": null,
+     "t5": null,
+     "t10": null,
+     "t20": null
+    }
+   },
+   {
+    "date": "2026-09-18",
+    "pool": "B",
+    "code": "sh688180",
+    "name": "君实生物-U",
+    "entry_price": 33.33,
+    "note": "营收45% · 研发38% · PE -77.63",
+    "follow": {
+     "t3": null,
+     "t5": null,
+     "t10": null,
+     "t20": null
+    }
+   },
+   {
+    "date": "2026-09-18",
+    "pool": "B",
+    "code": "sh688765",
+    "name": "禾元生物-U",
+    "entry_price": 37.75,
+    "note": "营收44% · 研发287% · PE -97.68",
+    "follow": {
+     "t3": null,
+     "t5": null,
+     "t10": null,
+     "t20": null
+    }
+   },
+   {
+    "date": "2026-09-18",
+    "pool": "B",
+    "code": "sz300661",
+    "name": "圣邦股份",
+    "entry_price": 125.13,
+    "note": "营收43% · 研发24% · PE 111.92",
+    "follow": {
+     "t3": null,
+     "t5": null,
+     "t10": null,
+     "t20": null
+    }
+   },
+   {
+    "date": "2026-09-18",
+    "pool": "B",
+    "code": "sh688826",
+    "name": "频准激光",
+    "entry_price": 850.51,
+    "note": "营收42% · 研发17% · PE 192.34",
+    "follow": {
+     "t3": null,
+     "t5": null,
+     "t10": null,
+     "t20": null
+    }
+   },
+   {
+    "date": "2026-09-18",
+    "pool": "B",
+    "code": "sz300458",
+    "name": "全志科技",
+    "entry_price": 31.27,
+    "note": "营收41% · 研发18% · PE 52.56",
+    "follow": {
+     "t3": null,
+     "t5": null,
+     "t10": null,
+     "t20": null
+    }
+   },
+   {
+    "date": "2026-09-18",
+    "pool": "B",
+    "code": "sh688449",
+    "name": "联芸科技",
+    "entry_price": 65.2,
+    "note": "营收40% · 研发36% · PE 49.53",
+    "follow": {
+     "t3": null,
+     "t5": null,
+     "t10": null,
+     "t20": null
+    }
+   },
+   {
+    "date": "2026-09-18",
+    "pool": "B",
+    "code": "sz301095",
+    "name": "广立微",
+    "entry_price": 78.75,
+    "note": "营收39% · 研发50% · PE 146.33",
+    "follow": {
+     "t3": null,
+     "t5": null,
+     "t10": null,
+     "t20": null
+    }
+   },
+   {
+    "date": "2026-09-18",
+    "pool": "B",
+    "code": "sh688392",
+    "name": "骄成超声",
+    "entry_price": 176.2,
+    "note": "营收38% · 研发19% · PE 125.53",
+    "follow": {
+     "t3": null,
+     "t5": null,
+     "t10": null,
+     "t20": null
+    }
+   },
+   {
+    "date": "2026-09-18",
+    "pool": "B",
+    "code": "sh688200",
+    "name": "华峰测控",
+    "entry_price": 407.93,
+    "note": "营收38% · 研发26% · PE 108.44",
+    "follow": {
+     "t3": null,
+     "t5": null,
+     "t10": null,
+     "t20": null
+    }
+   },
+   {
+    "date": "2026-09-18",
+    "pool": "B",
+    "code": "sh688690",
+    "name": "纳微科技",
+    "entry_price": 47.2,
+    "note": "营收37% · 研发16% · PE 90.97",
+    "follow": {
+     "t3": null,
+     "t5": null,
+     "t10": null,
+     "t20": null
+    }
+   },
+   {
+    "date": "2026-09-18",
+    "pool": "B",
+    "code": "sh688019",
+    "name": "安集科技",
+    "entry_price": 234.8,
+    "note": "营收34% · 研发16% · PE 57.05",
+    "follow": {
+     "t3": null,
+     "t5": null,
+     "t10": null,
+     "t20": null
+    }
+   },
+   {
+    "date": "2026-09-18",
+    "pool": "B",
+    "code": "sh688321",
+    "name": "微芯生物",
+    "entry_price": 25.02,
+    "note": "营收34% · 研发19% · PE 119.49",
+    "follow": {
+     "t3": null,
+     "t5": null,
+     "t10": null,
+     "t20": null
+    }
+   },
+   {
+    "date": "2026-09-18",
+    "pool": "B",
+    "code": "sh688686",
+    "name": "奥普特",
+    "entry_price": 143.8,
+    "note": "营收32% · 研发15% · PE 83.43",
+    "follow": {
+     "t3": null,
+     "t5": null,
+     "t10": null,
+     "t20": null
+    }
+   },
+   {
+    "date": "2026-09-18",
+    "pool": "B",
+    "code": "sh688702",
+    "name": "盛科通信-U",
+    "entry_price": 334.8,
+    "note": "营收32% · 研发39% · PE -954.43",
+    "follow": {
+     "t3": null,
+     "t5": null,
+     "t10": null,
+     "t20": null
+    }
+   },
+   {
+    "date": "2026-09-18",
+    "pool": "B",
+    "code": "sz300593",
+    "name": "新雷能",
+    "entry_price": 32.6,
+    "note": "营收31% · 研发28% · PE -101.23",
+    "follow": {
+     "t3": null,
+     "t5": null,
+     "t10": null,
+     "t20": null
+    }
+   },
+   {
+    "date": "2026-09-18",
+    "pool": "C",
+    "code": "sh603248",
+    "name": "锡华科技",
+    "entry_price": 24.57,
+    "note": "4板 · 连板梯队",
+    "follow": {
+     "t3": null,
+     "t5": null,
+     "t10": null,
+     "t20": null
+    }
+   },
+   {
+    "date": "2026-09-18",
+    "pool": "C",
+    "code": "sz001216",
+    "name": "华瓷股份",
+    "entry_price": 21.87,
+    "note": "4板 · 连板梯队",
+    "follow": {
+     "t3": null,
+     "t5": null,
+     "t10": null,
+     "t20": null
+    }
+   },
+   {
+    "date": "2026-09-18",
+    "pool": "C",
+    "code": "sh603230",
+    "name": "内蒙新华",
+    "entry_price": 13.48,
+    "note": "3板 · 连板梯队",
+    "follow": {
+     "t3": null,
+     "t5": null,
+     "t10": null,
+     "t20": null
+    }
+   },
+   {
+    "date": "2026-09-18",
+    "pool": "C",
+    "code": "sz002285",
+    "name": "世联行",
+    "entry_price": 2.89,
+    "note": "3板 · 连板梯队",
+    "follow": {
+     "t3": null,
+     "t5": null,
+     "t10": null,
+     "t20": null
+    }
+   },
+   {
+    "date": "2026-09-18",
+    "pool": "C",
+    "code": "sh600127",
+    "name": "金健米业",
+    "entry_price": 14.32,
+    "note": "2板 · 补涨",
+    "follow": {
+     "t3": null,
+     "t5": null,
+     "t10": null,
+     "t20": null
+    }
+   },
+   {
+    "date": "2026-09-18",
+    "pool": "C",
+    "code": "sh600448",
+    "name": "华纺股份",
+    "entry_price": 3.54,
+    "note": "2板 · 连板梯队",
+    "follow": {
+     "t3": null,
+     "t5": null,
+     "t10": null,
+     "t20": null
+    }
+   },
+   {
+    "date": "2026-09-18",
+    "pool": "C",
+    "code": "sh600630",
+    "name": "龙头股份",
+    "entry_price": 8.29,
+    "note": "2板 · 连板梯队",
+    "follow": {
+     "t3": null,
+     "t5": null,
+     "t10": null,
+     "t20": null
+    }
+   },
+   {
+    "date": "2026-09-18",
+    "pool": "C",
+    "code": "sh603626",
+    "name": "科森科技",
+    "entry_price": 23.42,
+    "note": "2板 · 连板梯队",
+    "follow": {
+     "t3": null,
+     "t5": null,
+     "t10": null,
+     "t20": null
+    }
+   },
+   {
+    "date": "2026-09-18",
+    "pool": "C",
+    "code": "sz000504",
+    "name": "南华生物",
+    "entry_price": 10.01,
+    "note": "2板 · 连板梯队",
+    "follow": {
+     "t3": null,
+     "t5": null,
+     "t10": null,
+     "t20": null
+    }
+   },
+   {
+    "date": "2026-09-18",
+    "pool": "C",
+    "code": "sz002453",
+    "name": "华软科技",
+    "entry_price": 5.34,
+    "note": "2板 · 连板梯队",
+    "follow": {
+     "t3": null,
+     "t5": null,
+     "t10": null,
+     "t20": null
+    }
+   },
+   {
+    "date": "2026-09-18",
+    "pool": "C",
+    "code": "sz002836",
+    "name": "新宏泽",
+    "entry_price": 11.92,
+    "note": "2板 · 连板梯队",
+    "follow": {
+     "t3": null,
+     "t5": null,
+     "t10": null,
+     "t20": null
+    }
+   },
+   {
+    "date": "2026-09-18",
+    "pool": "C",
+    "code": "sz301390",
+    "name": "经纬股份",
+    "entry_price": 54.0,
+    "note": "2板 · 连板梯队",
+    "follow": {
+     "t3": null,
+     "t5": null,
+     "t10": null,
+     "t20": null
+    }
+   }
+  ],
+  "price_log": {
+   "2026-09-18": {
+    "sh600105": 46.47,
+    "sh600127": 14.32,
+    "sh600448": 3.54,
+    "sh600522": 35.98,
+    "sh600630": 8.29,
+    "sh603230": 13.48,
+    "sh603248": 24.57,
+    "sh603256": 148.79,
+    "sh603626": 23.42,
+    "sh688019": 234.8,
+    "sh688180": 33.33,
+    "sh688192": 57.45,
+    "sh688200": 407.93,
+    "sh688266": 111.8,
+    "sh688321": 25.02,
+    "sh688382": 18.72,
+    "sh688392": 176.2,
+    "sh688449": 65.2,
+    "sh688536": 353.2,
+    "sh688686": 143.8,
+    "sh688690": 47.2,
+    "sh688702": 334.8,
+    "sh688765": 37.75,
+    "sh688795": 410.0,
+    "sh688796": 134.27,
+    "sh688806": 22.7,
+    "sh688826": 850.51,
+    "sh688828": 96.1,
+    "sz000504": 10.01,
+    "sz001216": 21.87,
+    "sz002008": 99.6,
+    "sz002080": 60.22,
+    "sz002285": 2.89,
+    "sz002436": 42.88,
+    "sz002453": 5.34,
+    "sz002653": 63.54,
+    "sz002836": 11.92,
+    "sz300033": 207.2,
+    "sz300302": 28.67,
+    "sz300398": 38.35,
+    "sz300458": 31.27,
+    "sz300474": 51.17,
+    "sz300570": 229.35,
+    "sz300593": 32.6,
+    "sz300604": 279.73,
+    "sz300661": 125.13,
+    "sz300672": 185.49,
+    "sz300765": 43.88,
+    "sz301095": 78.75,
+    "sz301390": 54.0,
+    "sz301536": 125.77
+   }
+  },
+  "created": "2026-09-19"
  }
 }
