@@ -53,6 +53,14 @@ def num(v, default=None):
         return default
 
 
+def to_yi(v):
+    """市值统一转亿元。⚠️ westock quote 的 total_market_cap 单位为「元」，自动判断兼容。"""
+    x = num(v)
+    if x is None:
+        return None
+    return round(x / 1e8, 1) if x > 1e6 else round(x, 1)
+
+
 def limit_up_pct(code: str) -> float:
     """涨停幅度：创业板/科创板 20%，主板 10%（ST 未单列）。"""
     if code.startswith(("sz30", "sh688")):
@@ -151,7 +159,7 @@ def main() -> int:
         q = quotes.get(code, {})
         b = boards.get(code, {}).get("boards", 0)
         name = boards.get(code, {}).get("name") or q.get("name") or zt_name.get(code, code)
-        cap = num(q.get("total_market_cap")) or 0.0            # 亿元
+        cap = to_yi(q.get("total_market_cap")) or 0.0          # 亿元（自动单位判断）
         turn = num(q.get("turnover_rate")) or 0.0
         chg20 = num(q.get("chg_20d")) or 0.0
         chg = num(q.get("change_percent")) or 0.0
