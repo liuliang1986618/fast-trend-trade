@@ -174,7 +174,7 @@ def render() -> str:
             ("早期埋伏", f['早期埋伏']),
             ("主升候选（剔小市值后）", f['主升候选(剔小市值后)']),
             ("主升候选（市值≥100亿）", f['主升候选(市值≥100亿合格)']),
-            ("多头池资金强", f['多头池资金强']),
+            ("站上主要均线·资金强", f['站上主要均线·资金强']),
             ("稳做名单", f['稳做名单']), ("快打名单", f['快打名单'])])
     probe_rows = "".join(
         f'<tr><td>{link(p[0], p[1])}</td><td>{sector_cell(p[0])}</td><td class="num">{pct(p[2])}</td>'
@@ -272,7 +272,7 @@ def render() -> str:
         '<div class="layer clinic"><div class="layer-title">③ 物种分诊 · 三池总览'
         '<span class="layer-sub">筛选与分类分离——同一批候选按物种分诊，各池独立纪律</span></div>'
         '<div class="clinic-grid">'
-        f'<div class="clinic-item c-a"><div class="ci-h">A · 趋势池</div>'
+        f'<div class="clinic-item c-a"><div class="ci-h">A · 稳做名单</div>'
         f'<div class="ci-n">{a_cnt} 只</div>'
         f'<div class="ci-d">PE∈[0,80] · PB≤8 · 扣非盈利</div>'
         f'<div class="ci-r">纪律：仓位≤20% · 让利润奔跑</div></div>'
@@ -315,7 +315,7 @@ def render() -> str:
         ("互证", "股票和它对应的 ETF 同时走强——最强的确认信号"),
         ("蓄势形态", "回调一次比一次浅、成交一次比一次少，涨之前憋的那口气"),
         ("突破价", "涨过它说明真启动"), ("认错价", "跌破它说明看错了"),
-        ("A 趋势池", "基本面合格 + 技术趋势确认（原「稳做名单」）"),
+        ("A 稳做名单", "基本面合格 + 技术趋势确认（原「稳做名单」）"),
         ("B 预期驱动池", "眼下不盈利或微利，但营收高增长、研发重投入"),
         ("C 情绪池", "涨停/连板票，纯博弈，不进趋势账本"),
         ("早期埋伏名单", "大钱已经进了、股价还没涨的票"),
@@ -484,6 +484,15 @@ def main():
     html = render()
     OUT.write_text(html, encoding="utf-8")
     print(f"[ok] 四层架构版已落盘 {OUT}（{len(html)} 字符）")
+
+    # 术语自检（prompt「语言规范」为铁律，防黑话/内部编号回归）
+    import subprocess as _sp
+    lint = Path(__file__).parent / "lint_report.py"
+    if lint.exists():
+        r = _sp.run([sys.executable, str(lint), str(OUT)], capture_output=True, text=True)
+        print(r.stdout.strip())
+        if r.returncode != 0:
+            print("⚠️  术语自检未通过 —— 请按 prompt「语言规范」修正后再提交")
     return 0
 
 
