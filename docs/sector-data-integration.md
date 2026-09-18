@@ -73,10 +73,39 @@ data_sector(mode="list", scope="sw1")          # 申万一级清单
 
 | 契约方法 | CLI 等价通道 | 状态 |
 |---|---|---|
-| `screen({"sector":...})` | `ranking/filter --universe <板块>` | ❌ **实测不生效**（2026-09-14：参数被接受并回显"板块: xxx"，但结果总数仍为全市场 5212 只；中文板块名与 `pt`/`sw1_` 板块码均无效）→ 属上游限制。替代：**本地按板块成分过滤**（板块成分数量有限，不违反工程红线） |
-| `sector_flow_rank` | 无 CLI 板块排行命令 | ⏳ 仅走 MCP `data_sector`（日常自动化已采用） |
-| `sector_of` | 无 CLI 等价物 | ⏳ 走 MCP `data_industry_chain mode=stock` 或 `data_sector mode=constituent` |
-| `sector_to_etf` | `label --asset etf` + 主题匹配 | ⏳ 待实现 |
+| `screen({"sector":...})` | `ranking/filter --universe <板块码>` | ✅ **2026-09-18 改判生效**（09-14 曾记录为「不生效」，疑为版本差异）：实测 40 板块拉出 2934 只，返回条数与该板块家数吻合（半导体 178 / 元件 59）。**更优替代见下条** |
+| `sector_of` | **`westock sector constituent <板块码>`** | ✅ **CLI 原生可用**（2026-09-18 实测）——一次调用直接拿全成分并标注总数，无需条件表达式。已用它重建「个股→板块」映射（124 板块） |
+| `sector_flow_rank` | **`westock sector ranking --type mainNetInflow5d`** | ✅ **CLI 原生可用**（2026-09-18 实测）——一次返回 124 个板块的 `changePct / mainNetInflow(5d/20d) / upCount / leader`，**数值与 MCP `data_sector` 完全一致**（半导体 2437776.21 万元 = 243.78 亿）→ 日常自动化可不再依赖 MCP |
+| `sector_to_etf` | `label --asset etf` + 主题匹配 | ⏳ 待实现；⚠️ ETF 持仓明细仍不可得（见第七节） |
+| `sector_members_with_weight` | — | ❌ 无权重字段（板块成分只返回 code/name） |
+
+---
+
+## 七、CLI 通道 vs MCP 通道（2026-09-18 实测：限频应对）
+
+**核心发现**：MCP（`mcp__westock-mcp__*`）与 CLI（`westock` / `westock-tool`）是**两条独立接入路径**。
+当天实测：MCP 反复返回「服务限频」（`data_kline` / `data_quote` / `data_etf(holdings)` 均中招），
+而 **CLI 全程顺畅，且同一份数据数值完全一致**（已用板块资金榜交叉验证）。
+
+→ **策略：数据获取统一切到 CLI，MCP 仅作兜底。**
+
+| 数据 | CLI 命令 | 状态 |
+|---|---|---|
+| 行情快照（PE/PB/市值/换手/区间涨幅） | `westock quote <codes>` | ✅ |
+| 日K | `westock kline <code> --period day --limit N` | ✅ |
+| 分钟线（用于封板时间） | `westock kline <code> --period m1 --start --end` | ✅（需指定近 1 月区间） |
+| 财务（营收/研发/毛利/增速，多期） | `westock finance <codes> --type income --limit N` | ✅ |
+| 条件选股（**支持财务字段**，如 `TORGrowRate > 30`） | `westock-tool filter "<expr>"` | ✅ |
+| 排行榜（含 `cap_main_5d` / `limitup_days` / `fin_growth`） | `westock-tool ranking <metric>` | ✅ |
+| 板块清单 + 资金/涨跌/上涨家数/龙头 | `westock sector ranking --kind industry --type mainNetInflow5d` | ✅ |
+| 板块成分 | `westock sector constituent <板块码>` | ✅ |
+| 交易日历 / 龙虎榜 / 指数清单 | `westock trade-calendar` / `lhb` / `index list` | ✅ |
+| **ETF / 指数持仓明细** | — | ❌ **两条通道同时故障**：MCP `data_etf(holdings)` 限频 + CLI `index constituent` 报 service error → 上游服务问题，非通道选择问题 |
+
+**⚠️ 单位陷阱（同日修复）**：`westock quote` 的 `total_market_cap` 单位是**元**（长电科技 130,627,000,000 = 1306.27 亿），不是「亿」。
+脚本统一用 `to_yi()` 自动判断（>1e6 视为元）。此前按「亿」处理导致两个校验**静默失效**：情绪池「小市值庄股」红旗、分诊台 B 池「市值≥100亿」。
+
+**封装**：`output/scripts/westock_cli.py` —— quote / kline / finance / sector_list / sector_members / filter_stocks / ranking / build_sector_map
 
 **结论**：板块维度在日常自动化中**全程走 MCP 路径**（第一、二节）；纯 Python `run_daily` 若需板块能力，
 `screen_by_sector` 用「本地按成分过滤」实现，其余按上表。实现时遵守 `providers/README.md` 的 checklist。
