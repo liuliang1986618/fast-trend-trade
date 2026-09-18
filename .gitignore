@@ -10,3 +10,10 @@ __pycache__/
 .env
 config/local.json
 .workbuddy/
+
+# 临时工作目录（中间产物/每日数据快照，可由脚本重建，不入库）
+output/tmp/
+# 预览用的副本文件
+output/daily/*-full.html
+# 台账本地备份
+output/history.json.bak-*

@@ -419,5 +419,137 @@
     "note": "L1是弱提示只观察不动仓位；L2确认后才可挂条件单埋伏。快启动（单日暴涨>60分）归涨停主线通道，不归本预警管。",
     "retention_note": "rotation.score_dates/score_series 保留250个交易日≈一年；SVG 横轴自适应刻度",
     "slider_note": "细节图=全历史滑动长卷：SVG宽=交易日数×13px+92，每日刻度+周一路径线+月份分隔虚线；外层 overflow-x:auto 容器 + 一行原生JS默认scrollLeft到最右（最新）；悬停title保留；全貌图保持每月刻度不动"
+  },
+  "emotion_pool": {
+    "_desc": "情绪票池（只看版·不产出买入信号）。定位：把涨停/连板池结构化呈现，标出每只的处境与高危项——用于防 FOMO、看情绪周期、识别不可碰标的。方法论：市场级五指标为游资圈共识（连板高度/涨停家数/炸板率/溢价率/晋级率）；个股五角色为共识分类。⚠️ 阈值取自业内通行区间，业内明确提示「需按自身市场常态校准」——本块全部阈值标注为待校准，先跑 20 个交易日再调。",
+    "enabled": true,
+    "mode": "observe_only",
+    "market_thermometer": {
+      "_desc": "市场情绪温度计·五指标。可即时计算的仅前两项；溢价率/晋级率需台账跨日积累 limitup_pool 后生效",
+      "max_board": {
+        "label": "连板高度",
+        "source": "ranking limitup_days 取 max",
+        "available": true
+      },
+      "limitup_count": {
+        "label": "涨停家数",
+        "source": "filter ChangePCT>9.8 计数",
+        "available": true
+      },
+      "broken_rate": {
+        "label": "炸板率",
+        "source": "无接口字段；暂对涨停池近似（quote.high 对比涨停价）",
+        "available": "partial"
+      },
+      "premium": {
+        "label": "连板溢价率",
+        "source": "昨日连板池今日均涨幅",
+        "available": "needs_pool_history"
+      },
+      "promotion_rate": {
+        "label": "晋级率",
+        "source": "昨 2 板今晋 3 板比例",
+        "available": "needs_pool_history"
+      },
+      "stages": {
+        "_desc": "阶段判定速查（业内通行区间，待本地校准）。判定只用可用指标，缺失项不计入",
+        "冰点": {
+          "max_board_max": 3,
+          "limitup_count_max": 30
+        },
+        "发酵": {
+          "max_board_range": [
+            4,
+            5
+          ],
+          "limitup_count_range": [
+            30,
+            60
+          ]
+        },
+        "主升": {
+          "max_board_min": 6,
+          "limitup_count_range": [
+            50,
+            80
+          ]
+        },
+        "退潮": {
+          "max_board_drop": true,
+          "limitup_count_max": 30
+        }
+      }
+    },
+    "roles": {
+      "_desc": "个股五角色判据（游资圈共识）。「辨识度/股性」为人判项，机器只输出可算项",
+      "总龙": {
+        "max_board_min": 4,
+        "market_cap_max_yi": 100,
+        "turnover_range": [
+          15,
+          35
+        ]
+      },
+      "中军": {
+        "market_cap_min_yi": 150,
+        "_note": "通常不连板，走趋势（已由趋势侧管理），此处仅作识别"
+      },
+      "卡位": {
+        "_desc": "龙头断板当天逆势涨停——需龙头断板信息，第二阶段实现",
+        "available": false
+      },
+      "补涨": {
+        "max_board_max": 2,
+        "requires": "所属主线已退潮"
+      },
+      "跟风": {
+        "_desc": "比龙头低 2~3 板、无辨识度 → 一律不碰",
+        "max_board_max": 1
+      }
+    },
+    "high_risk_rules": {
+      "_desc": "高危剔除（业内共识五类，其中 3 类现有数据可判，已在日报标红旗）",
+      "庄股_小市值": {
+        "market_cap_max_yi": 50,
+        "available": true
+      },
+      "高位加速缩量": {
+        "max_board_min": 4,
+        "turnover_max": 5,
+        "chg20d_min": 60,
+        "available": true
+      },
+      "杂毛跟风": {
+        "max_board_max": 1,
+        "requires": "板块不在活跃主线内",
+        "available": true
+      },
+      "尾盘偷袭板": {
+        "_desc": "需封板时间（分钟线逐票计算），第二阶段",
+        "available": false
+      },
+      "利好落地消息板": {
+        "_desc": "需公告数据，第二阶段",
+        "available": false
+      }
+    },
+    "display": {
+      "section_title": "情绪票池 · 非趋势 · 高波动",
+      "color_scheme": {
+        "trend": "#185FA5",
+        "trend_bg": "#042C53",
+        "emotion": "#D85A30",
+        "emotion_bg": "#4A1B0C",
+        "emotion_band": "#993C1D"
+      },
+      "badge_required": true,
+      "iron_rules": "机动仓 ≤1/3 · 只赌分歧转一致 · 破启动板无条件清仓",
+      "disclaimer": "本区块标的与稳做名单无任何关系，不适用趋势仓位与止盈规则"
+    },
+    "tracking": {
+      "_desc": "胜率跟踪（只看版的验收依据）：记录每票后续 3 个交易日结果，20 个交易日后评估是否升级为可执行信号",
+      "sample_days": 20,
+      "follow_up_days": 3
+    }
   }
 }
