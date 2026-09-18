@@ -184,9 +184,31 @@ def render() -> str:
     confirm_rows = "".join(
         f'<tr><td>{link(c[0], c[1])}</td><td>{sector_cell(c[0])}</td><td class="num">{pct(c[2])}</td>'
         f'<td class="num">{c[3]}</td><td class="num">{c[4]:.1f}</td></tr>' for c in D.CONFIRM)
-    stable_rows = "".join(
-        f'<tr><td>{link(s[0], s[1])}</td><td>{sector_cell(s[0])}</td><td class="num"><b>{s[2]}</b></td>'
-        f'<td>{s[4]}</td><td class="muted">{s[6]}</td></tr>' for s in D.STABLE_LIST)
+    # A 池评分：优先规则分（可复现），无则回退手工分
+    import subprocess as _sp2
+    _sc_script = Path(__file__).parent / "score_stable.py"
+    _sc_path = ROOT / "output" / "tmp" / "a_pool_scored.json"
+    if _sc_script.exists():
+        _sp2.run([sys.executable, str(_sc_script), "--json"],
+                 capture_output=True, text=True, timeout=180,
+                 cwd=str(ROOT))   # 实时重算评分（不读过期缓存）
+    _scores = {}
+    if _sc_path.exists():
+        for _sr in json.loads(_sc_path.read_text(encoding="utf-8")):
+            _scores[_sr["code"]] = _sr
+    a_rows_sorted = sorted(D.STABLE_LIST, key=lambda s: -(_scores.get(s[0], {}).get("rule") or s[2]))
+    stable_rows = ""
+    for s in a_rows_sorted:
+        sr = _scores.get(s[0])
+        if sr:
+            d5 = sr["detail"]
+            score_html = (f'<b>{sr["rule"]}</b><span class="muted">'
+                          f'（主线{d5["主线"]}·地位{d5["地位"]}·蓄势{d5["蓄势"]}·资金{d5["资金"]}·距买点{d5["距买点"]}）</span>')
+        else:
+            score_html = f'<b>{s[2]}</b><span class="muted">（手工）</span>'
+        stable_rows += (f'<tr><td>{link(s[0], s[1])}</td><td>{sector_cell(s[0])}</td>'
+                        f'<td class="num">{score_html}</td>'
+                        f'<td>{s[4]}</td><td class="muted">{s[6]}</td></tr>')
     vcp_rows = "".join(
         f'<tr><td>{link(v[0], v[1])}</td><td>{sector_cell(v[0])}</td><td class="num"><b>{v[2]}</b></td>'
         f'<td>{v[3]}</td><td class="num">{v[5]}</td><td class="num">{v[6]}</td>'
@@ -214,7 +236,7 @@ def render() -> str:
         + card("主升候选", table(["标的", "板块 · 主线", "20日", "现价", "PE"], confirm_rows),
                sub="主升名单 25~60%")
         + card("稳做名单", table(["标的", "板块 · 主线", "评分", "形态", "资格"], stable_rows),
-               sub="五维评分降序 · 形态描述≠交易资格")
+               sub="五维规则评分（主线强度/板块地位/蓄势形态/资金验证/距买点）· 降序 · 形态≠交易资格")
         + card("蓄势观察", table(["标的", "板块 · 主线", "蓄势分", "档位", "突破价", "认错价", "距突破"], vcp_rows),
                sub="≥75 快憋满 / 60~75 还在压")
     )
