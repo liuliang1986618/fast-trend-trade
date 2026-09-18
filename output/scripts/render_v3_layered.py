@@ -45,6 +45,28 @@ SECTOR_LINK = [   # 板块联动（正向主线 × 板块资金方向）
 ]
 
 
+def _render_etf_holdings() -> str:
+    """ETF → 龙头个股反查表（读 build_etf_holdings.py 产出）。"""
+    p = ROOT / "output" / "tmp" / f"etf_holdings_{DAY}.json"
+    if not p.exists():
+        return '<p class="muted">ETF 持仓数据未生成。</p>'
+    d = json.loads(p.read_text(encoding="utf-8"))
+    rows = ""
+    for h in d.get("holdings", []):
+        if h.get("error"):
+            rows += (f'<tr><td>{H_(h["etf_name"])}</td><td colspan="2" class="muted">取数失败：{H_(h["error"])}</td></tr>')
+            continue
+        tag = ('<span class="prec-yes">精确</span>' if h.get("precise")
+               else '<span class="prec-approx">近似</span>')
+        tops = "　".join(
+            f'{link(t["code"], t["name"])}<span class="muted">({t["cap_yi"]:.0f}亿)</span>'
+            for t in h.get("top10", [])[:3] if t.get("cap_yi"))
+        rows += (f'<tr><td>{link(h["etf_code"], h["etf_name"])}</td><td>{tag}</td>'
+                 f'<td>{tops or "—"}</td></tr>')
+    return ('<table class="etfh"><thead><tr><th>ETF</th><th>来源</th>'
+            '<th>前三大权重（市值）</th></tr></thead><tbody>' + rows + '</tbody></table>')
+
+
 def card(title, body, cls="", sub=""):
     sub_html = f'<span class="card-sub">{sub}</span>' if sub else ""
     return (f'<div class="card {cls}"><h2>{title}{sub_html}</h2>{body}</div>')
@@ -219,9 +241,8 @@ def render() -> str:
         + card("板块联动强度", table(["板块", "主力5日", "上涨家数", "联动", "说明"], link_rows),
                sub="业内等价于「共振」：板块资金方向 × 上涨广度", cls="rev")
         + card("ETF 持仓龙头反查",
-               '<p class="muted">待生成：需 <code>data_etf aspect=holdings</code> 拉前十大权重，'
-               '接口当日未取（框架已就位，明日自动化补齐）。</p>',
-               sub="透明度：数据缺口如实标注，不臆造", cls="rev")
+               _render_etf_holdings(),
+               sub="精确=跟踪指数成分 ｜ 近似=板块市值前列（ETF 实际持仓接口上游故障）", cls="rev")
     )
 
     # ---------- ④ 时间层（并入左右列底部） ----------
@@ -316,6 +337,11 @@ def render() -> str:
  .cv-res.q-strong{{color:#1a9e6b}} .cv-res.q-miss{{color:#d97b1c}}
  .cv-res.q-weak{{color:#d43a3a}} .cv-res.q-none{{color:#8a94a8}}
  .cv-note{{font-weight:400;font-size:10.5px;color:#8a94a8;white-space:normal;margin-top:2px;line-height:1.5}}
+ .etfh{{width:100%;border-collapse:collapse;font-size:11.5px}}
+ .etfh th{{text-align:left;color:#8a94a8;font-weight:500;font-size:10.5px;padding:5px 6px;border-bottom:1px solid #eef2f8;background:#fafcfe}}
+ .etfh td{{padding:6px;border-bottom:1px solid #f4f7fb;vertical-align:top}}
+ .prec-yes{{background:#e6f5ee;color:#0f6e56;border-radius:999px;padding:1px 7px;font-size:11px}}
+ .prec-approx{{background:#fdf1e2;color:#d97b1c;border-radius:999px;padding:1px 7px;font-size:11px}}
  .clinic{{border-left:5px solid #EF9F27}}
  .clinic-grid{{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}}
  .clinic-item{{border-radius:9px;padding:9px 12px;border:1px solid #eef2f8}}
