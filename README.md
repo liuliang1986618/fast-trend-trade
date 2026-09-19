@@ -68,12 +68,15 @@ class DataProvider:
 
 ## 目录
 
+完整目录树、22 个脚本清单、每日数据流、配置块索引与全局约定 → **`docs/project-structure.md`**
+
 ```
-config/     一切阈值的单一事实源（settings.json，17 个配置块含判据出处）
-src/        官方框架（run_daily 主流程 + providers 数据源抽象）
-docs/       13 份文档（方法手册 / 自动化 / 数据接入 / 规范 / 归档）
-output/     产物（daily 日报 / dashboard 驾驶舱 / history.json 台账 / scripts 施工脚本）
-tests/      最小冒烟测试（语法 / import / 术语 / 台账 schema / 单位哨兵）
+config/     一切阈值的单一事实源
+src/        官方框架（run_daily + providers）
+scripts/    施工层（22 个脚本：流水线 / 数据通道 / 工具）
+docs/       13 份文档
+tests/      最小冒烟测试（提交前必跑）
+output/     产物（history.json 台账为核心资产）
 ```
 
 ## 文档索引
