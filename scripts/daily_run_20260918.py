@@ -20,7 +20,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 DAY = "2026-09-18"
 HIST = ROOT / "output" / "ledger" / "history.json"
-OUT = ROOT / "output" / "daily" / f"{DAY}.html"
+# 单列版日报已退役（v3.1 合并页 daily/<DAY>/index.html 取代），render() 保留供追溯
 D_TMP = ROOT / "output" / "tmp"
 
 DISCLAIMER = (
@@ -565,7 +565,7 @@ def update_history():
 def main():
     OUT.parent.mkdir(parents=True, exist_ok=True)
     html = render()
-    OUT.write_text(html, encoding="utf-8")
+    # OUT.write_text(html, encoding="utf-8")  # 单列版退役——见上注
     print(f"[ok] 日报已落盘 {OUT}（{len(html)} 字符）")
     update_history()
 
