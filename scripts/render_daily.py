@@ -346,9 +346,14 @@ def render() -> str:
                 return f"../{d}/{cand}"
         return f"../{d}/"
 
-    _nav_items = "".join(
-        f'<a class="nav-d{" cur" if d == DAY else ""}" href="{_day_href(d)}">{d[5:]}</a>'
-        for d in _all_days)
+    _nav_items, _cur_m = "", None
+    for d in _all_days:
+        _m = d[:7]
+        if _m != _cur_m:
+            _nav_items += f'<div class="nav-m">{_m}</div>'
+            _cur_m = _m
+        _cur = ' cur' if d == DAY else ''
+        _nav_items += f'<a class="nav-d{_cur}" href="{_day_href(d)}" title="{d}">{d[8:]}</a>'  # 只显示「日」
     nav_bar = f'<div class="date-nav"><div class="nav-t">复盘档案</div>{_nav_items}</div>'
 
     try:
@@ -553,7 +558,7 @@ def render() -> str:
 <style>
  body{{font-family:-apple-system,"PingFang SC","Helvetica Neue",sans-serif;background:#f2f5f9;color:#1c2333;
       margin:0;padding:0;line-height:1.65}}
- .date-nav{{position:fixed;left:0;top:0;bottom:0;width:88px;overflow-y:auto;background:#16202e;padding:12px 6px;z-index:50}}.date-nav .nav-t{{color:#5b6b80;font-size:11px;font-weight:700;padding:4px 6px;margin-bottom:6px}}.date-nav a{{display:block;color:#9fb0c8;text-decoration:none;font-size:12.5px;padding:5px 7px;border-radius:6px;margin-bottom:2px;text-align:center}}.date-nav a.cur{{background:#2b5fad;color:#fff;font-weight:700}}.date-nav a:hover{{background:#243244}}.shell{{max-width:1900px;height:100vh;margin:0 auto 0 88px;padding:14px 18px 0;display:flex;flex-direction:column;box-sizing:border-box}}
+ .date-nav{{position:fixed;left:0;top:0;bottom:0;width:88px;overflow-y:auto;background:#16202e;padding:12px 6px;z-index:50}}.date-nav .nav-t{{color:#5b6b80;font-size:11px;font-weight:700;padding:4px 6px;margin-bottom:6px}}.date-nav .nav-m{{color:#e8b14a;font-size:10.5px;font-weight:700;padding:8px 6px 3px;border-top:1px solid #243244;margin-top:4px}}.date-nav a{{display:block;color:#9fb0c8;text-decoration:none;font-size:12.5px;padding:5px 7px;border-radius:6px;margin-bottom:2px;text-align:center}}.date-nav a.cur{{background:#2b5fad;color:#fff;font-weight:700}}.date-nav a:hover{{background:#243244}}.shell{{max-width:1900px;height:100vh;margin:0 auto 0 88px;padding:14px 18px 0;display:flex;flex-direction:column;box-sizing:border-box}}
  .fixed{{flex:0 0 auto}}
  h1{{font-size:20px;margin:0 0 2px;color:#1a3a6b}}
  .meta{{font-size:11.5px;color:#8a94a8;margin-bottom:10px}}
