@@ -1,0 +1,486 @@
+{
+ "date": "2026-09-18",
+ "note": "ETF 实际持仓接口故障（MCP 限频 + CLI 不支持行业主题指数）；index 类为精确成分，sector_approx 类为板块市值前列近似",
+ "holdings": [
+  {
+   "etf_code": "sh588000",
+   "etf_name": "科创50ETF华夏",
+   "source": "index",
+   "source_desc": "精确·跟踪指数 sh000688",
+   "precise": true,
+   "member_count": 50,
+   "top10": [
+    {
+     "code": "sh688981",
+     "name": "中芯国际",
+     "cap_yi": 10446.0,
+     "chg_pct": 2.85,
+     "pe": 144.94
+    },
+    {
+     "code": "sh688256",
+     "name": "寒武纪",
+     "cap_yi": 7000.0,
+     "chg_pct": 0.65,
+     "pe": 210.08
+    },
+    {
+     "code": "sh688041",
+     "name": "海光信息",
+     "cap_yi": 5610.5,
+     "chg_pct": 4.04,
+     "pe": 178.57
+    },
+    {
+     "code": "sh688347",
+     "name": "华虹宏力",
+     "cap_yi": 4512.7,
+     "chg_pct": 5.93,
+     "pe": 643.62
+    },
+    {
+     "code": "sh688012",
+     "name": "中微公司",
+     "cap_yi": 3399.6,
+     "chg_pct": 1.05,
+     "pe": 80.35
+    },
+    {
+     "code": "sh688820",
+     "name": "盛合晶微",
+     "cap_yi": 2661.3,
+     "chg_pct": 7.11,
+     "pe": 284.65
+    },
+    {
+     "code": "sh688008",
+     "name": "澜起科技",
+     "cap_yi": 2472.0,
+     "chg_pct": 4.22,
+     "pe": 80.42
+    },
+    {
+     "code": "sh688498",
+     "name": "源杰科技",
+     "cap_yi": 2284.6,
+     "chg_pct": 2.82,
+     "pe": 303.91
+    },
+    {
+     "code": "sh688802",
+     "name": "沐曦股份",
+     "cap_yi": 2219.9,
+     "chg_pct": 1.52,
+     "pe": 24952.1
+    },
+    {
+     "code": "sh688072",
+     "name": "拓荆科技",
+     "cap_yi": 2103.8,
+     "chg_pct": 3.76,
+     "pe": 96.72
+    }
+   ]
+  },
+  {
+   "etf_code": "sh560710",
+   "etf_name": "船舶ETF富国",
+   "source": "sector_approx",
+   "source_desc": "近似·板块成分按市值排序（板块 pt01801744、pt01801992）",
+   "precise": false,
+   "member_count": 45,
+   "top10": [
+    {
+     "code": "sh600150",
+     "name": "中国船舶",
+     "cap_yi": 2970.4,
+     "chg_pct": 1.31,
+     "pe": 21.18
+    },
+    {
+     "code": "sh601919",
+     "name": "中远海控",
+     "cap_yi": 2458.2,
+     "chg_pct": -1.04,
+     "pe": 9.19
+    },
+    {
+     "code": "sh603268",
+     "name": "松发股份",
+     "cap_yi": 2118.9,
+     "chg_pct": 7.49,
+     "pe": 37.73
+    },
+    {
+     "code": "sh601872",
+     "name": "招商轮船",
+     "cap_yi": 1805.5,
+     "chg_pct": 2.33,
+     "pe": 16.64
+    },
+    {
+     "code": "sh600018",
+     "name": "上港集团",
+     "cap_yi": 1247.8,
+     "chg_pct": -1.29,
+     "pe": 8.88
+    },
+    {
+     "code": "sh600026",
+     "name": "中远海能",
+     "cap_yi": 1207.5,
+     "chg_pct": -0.09,
+     "pe": 17.99
+    },
+    {
+     "code": "sh601018",
+     "name": "宁波港",
+     "cap_yi": 665.3,
+     "chg_pct": -2.56,
+     "pe": 13.01
+    },
+    {
+     "code": "sh601298",
+     "name": "青岛港",
+     "cap_yi": 626.4,
+     "chg_pct": -1.03,
+     "pe": 12.06
+    },
+    {
+     "code": "sz001872",
+     "name": "招商港口",
+     "cap_yi": 573.1,
+     "chg_pct": -0.39,
+     "pe": 12.03
+    },
+    {
+     "code": "sh600685",
+     "name": "中船防务",
+     "cap_yi": 406.8,
+     "chg_pct": 0.98,
+     "pe": 30.85
+    }
+   ]
+  },
+  {
+   "etf_code": "sh515880",
+   "etf_name": "通信ETF",
+   "source": "sector_approx",
+   "source_desc": "近似·板块成分按市值排序（板块 pt01801102）",
+   "precise": false,
+   "member_count": 89,
+   "top10": [
+    {
+     "code": "sz300308",
+     "name": "中际旭创",
+     "cap_yi": 10912.5,
+     "chg_pct": 3.4,
+     "pe": 53.35
+    },
+    {
+     "code": "sz300502",
+     "name": "新易盛",
+     "cap_yi": 6206.6,
+     "chg_pct": 4.87,
+     "pe": 47.31
+    },
+    {
+     "code": "sh601869",
+     "name": "长飞光纤",
+     "cap_yi": 3766.9,
+     "chg_pct": -2.58,
+     "pe": 109.42
+    },
+    {
+     "code": "sz300394",
+     "name": "天孚通信",
+     "cap_yi": 3105.1,
+     "chg_pct": 2.52,
+     "pe": 133.71
+    },
+    {
+     "code": "sh600487",
+     "name": "亨通光电",
+     "cap_yi": 1713.9,
+     "chg_pct": 1.46,
+     "pe": 40.94
+    },
+    {
+     "code": "sz002281",
+     "name": "光迅科技",
+     "cap_yi": 1617.6,
+     "chg_pct": 2.19,
+     "pe": 139.92
+    },
+    {
+     "code": "sz000063",
+     "name": "中兴通讯",
+     "cap_yi": 1551.8,
+     "chg_pct": 1.79,
+     "pe": 46.84
+    },
+    {
+     "code": "sz301165",
+     "name": "锐捷网络",
+     "cap_yi": 1309.1,
+     "chg_pct": 1.27,
+     "pe": 139.5
+    },
+    {
+     "code": "sh600522",
+     "name": "中天科技",
+     "cap_yi": 1228.0,
+     "chg_pct": -1.13,
+     "pe": 32.99
+    },
+    {
+     "code": "sh603083",
+     "name": "剑桥科技",
+     "cap_yi": 839.5,
+     "chg_pct": 4.09,
+     "pe": 178.5
+    }
+   ]
+  },
+  {
+   "etf_code": "sz159063",
+   "etf_name": "粮食ETF南方",
+   "source": "sector_approx",
+   "source_desc": "近似·板块成分按市值排序（板块 pt01801016、pt01801012）",
+   "precise": false,
+   "member_count": 48,
+   "top10": [
+    {
+     "code": "sz300999",
+     "name": "金龙鱼",
+     "cap_yi": 1355.4,
+     "chg_pct": 0.44,
+     "pe": 36.72
+    },
+    {
+     "code": "sh600737",
+     "name": "中粮糖业",
+     "cap_yi": 316.1,
+     "chg_pct": 0.2,
+     "pe": 28.36
+    },
+    {
+     "code": "sh605198",
+     "name": "安德利",
+     "cap_yi": 281.6,
+     "chg_pct": 7.55,
+     "pe": 111.52
+    },
+    {
+     "code": "sh601118",
+     "name": "海南橡胶",
+     "cap_yi": 263.2,
+     "chg_pct": -1.28,
+     "pe": -458.01
+    },
+    {
+     "code": "sh600598",
+     "name": "北大荒",
+     "cap_yi": 224.7,
+     "chg_pct": 0.56,
+     "pe": -63.34
+    },
+    {
+     "code": "sz000998",
+     "name": "隆平高科",
+     "cap_yi": 132.1,
+     "chg_pct": -0.55,
+     "pe": 231.77
+    },
+    {
+     "code": "sh601952",
+     "name": "苏垦农发",
+     "cap_yi": 131.5,
+     "chg_pct": 2.58,
+     "pe": 27.47
+    },
+    {
+     "code": "sz002215",
+     "name": "诺普信",
+     "cap_yi": 97.1,
+     "chg_pct": -0.21,
+     "pe": 12.66
+    },
+    {
+     "code": "sz000930",
+     "name": "中粮科技",
+     "cap_yi": 96.0,
+     "chg_pct": -0.77,
+     "pe": -40.3
+    },
+    {
+     "code": "sh600127",
+     "name": "金健米业",
+     "cap_yi": 91.9,
+     "chg_pct": 9.98,
+     "pe": -526.06
+    }
+   ]
+  },
+  {
+   "etf_code": "sh512480",
+   "etf_name": "半导体ETF国联安",
+   "source": "sector_approx",
+   "source_desc": "近似·板块成分按市值排序（板块 pt01801081）",
+   "precise": false,
+   "member_count": 187,
+   "top10": [
+    {
+     "code": "sh688825",
+     "name": "长鑫科技",
+     "cap_yi": 37702.8,
+     "chg_pct": 3.87,
+     "pe": 46.08
+    },
+    {
+     "code": "sh688981",
+     "name": "中芯国际",
+     "cap_yi": 10446.0,
+     "chg_pct": 2.85,
+     "pe": 144.94
+    },
+    {
+     "code": "sh688256",
+     "name": "寒武纪",
+     "cap_yi": 7000.0,
+     "chg_pct": 0.65,
+     "pe": 210.08
+    },
+    {
+     "code": "sh688041",
+     "name": "海光信息",
+     "cap_yi": 5610.5,
+     "chg_pct": 4.04,
+     "pe": 178.57
+    },
+    {
+     "code": "sz002371",
+     "name": "北方华创",
+     "cap_yi": 4981.9,
+     "chg_pct": 3.16,
+     "pe": 87.65
+    },
+    {
+     "code": "sh688347",
+     "name": "华虹宏力",
+     "cap_yi": 4512.7,
+     "chg_pct": 5.93,
+     "pe": 643.62
+    },
+    {
+     "code": "sh688012",
+     "name": "中微公司",
+     "cap_yi": 3399.6,
+     "chg_pct": 1.05,
+     "pe": 80.35
+    },
+    {
+     "code": "sh603986",
+     "name": "兆易创新",
+     "cap_yi": 2732.7,
+     "chg_pct": 4.95,
+     "pe": 34.46
+    },
+    {
+     "code": "sh688820",
+     "name": "盛合晶微",
+     "cap_yi": 2661.3,
+     "chg_pct": 7.11,
+     "pe": 284.65
+    },
+    {
+     "code": "sh688008",
+     "name": "澜起科技",
+     "cap_yi": 2472.0,
+     "chg_pct": 4.22,
+     "pe": 80.42
+    }
+   ]
+  },
+  {
+   "etf_code": "sh588170",
+   "etf_name": "科创半导体ETF华夏",
+   "source": "sector_approx",
+   "source_desc": "近似·板块成分按市值排序（板块 pt01801081） + 仅 688 板",
+   "precise": false,
+   "member_count": 119,
+   "top10": [
+    {
+     "code": "sh688825",
+     "name": "长鑫科技",
+     "cap_yi": 37702.8,
+     "chg_pct": 3.87,
+     "pe": 46.08
+    },
+    {
+     "code": "sh688981",
+     "name": "中芯国际",
+     "cap_yi": 10446.0,
+     "chg_pct": 2.85,
+     "pe": 144.94
+    },
+    {
+     "code": "sh688256",
+     "name": "寒武纪",
+     "cap_yi": 7000.0,
+     "chg_pct": 0.65,
+     "pe": 210.08
+    },
+    {
+     "code": "sh688041",
+     "name": "海光信息",
+     "cap_yi": 5610.5,
+     "chg_pct": 4.04,
+     "pe": 178.57
+    },
+    {
+     "code": "sh688347",
+     "name": "华虹宏力",
+     "cap_yi": 4512.7,
+     "chg_pct": 5.93,
+     "pe": 643.62
+    },
+    {
+     "code": "sh688012",
+     "name": "中微公司",
+     "cap_yi": 3399.6,
+     "chg_pct": 1.05,
+     "pe": 80.35
+    },
+    {
+     "code": "sh688820",
+     "name": "盛合晶微",
+     "cap_yi": 2661.3,
+     "chg_pct": 7.11,
+     "pe": 284.65
+    },
+    {
+     "code": "sh688008",
+     "name": "澜起科技",
+     "cap_yi": 2472.0,
+     "chg_pct": 4.22,
+     "pe": 80.42
+    },
+    {
+     "code": "sh688498",
+     "name": "源杰科技",
+     "cap_yi": 2284.6,
+     "chg_pct": 2.82,
+     "pe": 303.91
+    },
+    {
+     "code": "sh688801",
+     "name": "燧原科技",
+     "cap_yi": 2225.5,
+     "chg_pct": 3.43,
+     "pe": -187.69
+    }
+   ]
+  }
+ ]
+}

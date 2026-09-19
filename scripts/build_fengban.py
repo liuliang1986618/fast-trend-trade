@@ -21,13 +21,13 @@ def main() -> int:
     import datetime
     day = None
     try:
-        h = json.loads((ROOT / "output" / "history.json").read_text(encoding="utf-8"))
+        h = json.loads((ROOT / "output" / "ledger" / "history.json").read_text(encoding="utf-8"))
         day = (h.get("days") or [{}])[-1].get("date")
     except Exception:
         pass
     day = day or datetime.date.today().isoformat()
 
-    ep = ROOT / "output" / "tmp" / f"emotion_pool_{day}.json"
+    ep = ROOT / "output" / "daily" / day / "data" / "emotion_pool.json"
     if not ep.exists():
         print(f"情绪池文件不存在：{ep}")
         return 1

@@ -19,7 +19,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 DAY = "2026-09-18"
-HIST = ROOT / "output" / "history.json"
+HIST = ROOT / "output" / "ledger" / "history.json"
 OUT = ROOT / "output" / "daily" / f"{DAY}.html"
 D_TMP = ROOT / "output" / "tmp"
 

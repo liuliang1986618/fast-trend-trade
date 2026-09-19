@@ -24,7 +24,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 ROOT = Path(__file__).resolve().parents[1]
 TMP = ROOT / "output" / "tmp"
-HIST = ROOT / "output" / "history.json"
+HIST = ROOT / "output" / "ledger" / "history.json"
 
 STAGE_W = {"主升": 1.0, "刚起步": 0.8, "尾声": 0.5, "退潮": 0.0}
 W = {"mainline": 25, "position": 20, "vcp": 25, "fund": 20, "dist": 10}
@@ -186,7 +186,7 @@ def main() -> int:
     print("   阈值均为首版设定，跑 20 个交易日后按实际表现校准。")
 
     if out_json:
-        out = TMP / "a_pool_scored.json"
+        out = TMP / "pools" / "a_pool_scored.json"
         out.write_text(json.dumps(results, ensure_ascii=False, indent=1), encoding="utf-8")
         print(f"\n✅ 已输出 {out}")
     return 0

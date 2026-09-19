@@ -5,7 +5,7 @@ import json, os, datetime
 
 # 本脚本固定位于 <仓库根>/output/scripts/ 下，故 BASE = 其父目录（output/）
 BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-HIST = os.path.join(BASE, "history.json")
+HIST = os.path.join(BASE, "ledger", "history.json")
 OUT = os.path.join(BASE, "dashboard.html")
 
 with open(HIST) as f:
@@ -343,8 +343,8 @@ def _load_json(path):
         return _json.load(open(path, encoding="utf-8"))
     except Exception:
         return {}
-_gp = _load_json(_os.path.join(BASE, "tmp", f"growth_pool_{_day}.json")).get("b_pool", [])
-_core = _load_json(_os.path.join(BASE, "tmp", f"emotion_pool_{_day}.json")).get("core", [])
+_gp = _load_json(_os.path.join(BASE, "daily", _day, "data", "growth_pool.json")).get("b_pool", [])
+_core = _load_json(_os.path.join(BASE, "daily", _day, "data", "emotion_pool.json")).get("core", [])
 _a_cnt = len(today.get("stable_list", []))
 def _top(lst, n=4):
     names = []

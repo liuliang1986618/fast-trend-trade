@@ -10,7 +10,7 @@
 定位：**独立入口**（全市场按财务筛），不挂在日报候选池下
       —— 实测证实日报候选池偏成熟/周期股（1/3 营收负增长），不是高成长聚集地。
 
-产出：output/tmp/growth_pool_<date>.json
+产出：output/tmp/pools/growth_pool_<date>.json
 """
 import json
 import subprocess
@@ -36,7 +36,7 @@ def data_day() -> str:
     """
     import json as _json
     try:
-        h = _json.loads((ROOT / "output" / "history.json").read_text(encoding="utf-8"))
+        h = _json.loads((ROOT / "output" / "ledger" / "history.json").read_text(encoding="utf-8"))
         d = (h.get("days") or [{}])[-1].get("date")
         if d:
             return d
@@ -258,7 +258,7 @@ def main() -> int:
                   "buy_signals": sum(1 for x in b_pool
                                      if x.get("tech") and x["tech"]["status"] in ("已触发", "临近突破"))},
     }
-    out = TMP / f"growth_pool_{day}.json"
+    out = TMP / "pools" / f"growth_pool_{day}.json"
     out.write_text(json.dumps(result, ensure_ascii=False, indent=1), encoding="utf-8")
 
     print(f"[5/5] ✅ {out}")

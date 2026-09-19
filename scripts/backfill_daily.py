@@ -24,7 +24,7 @@ from datetime import datetime
 
 BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))          # <仓库根>/output
 ROOT = os.path.dirname(BASE)
-HIST = os.path.join(BASE, "history.json")
+HIST = os.path.join(BASE, "ledger", "history.json")
 DAILY = os.path.join(BASE, "daily")
 WE = os.popen("ls -d ~/.workbuddy/plugins/cache/*/finance-data/*/skills/westock-tool/scripts/index.js 2>/dev/null").read().split()
 WT = WE[-1] if WE else ""                                                    # westock-tool 入口

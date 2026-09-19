@@ -13,7 +13,7 @@
                    （行业主题 ETF 的选样通常按市值/流动性加权，
                      故板块市值前列与实际重仓方向高度重合，但非精确权重）
 
-产出：output/tmp/etf_holdings_<date>.json
+产出：output/tmp/pools/etf_holdings_<date>.json
 """
 import json
 import sys
@@ -47,7 +47,7 @@ def data_day() -> str:
     """
     import json as _json
     try:
-        h = _json.loads((ROOT / "output" / "history.json").read_text(encoding="utf-8"))
+        h = _json.loads((ROOT / "output" / "ledger" / "history.json").read_text(encoding="utf-8"))
         d = (h.get("days") or [{}])[-1].get("date")
         if d:
             return d
@@ -112,7 +112,7 @@ def main() -> int:
     result = {"date": day, "note": "ETF 实际持仓接口故障（MCP 限频 + CLI 不支持行业主题指数）；"
                                    "index 类为精确成分，sector_approx 类为板块市值前列近似",
               "holdings": out}
-    p = TMP / f"etf_holdings_{day}.json"
+    p = TMP / "pools" / f"etf_holdings_{day}.json"
     p.write_text(json.dumps(result, ensure_ascii=False, indent=1), encoding="utf-8")
     print(f"\n✅ {p}")
     return 0

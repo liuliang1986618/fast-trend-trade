@@ -27,7 +27,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import westock_cli as W  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
-HIST = ROOT / "output" / "history.json"
+HIST = ROOT / "output" / "ledger" / "history.json"
 TMP = ROOT / "output" / "tmp"
 HORIZONS = [3, 5, 10, 20]
 
@@ -66,13 +66,13 @@ def collect_pools(day: str) -> list:
             items.append({"pool": "A", "code": s["code"], "name": s["name"],
                           "note": f"稳做名单 {s.get('score', '—')} 分 · {s.get('tier', '')}"})
     # B 池：预期驱动池
-    bp = TMP / f"growth_pool_{day}.json"
+    bp = TMP / "pools" / f"growth_pool_{day}.json"
     if bp.exists():
         for x in json.loads(bp.read_text(encoding="utf-8")).get("b_pool", []):
             items.append({"pool": "B", "code": x["code"], "name": x["name"],
                           "note": f"营收{x['torg']:.0f}% · 研发{x['rd_ratio']:.0f}% · PE {x.get('pe', '—')}"})
     # C 池：情绪池梯队
-    ep = TMP / f"emotion_pool_{day}.json"
+    ep = TMP / "pools" / f"emotion_pool_{day}.json"
     if ep.exists():
         for x in json.loads(ep.read_text(encoding="utf-8")).get("core", []):
             items.append({"pool": "C", "code": x["code"], "name": x["name"],

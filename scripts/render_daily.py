@@ -26,8 +26,8 @@ from emotion_section import CSS as EMO_CSS, render_guide  # noqa: E402
 from emotion_parts import CSS_EXTRA, render_thermometer, render_tier_list  # noqa: E402
 
 DAY = D.DAY
-OUT = ROOT / "output" / "daily" / DAY / "layered.html"
-EP = ROOT / "output" / "tmp" / f"emotion_pool_{DAY}.json"
+OUT = ROOT / "output" / "daily" / DAY / "index.html"
+EP = ROOT / "output" / "daily" / DAY / "data" / "emotion_pool.json"
 
 # 反向通道：主线锚定 ETF 实测数据（09-18；资金字段当日未出）
 ETF_ANCHORS = [
@@ -47,7 +47,7 @@ SECTOR_LINK = [   # 板块联动（正向主线 × 板块资金方向）
 
 def _render_etf_holdings() -> str:
     """ETF → 龙头个股反查表（读 build_etf_holdings.py 产出）。"""
-    p = ROOT / "output" / "tmp" / f"etf_holdings_{DAY}.json"
+    p = ROOT / "output" / "daily" / DAY / "data" / "etf_holdings.json"
     if not p.exists():
         return '<p class="muted">ETF 持仓数据未生成。</p>'
     d = json.loads(p.read_text(encoding="utf-8"))
@@ -98,7 +98,21 @@ def H_(v):
     return str(v).replace('<', '&lt;').replace('>', '&gt;')
 
 
+LINE_COLORS = {"航运": "#2b5fad", "算力(PCB/光通信)": "#c0392b", "粮食": "#b8860b", "半导体": "#7b3fa0"}
+
+
+legend = ('<div class="note">曲线怎么读：每条线是一条主线的"趋势强度分"（动量40%+均线30%+量能30%，锚定ETF日K计算，60分以上=主升区）。'
+          '<b>预警标记怎么看</b>：○ 空心圆=放量关注(L1)；实心圆+▲=启动预警(L2)；灰空心圆+✕=缩量骗炮——'
+          '<b>量价同涨才可信</b>，缩量涨价多为反弹噪音（历史验证：08-10量比0.77骗炮、09-07量比1.48真启动）。</div>')
+
+
 def render() -> str:
+    # ---- 台账（跨日数据源：轮动/形态/状态机/趋势线序列）----
+    _hd = json.loads((ROOT / "output" / "ledger" / "history.json").read_text(encoding="utf-8"))
+    days_h = _hd.get("days", [])
+    rot = _hd.get("rotation", {})
+    today = days_h[-1] if days_h else {}
+    prev = days_h[-2] if len(days_h) >= 2 else {}
     emo = json.loads(EP.read_text(encoding="utf-8")) if EP.exists() else None
     guide = render_guide(emo["thermometer"], emo["active_lines"], emo["retired_lines"]) if emo else ""
     wx = render_thermometer(emo) if emo else ""
@@ -107,7 +121,7 @@ def render() -> str:
 
     # ---------- 个股 → 板块 → 主线 的显性关联 ----------
     SMAP = {}
-    _sm = ROOT / "output" / "tmp" / "sector_map.json"
+    _sm = ROOT / "output" / "cache" / "sector_map.json"
     if _sm.exists():
         SMAP = json.loads(_sm.read_text(encoding="utf-8"))
     # 板块 → 主线（一条主线通常横跨多个板块；多对多时取主关联，首版口径）
@@ -193,7 +207,7 @@ def render() -> str:
     # A 池评分：优先规则分（可复现），无则回退手工分
     import subprocess as _sp2
     _sc_script = Path(__file__).parent / "score_stable.py"
-    _sc_path = ROOT / "output" / "tmp" / "a_pool_scored.json"
+    _sc_path = ROOT / "output" / "daily" / DAY / "data" / "a_pool_scored.json"
     if _sc_script.exists():
         _sp2.run([sys.executable, str(_sc_script), "--json"],
                  capture_output=True, text=True, timeout=180,
@@ -283,7 +297,7 @@ def render() -> str:
     ts_rows = "".join(
         f'<tr><td>{t[0]}</td><td class="num"><b>{t[1]}</b></td>'
         f'<td class="num">{t[2]:+.1f}</td><td class="num">{t[3]}</td></tr>' for t in D.SCORE_TREND)
-    time_fwd = (card("观察池 · 跨日追踪（19 只）",
+    time_fwd = (card("观察池 · 跨日追踪（19 只 · 状态机）",
                      table(["标的", "板块 · 主线", "连续", "状态", "蓄势分", "今收"], watch_rows),
                      sub="收盘价推进状态机 · 与趋势强度分同轴", cls="time")
                 + card("主线趋势强度分", table(["主线", "分数", "日环比", "量比"], ts_rows),
@@ -292,7 +306,7 @@ def render() -> str:
 
     # ---------- ②.5 物种分诊：三池总览 + B 池详情 ----------
     gp = {}
-    _gp = ROOT / "output" / "tmp" / f"growth_pool_{DAY}.json"
+    _gp = ROOT / "output" / "daily" / DAY / "data" / "growth_pool.json"
     if _gp.exists():
         gp = json.loads(_gp.read_text(encoding="utf-8"))
     bp = gp.get("b_pool", [])
@@ -316,6 +330,97 @@ def render() -> str:
         f'<div class="ci-r">纪律：机动仓≤5% · 快进快出</div></div>'
         '</div></div>')
 
+    # ---------- 驾驶舱区块（趋势曲线/轮动热力/叙事/形态分布/追踪台）----------
+    trend_img = ('<div class="rot"><h3>主线趋势强度曲线——两条线的交叉就是接力棒交接的时刻</h3>'
+             '<img src="../charts/trend-lines.svg" style="width:100%;background:#fff;border-radius:8px">'
+             '<img src="../charts/trend-lines-annual.svg" style="width:100%;margin-top:10px;background:#fff;border-radius:8px">'
+             + legend +
+             '<div class="note">趋势线由 build_dashboard_full.py 生成（自动化每日更新）。</div></div>')
+    STAGE_CLS = {"启动":"c-启动","刚起步":"c-刚起步","主升":"c-主升","尾声":"c-尾声","退潮":"c-退潮","蓄势":"c-蓄势","埋伏":"c-埋伏","退出":"c-退出"}
+    heat_rows = []
+    for line in rot["lines"]:
+        cells = []
+        for d in rot["dates"]:
+            st = line["stages"].get(d, "")
+            cls = STAGE_CLS.get(st.replace("*", ""), "c-blank")
+            cells.append(f'<td class="{cls}">{st.replace("*","") if st else "·"}</td>')
+        heat_rows.append(f'<tr><td class="nm">{line["name"]}</td>{"".join(cells)}</tr>')
+    dates_head = "".join(f'<th>{d}</th>' for d in rot["dates"])
+
+    story = f'''<div class="story"><b>〔人工轮动叙事 · 上次更新 09-15，随每日复盘续写〕</b><b>老主线怎么走完（农业/粮食）</b>：08-18 粮食ETF点火（+52分跳升）→ 08-19~09-07 主升（20日涨幅一度+20.4%）→ 09-08 尾声 → 09-10 退潮确认（中粮糖业天地板、梯队晋级失败）→ 09-14 退潮第3日（敦煌种业跌停-10%）→ <b>09-15 退潮第4日：种植业-4.65%（0/20上涨）、敦煌种业再跌停、粮食ETF 4连阴（今日-3.93%），20日涨幅滑落至-6.7%（今日口径），趋势强度分 38.4→30.4。彻底退场，只可龙头快打或不碰。</b><br>
+    <b>新主线怎么接棒（算力硬件·PCB/覆铜板）</b>：09-10 候补入册（早期埋伏名单15席占12席，资金先行）→ 09-14 转正"刚起步"（元件5日145.4亿第1）→ <b>09-15 刚起步第2日：元件5日136.4亿维持第1、玻璃玻纤64.9亿第2；元件当日主力-17.6亿高位换手、玻璃玻纤当日+15.4亿接棒；板块内连板梯队仍在晋级（澳弘电子3板、双星新材3板、华正新材2连板涨停踩到突破价251.57）。但通信ETF方向闸仍未过（20日-8.0%、60日-27.4%深跌通道），且前十大权重无PCB股（锚定错配）——仍是"钱进了价没涨"，等ETF点火才有"主升·互证"。</b><br>
+    <b>航运船舶（刚起步第7日）预警亮牌</b>：09-11 主升降级回刚起步后，09-15 ETF资金通道确认「价涨钱走=衰竭预警」——船舶ETF当日净流出480万、份额月-6.0%/周-3.7%，与20日+4.3%的涨幅背离；板块资金第7（未转流出）暂保刚起步，份额续缩则降级退潮。<br>
+    <b>候补更替</b>：医疗服务候补一夜证伪（5日资金第11→第100）；新候补=<b>风电设备</b>（09-15 涨幅第2+5日资金第3+上涨家数80%，海力风电+12.84%）。<br>
+    <b>轮动规律一句话</b>：资金是搬家不是离场——农业退潮撤出的钱正趴在元件板块（5日136亿），并已开始试水风电设备。盯住老主线尾声时谁在蓄势，接力棒交接处（曲线交叉）就是布局窗口。</div>'''
+
+    heat_html = (f'<div class="rot"><h3>主线轮动时间线 · 阶段热力表（新日期在右；带*为ETF日K回溯推算）</h3>'
+                 f'<table><tr><th class="nm">主线</th>{dates_head}</tr>{"".join(heat_rows)}</table>{story}</div>')
+    prev_watch = {w["code"]: w for w in prev.get("watchlist", [])} if prev else {}   # list→dict（按 code 索引）
+    days = days_h
+    STATUS_CLS = {"观察中":"p-blue","临近突破":"p-red","已触发":"p-green","已触及·等回踩":"p-orange","已失效":"p-gray"}
+    def pill(st): return f'<span class="pill {STATUS_CLS.get(st,"p-gray")}">{st}</span>'
+    def xushi_cell(sc):
+        if sc is None: return '<span class="muted">—</span>'
+        tag = "快憋满" if sc >= 75 else ("还在压" if sc >= 60 else "没形态")
+        cls = "p-red" if sc >= 75 else ("p-blue" if sc >= 60 else "p-gray")
+        return f'<b>{sc}</b> <span class="pill {cls}">{tag}</span>'
+    def dist_cell(v):
+        if v is None: return '<span class="muted">—</span>'
+        pct = max(0, min(100, 100 - v * 20))
+        return f'<div class="bar-wrap"><div class="bar dg" style="width:{pct}%"></div></div><span class="muted">{v}%</span>'
+    rows = []
+    for w0 in today["watchlist"]:
+        p = prev_watch.get(w0["code"])
+        if p:
+            ps = p.get("xushi")
+            if ps is None and w0["xushi"] is None: d = "—"
+            elif w0["xushi"] is None: d = "—"
+            elif ps is None: d = '<span class="up">▲新</span>'
+            else:
+                dd = round(w0["xushi"] - ps, 1)
+                d = f'<span class="up">▲ +{dd}</span>' if dd > 0 else (f'<span class="down">▼ {dd}</span>' if dd < 0 else "—")
+        else:
+            d = '<span class="up">新面孔</span>'
+        seq = []
+        for dd in days[-5:]:
+            for ww in dd["watchlist"]:
+                if ww["code"] == w0["code"] and ww.get("xushi") is not None:
+                    seq.append(ww["xushi"])
+        bars = "".join(f'<div class="sp" style="height:{max(3,int(s/3))}px" title="{s}"></div>' for s in seq[-5:]) or '<span class="muted">—</span>'
+        gate = ' <span class="pill p-gold">红线</span>' if "红线" in (w0.get("note") or "") else ""
+        rows.append(f'<tr><td class="nm">{link(w0.get("code",""), w0["name"])}{gate}</td><td>{w0["first_seen"][5:]}</td><td class="num">{w0["days_in"]}</td>'
+                    f'<td>{pill(w0["status"])}</td><td>{xushi_cell(w0["xushi"])}</td><td>{dist_cell(w0["dist_to_break_pct"])}</td>'
+                    f'<td>{d}</td><td><div class="spark">{bars}</div></td><td class="muted">{w0["note"][:38]}…</td></tr>')
+    watch_html = (f'<div class="rot"><h3>观察池 · 跨日追踪台（收盘价口径推进 · 数据日期 {today["date"]}）</h3>'
+                  f'<table><tr><th>观察票</th><th>入池日</th><th>连续在榜</th><th>状态</th><th>今日蓄势分</th><th>距突破价</th><th>较上次</th><th>近5日</th><th>备注</th></tr>{"".join(rows)}</table></div>')
+    chain = (f'<div class="chain">约 <b>{f.get("全市场约","—")}</b> 全市场 → <b>{f.get("站上所有均线","—")}</b> 站上所有主要均线 → '
+             f'<b>{f.get("早期埋伏","—")}</b> 早期埋伏（大钱进了还没涨） → <b>{f.get("主升候选(剔小市值后)","—")}</b> 主升候选（合格{f.get("主升候选(市值≥100亿合格)","—")}） → '
+             f'<b>{f.get("站上主要均线资金强","—")}</b> 站上主要均线×资金交叉 → <b>稳做 {f.get("稳做名单","—")}</b> ＋ <b>快打 {f.get("快打名单","—")}</b>'
+             f'<span class="anchor-sub">（数据日期 {today["date"]}）</span></div>')
+
+    pc = rot.get("pattern_check") or []
+    pe = pc[-1] if pc else None
+    if pe:
+        d_ = pe.get("dist", {})
+        chips = " · ".join(f'{k} <b>{v}</b> 只' for k, v in d_.items() if v)
+        rows_p = ""
+        for s in pe.get("stocks", []):
+            e = s.get("eligibility", "—")
+            cls = "p-green" if e.startswith("✅") else ("p-gray" if e.startswith("观察") else "p-red")
+            rows_p += (f'<tr><td class="nm">{link(s.get("code",""), s.get("name",""))}</td><td>{s.get("pattern","")}</td>'
+                       f'<td class="num">{s.get("chg60d","—")}</td><td class="num">{s.get("chg20d","—")}</td>'
+                       f'<td class="num">{s.get("chg5d","—")}</td><td class="num">{s.get("today","—")}</td>'
+                       f'<td><span class="pill {cls}">{e}</span></td><td class="muted">{s.get("elig_note","")}</td></tr>')
+        t1 = pe.get("t1_count_issue")
+        pattern_card = (f'<div class="anchor-card" style="border-left:5px solid #8e44ad">'
+            f'<div class="anchor-head"><span class="anchor-tag">形态分布 · 个股资格</span>'
+            f'<span class="anchor-sub">形态标签（走势长什么样）≠ 交易资格（能不能做）· 两层合并输出 · {pe.get("date","")}</span></div>'
+            f'<div class="chain">形态分布：{chips}　<span class="anchor-sub">（{pe.get("mainline","")}主线内逐票）</span></div>'
+            f'<table class="mini"><tr><th>个股</th><th>形态</th><th>60日</th><th>20日</th><th>5日</th><th>今日</th><th>系统资格</th><th>依据</th></tr>{rows_p}</table>'
+            + (f'<div class="tip">⚠️ <b>T1 计数复核</b>：{t1}</div>' if t1 else '')
+            + f'<div class="note">{pe.get("note","")}</div></div>')
+    else:
+        pattern_card = '<div class="note">形态分布数据待生成（rotation.pattern_check，由每日自动化写入）。</div>'
     # ---------- 三池跟踪统计（台账 pool_tracking）----------
     stats_card = ""
     try:
@@ -532,17 +637,21 @@ def render() -> str:
 <span class="guide-meta">活跃主线 {len(emo["active_lines"]) if emo else 0} 条 / 退潮 {len(emo["retired_lines"]) if emo else 0} 条</span></div></div>
 {wx}
 {dict_html}
+{trend_img}
+{heat_html}
 </div>
 
 {merge_layer}
 
 {overview}
 {stats_card}
+{pattern_card}
 
 <div class="cols">
  <div class="col">
   <div class="col-inner"><div class="layer-title fwd">③ 正向通道 ▶ 自下而上：个股 → 主线 → 选票</div></div>
-  {fwd_layer}
+  {chain}
+{fwd_layer}
   {b_block}
   <div class="col-inner"><div class="layer-title" style="color:#b8860b;border-bottom:2px solid #f0c96a;padding-bottom:5px">④ 时间层 · 趋势侧跨日跟踪</div></div>
   {time_fwd}

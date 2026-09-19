@@ -80,7 +80,7 @@ def test_jargon():
 
 # ---------- 4. 台账 schema：关键字段 + 三池样本 ----------
 def test_ledger():
-    h = json.loads((ROOT / "output" / "history.json").read_text(encoding="utf-8"))
+    h = json.loads((ROOT / "output" / "ledger" / "history.json").read_text(encoding="utf-8"))
     assert h.get("days"), "days 快照缺失"
     assert (h["days"][-1] or {}).get("date"), "最后快照无日期"
     entries = h.get("pool_tracking", {}).get("entries", [])

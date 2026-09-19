@@ -3,7 +3,7 @@
 import json, os
 
 BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-HIST = os.path.join(BASE, "history.json")
+HIST = os.path.join(BASE, "ledger", "history.json")
 OUT  = os.path.join(BASE, "dashboard.html")
 
 with open(HIST) as f:

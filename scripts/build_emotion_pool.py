@@ -7,7 +7,7 @@
   高危五类     —— 业内共识，其中 3 类现有数据可判
 
 定位：**只看版**——结构化呈现 + 高风险标注，不产出买入信号。
-产出：output/tmp/emotion_pool_<date>.json（供日报渲染与台账追加）
+产出：output/tmp/pools/emotion_pool_<date>.json（供日报渲染与台账追加）
 
 数据源：westock-tool CLI（1.5.0）+ output/tmp/sector_map.json（板块成分映射）
 """
@@ -32,7 +32,7 @@ def data_day() -> str:
     """
     import json as _json
     try:
-        h = _json.loads((ROOT / "output" / "history.json").read_text(encoding="utf-8"))
+        h = _json.loads((ROOT / "output" / "ledger" / "history.json").read_text(encoding="utf-8"))
         d = (h.get("days") or [{}])[-1].get("date")
         if d:
             return d
@@ -140,7 +140,7 @@ def main() -> int:
     smap = load_sector_map()
 
     # 今日活跃主线（未退潮）+ 主线锚定板块
-    hist = json.loads((ROOT / "output" / "history.json").read_text(encoding="utf-8"))
+    hist = json.loads((ROOT / "output" / "ledger" / "history.json").read_text(encoding="utf-8"))
     today = hist["days"][-1]
     active_lines, retired_lines = [], []
     for m in today.get("mainlines", []):
@@ -261,7 +261,7 @@ def main() -> int:
             "有红旗": sum(1 for p in pool if p["red_flags"]),
         },
     }
-    out = TMP / f"emotion_pool_{day}.json"
+    out = TMP / "pools" / f"emotion_pool_{day}.json"
     out.write_text(json.dumps(result, ensure_ascii=False, indent=1), encoding="utf-8")
     print(f"[5/5] ✅ {out}")
     print(f"  温度计：连板高度 {max_board}（{max_board_name}）｜涨停 {limitup_count} 家｜阶段 {stage}")

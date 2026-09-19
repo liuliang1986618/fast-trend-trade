@@ -1,0 +1,110 @@
+Traceback (most recent call last):
+  File "/Users/liuliang19/.workbuddy/plugins/cache/cb_teams_marketplace/finance-data/1.5.0/skills/wb-finance-skill/scripts/run_signal.py", line 204, in <module>
+    raise SystemExit(main())
+                     ~~~~^^
+  File "/Users/liuliang19/.workbuddy/plugins/cache/cb_teams_marketplace/finance-data/1.5.0/skills/wb-finance-skill/scripts/run_signal.py", line 198, in main
+    result = _run_vcp(args.code, df) if args.engine == "vcp" else _run_engine(args.engine, args.code, df)
+             ~~~~~~~~^^^^^^^^^^^^^^^
+  File "/Users/liuliang19/.workbuddy/plugins/cache/cb_teams_marketplace/finance-data/1.5.0/skills/wb-finance-skill/scripts/run_signal.py", line 149, in _run_vcp
+    high = float(ch["high"].max())
+                 ~~^^^^^^^^
+IndexError: only integers, slices (`:`), ellipsis (`...`), numpy.newaxis (`None`) and integer or boolean arrays are valid indices
+Traceback (most recent call last):
+  File "/Users/liuliang19/.workbuddy/plugins/cache/cb_teams_marketplace/finance-data/1.5.0/skills/wb-finance-skill/scripts/run_signal.py", line 204, in <module>
+    raise SystemExit(main())
+                     ~~~~^^
+  File "/Users/liuliang19/.workbuddy/plugins/cache/cb_teams_marketplace/finance-data/1.5.0/skills/wb-finance-skill/scripts/run_signal.py", line 198, in main
+    result = _run_vcp(args.code, df) if args.engine == "vcp" else _run_engine(args.engine, args.code, df)
+             ~~~~~~~~^^^^^^^^^^^^^^^
+  File "/Users/liuliang19/.workbuddy/plugins/cache/cb_teams_marketplace/finance-data/1.5.0/skills/wb-finance-skill/scripts/run_signal.py", line 149, in _run_vcp
+    high = float(ch["high"].max())
+                 ~~^^^^^^^^
+IndexError: only integers, slices (`:`), ellipsis (`...`), numpy.newaxis (`None`) and integer or boolean arrays are valid indices
+Traceback (most recent call last):
+  File "/Users/liuliang19/.workbuddy/plugins/cache/cb_teams_marketplace/finance-data/1.5.0/skills/wb-finance-skill/scripts/run_signal.py", line 204, in <module>
+    raise SystemExit(main())
+                     ~~~~^^
+  File "/Users/liuliang19/.workbuddy/plugins/cache/cb_teams_marketplace/finance-data/1.5.0/skills/wb-finance-skill/scripts/run_signal.py", line 198, in main
+    result = _run_vcp(args.code, df) if args.engine == "vcp" else _run_engine(args.engine, args.code, df)
+             ~~~~~~~~^^^^^^^^^^^^^^^
+  File "/Users/liuliang19/.workbuddy/plugins/cache/cb_teams_marketplace/finance-data/1.5.0/skills/wb-finance-skill/scripts/run_signal.py", line 149, in _run_vcp
+    high = float(ch["high"].max())
+                 ~~^^^^^^^^
+IndexError: only integers, slices (`:`), ellipsis (`...`), numpy.newaxis (`None`) and integer or boolean arrays are valid indices
+Traceback (most recent call last):
+  File "/Users/liuliang19/.workbuddy/plugins/cache/cb_teams_marketplace/finance-data/1.5.0/skills/wb-finance-skill/scripts/run_signal.py", line 204, in <module>
+    raise SystemExit(main())
+                     ~~~~^^
+  File "/Users/liuliang19/.workbuddy/plugins/cache/cb_teams_marketplace/finance-data/1.5.0/skills/wb-finance-skill/scripts/run_signal.py", line 198, in main
+    result = _run_vcp(args.code, df) if args.engine == "vcp" else _run_engine(args.engine, args.code, df)
+             ~~~~~~~~^^^^^^^^^^^^^^^
+  File "/Users/liuliang19/.workbuddy/plugins/cache/cb_teams_marketplace/finance-data/1.5.0/skills/wb-finance-skill/scripts/run_signal.py", line 149, in _run_vcp
+    high = float(ch["high"].max())
+                 ~~^^^^^^^^
+IndexError: only integers, slices (`:`), ellipsis (`...`), numpy.newaxis (`None`) and integer or boolean arrays are valid indices
+Traceback (most recent call last):
+  File "/Users/liuliang19/.workbuddy/plugins/cache/cb_teams_marketplace/finance-data/1.5.0/skills/wb-finance-skill/scripts/run_signal.py", line 204, in <module>
+    raise SystemExit(main())
+                     ~~~~^^
+  File "/Users/liuliang19/.workbuddy/plugins/cache/cb_teams_marketplace/finance-data/1.5.0/skills/wb-finance-skill/scripts/run_signal.py", line 198, in main
+    result = _run_vcp(args.code, df) if args.engine == "vcp" else _run_engine(args.engine, args.code, df)
+             ~~~~~~~~^^^^^^^^^^^^^^^
+  File "/Users/liuliang19/.workbuddy/plugins/cache/cb_teams_marketplace/finance-data/1.5.0/skills/wb-finance-skill/scripts/run_signal.py", line 149, in _run_vcp
+    high = float(ch["high"].max())
+                 ~~^^^^^^^^
+IndexError: only integers, slices (`:`), ellipsis (`...`), numpy.newaxis (`None`) and integer or boolean arrays are valid indices
+Traceback (most recent call last):
+  File "/Users/liuliang19/.workbuddy/plugins/cache/cb_teams_marketplace/finance-data/1.5.0/skills/wb-finance-skill/scripts/run_signal.py", line 204, in <module>
+    raise SystemExit(main())
+                     ~~~~^^
+  File "/Users/liuliang19/.workbuddy/plugins/cache/cb_teams_marketplace/finance-data/1.5.0/skills/wb-finance-skill/scripts/run_signal.py", line 198, in main
+    result = _run_vcp(args.code, df) if args.engine == "vcp" else _run_engine(args.engine, args.code, df)
+             ~~~~~~~~^^^^^^^^^^^^^^^
+  File "/Users/liuliang19/.workbuddy/plugins/cache/cb_teams_marketplace/finance-data/1.5.0/skills/wb-finance-skill/scripts/run_signal.py", line 149, in _run_vcp
+    high = float(ch["high"].max())
+                 ~~^^^^^^^^
+IndexError: only integers, slices (`:`), ellipsis (`...`), numpy.newaxis (`None`) and integer or boolean arrays are valid indices
+Traceback (most recent call last):
+  File "/Users/liuliang19/.workbuddy/plugins/cache/cb_teams_marketplace/finance-data/1.5.0/skills/wb-finance-skill/scripts/run_signal.py", line 204, in <module>
+    raise SystemExit(main())
+                     ~~~~^^
+  File "/Users/liuliang19/.workbuddy/plugins/cache/cb_teams_marketplace/finance-data/1.5.0/skills/wb-finance-skill/scripts/run_signal.py", line 198, in main
+    result = _run_vcp(args.code, df) if args.engine == "vcp" else _run_engine(args.engine, args.code, df)
+             ~~~~~~~~^^^^^^^^^^^^^^^
+  File "/Users/liuliang19/.workbuddy/plugins/cache/cb_teams_marketplace/finance-data/1.5.0/skills/wb-finance-skill/scripts/run_signal.py", line 149, in _run_vcp
+    high = float(ch["high"].max())
+                 ~~^^^^^^^^
+IndexError: only integers, slices (`:`), ellipsis (`...`), numpy.newaxis (`None`) and integer or boolean arrays are valid indices
+Traceback (most recent call last):
+  File "/Users/liuliang19/.workbuddy/plugins/cache/cb_teams_marketplace/finance-data/1.5.0/skills/wb-finance-skill/scripts/run_signal.py", line 204, in <module>
+    raise SystemExit(main())
+                     ~~~~^^
+  File "/Users/liuliang19/.workbuddy/plugins/cache/cb_teams_marketplace/finance-data/1.5.0/skills/wb-finance-skill/scripts/run_signal.py", line 198, in main
+    result = _run_vcp(args.code, df) if args.engine == "vcp" else _run_engine(args.engine, args.code, df)
+             ~~~~~~~~^^^^^^^^^^^^^^^
+  File "/Users/liuliang19/.workbuddy/plugins/cache/cb_teams_marketplace/finance-data/1.5.0/skills/wb-finance-skill/scripts/run_signal.py", line 149, in _run_vcp
+    high = float(ch["high"].max())
+                 ~~^^^^^^^^
+IndexError: only integers, slices (`:`), ellipsis (`...`), numpy.newaxis (`None`) and integer or boolean arrays are valid indices
+Traceback (most recent call last):
+  File "/Users/liuliang19/.workbuddy/plugins/cache/cb_teams_marketplace/finance-data/1.5.0/skills/wb-finance-skill/scripts/run_signal.py", line 204, in <module>
+    raise SystemExit(main())
+                     ~~~~^^
+  File "/Users/liuliang19/.workbuddy/plugins/cache/cb_teams_marketplace/finance-data/1.5.0/skills/wb-finance-skill/scripts/run_signal.py", line 198, in main
+    result = _run_vcp(args.code, df) if args.engine == "vcp" else _run_engine(args.engine, args.code, df)
+             ~~~~~~~~^^^^^^^^^^^^^^^
+  File "/Users/liuliang19/.workbuddy/plugins/cache/cb_teams_marketplace/finance-data/1.5.0/skills/wb-finance-skill/scripts/run_signal.py", line 149, in _run_vcp
+    high = float(ch["high"].max())
+                 ~~^^^^^^^^
+IndexError: only integers, slices (`:`), ellipsis (`...`), numpy.newaxis (`None`) and integer or boolean arrays are valid indices
+Traceback (most recent call last):
+  File "/Users/liuliang19/.workbuddy/plugins/cache/cb_teams_marketplace/finance-data/1.5.0/skills/wb-finance-skill/scripts/run_signal.py", line 204, in <module>
+    raise SystemExit(main())
+                     ~~~~^^
+  File "/Users/liuliang19/.workbuddy/plugins/cache/cb_teams_marketplace/finance-data/1.5.0/skills/wb-finance-skill/scripts/run_signal.py", line 198, in main
+    result = _run_vcp(args.code, df) if args.engine == "vcp" else _run_engine(args.engine, args.code, df)
+             ~~~~~~~~^^^^^^^^^^^^^^^
+  File "/Users/liuliang19/.workbuddy/plugins/cache/cb_teams_marketplace/finance-data/1.5.0/skills/wb-finance-skill/scripts/run_signal.py", line 149, in _run_vcp
+    high = float(ch["high"].max())
+                 ~~^^^^^^^^
+IndexError: only integers, slices (`:`), ellipsis (`...`), numpy.newaxis (`None`) and integer or boolean arrays are valid indices
