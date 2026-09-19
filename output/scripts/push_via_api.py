@@ -50,14 +50,27 @@ def api(method, path, data=None, token=""):
         raise RuntimeError(f"API {method} {path} → {e.code}: {e.read()[:300]}")
 
 
+def load_token(explicit=None) -> str:
+    """token 取值优先级：命令行参数 > 仓库根 .env 的 GITHUB_TOKEN。"""
+    if explicit:
+        return explicit
+    env_path = Path(__file__).resolve().parents[2] / ".env"   # 仓库根/.env
+    if env_path.exists():
+        for line in env_path.read_text(encoding="utf-8").splitlines():
+            if line.strip().startswith("GITHUB_TOKEN="):
+                return line.split("=", 1)[1].strip()
+    raise RuntimeError("未找到 token：请传 --token 或在仓库根 .env 写 GITHUB_TOKEN=...")
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--repo", required=True, help="owner/repo")
-    ap.add_argument("--token", required=True)
+    ap.add_argument("--repo", default="liuliang1986618/fast-trend-trade")
+    ap.add_argument("--token", default=None, help="缺省从仓库根 .env 的 GITHUB_TOKEN 读取")
     ap.add_argument("--branch", default="main")
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--from", dest="base", default=None, help="远端当前 HEAD（默认自动查询）")
     args = ap.parse_args()
+    args.token = load_token(args.token)
 
     repo = args.repo
     tok = args.token
