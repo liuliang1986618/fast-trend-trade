@@ -334,6 +334,42 @@ if pe:
 else:
     pattern_card = '<div class="note">形态分布数据待生成（rotation.pattern_check，由每日自动化写入）。</div>'
 
+# ---- 三池分诊总览（v0.3）----
+import json as _json
+import os as _os
+_day = today.get("date", "")
+def _load_json(path):
+    try:
+        return _json.load(open(path, encoding="utf-8"))
+    except Exception:
+        return {}
+_gp = _load_json(_os.path.join(BASE, "tmp", f"growth_pool_{_day}.json")).get("b_pool", [])
+_core = _load_json(_os.path.join(BASE, "tmp", f"emotion_pool_{_day}.json")).get("core", [])
+_a_cnt = len(today.get("stable_list", []))
+def _top(lst, n=4):
+    names = []
+    for x in lst[:n]:
+        if isinstance(x, dict):
+            names.append(x.get("name", ""))
+        elif isinstance(x, (list, tuple)) and len(x) > 1:
+            names.append(str(x[1]))
+    return "、".join(n2 for n2 in names if n2) or "—"
+def _gp_name(x):
+    return x.get("name", "")
+_clinic_rows = (
+    f'<tr><td><span class="pill p-green">A 趋势池</span></td><td class="num">{_a_cnt}</td>'
+    f'<td>PE∈[0,80] · PB≤8 · 扣非盈利</td><td>仓位≤20% · 让利润奔跑</td><td>{_top(today.get("stable_list", []))}</td></tr>'
+    f'<tr><td><span class="pill p-orange">B 预期驱动池</span></td><td class="num">{len(_gp)}</td>'
+    f'<td>营收≥30% · 毛利&gt;40% · 研发≥15%</td><td>仓位≤10% · 独立账本 · 止损-5%</td><td>{_top(_gp)}</td></tr>'
+    f'<tr><td><span class="pill p-red">C 情绪池</span></td><td class="num">{len(_core)}</td>'
+    f'<td>涨停/连板 · 换手&gt;15%</td><td>机动仓≤5% · 快进快出</td><td>{_top(_core)}</td></tr>')
+clinic_card = (f'<div class="anchor-card" style="border-left:5px solid #EF9F27">'
+    f'<div class="anchor-head"><span class="anchor-tag">物种分诊 · 三池总览</span>'
+    f'<span class="anchor-sub">筛选与分类分离——同一批候选按物种分诊，各池独立纪律（{_day}）</span></div>'
+    f'<table class="mini"><tr><th>池</th><th>数量</th><th>判据</th><th>纪律</th><th>代表标的</th></tr>{_clinic_rows}</table>'
+    f'<div class="note">B 池买点状态四档：已触发（收盘站上突破价）｜临近突破（距突破价≤2%）｜'
+    f'蓄势充分（形态憋满但离买点远）｜观察中。台账 pool_tracking 记录三池后续表现，20 交易日后数据裁决。</div></div>')
+
 html = f'''<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>趋势观察驾驶舱 · 每日收盘后自动重建</title><style>
 :root{{--ink:#1c2330;--sub:#5b6472;--line:#e3e7ee;--bg:#f7f8fa;--up:#d43a3a;--down:#1a9e6b;--blue:#2b5fad;--orange:#d97b1c;--gold:#b8860b}}
 *{{box-sizing:border-box;margin:0;padding:0}}
@@ -402,6 +438,7 @@ a.q.etf{{color:#8e44ad;border-bottom-color:#d9c7ea}}
 <h2>双向锚定 · 正反两路交叉验证</h2>
 {pos_card}{neg_card}{cross_card}
 {pattern_card}
+{clinic_card}
 </div></body></html>'''
 
 with open(OUT, "w") as f2:
