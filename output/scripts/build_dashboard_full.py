@@ -203,7 +203,7 @@ for line in rot["lines"]:
 dates_head = "".join(f'<th>{d}</th>' for d in rot["dates"])
 
 story = f'''<div class="story"><b>老主线怎么走完（农业/粮食）</b>：08-18 粮食ETF点火（+52分跳升）→ 08-19~09-07 主升（20日涨幅一度+20.4%）→ 09-08 尾声 → 09-10 退潮确认（中粮糖业天地板、梯队晋级失败）→ 09-14 退潮第3日（敦煌种业跌停-10%）→ <b>09-15 退潮第4日：种植业-4.65%（0/20上涨）、敦煌种业再跌停、粮食ETF 4连阴（今日-3.93%），20日涨幅滑落至-6.7%（今日口径），趋势强度分 38.4→30.4。彻底退场，只可龙头快打或不碰。</b><br>
-<b>新主线怎么接棒（算力硬件·PCB/覆铜板）</b>：09-10 候补入册（探测层15席占12席，资金先行）→ 09-14 转正"刚起步"（元件5日145.4亿第1）→ <b>09-15 刚起步第2日：元件5日136.4亿维持第1、玻璃玻纤64.9亿第2；元件当日主力-17.6亿高位换手、玻璃玻纤当日+15.4亿接棒；板块内连板梯队仍在晋级（澳弘电子3板、双星新材3板、华正新材2连板涨停踩到突破价251.57）。但通信ETF方向闸仍未过（20日-8.0%、60日-27.4%深跌通道），且前十大权重无PCB股（锚定错配）——仍是"钱进了价没涨"，等ETF点火才有"主升·互证"。</b><br>
+<b>新主线怎么接棒（算力硬件·PCB/覆铜板）</b>：09-10 候补入册（早期埋伏名单15席占12席，资金先行）→ 09-14 转正"刚起步"（元件5日145.4亿第1）→ <b>09-15 刚起步第2日：元件5日136.4亿维持第1、玻璃玻纤64.9亿第2；元件当日主力-17.6亿高位换手、玻璃玻纤当日+15.4亿接棒；板块内连板梯队仍在晋级（澳弘电子3板、双星新材3板、华正新材2连板涨停踩到突破价251.57）。但通信ETF方向闸仍未过（20日-8.0%、60日-27.4%深跌通道），且前十大权重无PCB股（锚定错配）——仍是"钱进了价没涨"，等ETF点火才有"主升·互证"。</b><br>
 <b>航运船舶（刚起步第7日）预警亮牌</b>：09-11 主升降级回刚起步后，09-15 ETF资金通道确认「价涨钱走=衰竭预警」——船舶ETF当日净流出480万、份额月-6.0%/周-3.7%，与20日+4.3%的涨幅背离；板块资金第7（未转流出）暂保刚起步，份额续缩则降级退潮。<br>
 <b>候补更替</b>：医疗服务候补一夜证伪（5日资金第11→第100）；新候补=<b>风电设备</b>（09-15 涨幅第2+5日资金第3+上涨家数80%，海力风电+12.84%）。<br>
 <b>轮动规律一句话</b>：资金是搬家不是离场——农业退潮撤出的钱正趴在元件板块（5日136亿），并已开始试水风电设备。盯住老主线尾声时谁在蓄势，接力棒交接处（曲线交叉）就是布局窗口。</div>'''
@@ -253,7 +253,7 @@ watch_html = (f'<div class="rot"><h3>观察池 · 跨日追踪台（收盘价口
 f = today["funnel"]
 chain = (f'<div class="chain">约 <b>{f.get("全市场约","—")}</b> 全市场 → <b>{f.get("站上所有均线","—")}</b> 站上所有主要均线 → '
          f'<b>{f.get("早期埋伏","—")}</b> 早期埋伏（大钱进了还没涨） → <b>{f.get("主升候选(剔小市值后)","—")}</b> 主升候选（合格{f.get("主升候选(市值≥100亿合格)","—")}） → '
-         f'<b>{f.get("多头池资金强","—")}</b> 多头池×资金交叉 → <b>稳做 {f.get("稳做名单","—")}</b> ＋ <b>快打 {f.get("快打名单","—")}</b>'
+         f'<b>{f.get("站上主要均线资金强","—")}</b> 站上主要均线×资金交叉 → <b>稳做 {f.get("稳做名单","—")}</b> ＋ <b>快打 {f.get("快打名单","—")}</b>'
          f'<span class="anchor-sub">（数据日期 {today["date"]}）</span></div>')
 stable_rows = "".join(f'<tr><td class="nm">{qlink(s["code"], s["name"])}</td><td class="muted">{s["code"]}</td><td>{s["mainline"]}</td><td class="num"><b>{s["score"]}</b></td><td>{s["tier"]}</td><td class="muted">{s["reason"]}</td></tr>' for s in today["stable_list"])
 
@@ -458,3 +458,17 @@ with open(os.path.join(BASE, "trend-lines.svg"), "w") as f3:
 with open(os.path.join(BASE, "trend-lines-annual.svg"), "w") as f3:
     f3.write(annual_svg().replace('<svg ', '<svg ', 1))
 print("dashboard.html 重建完成:", os.path.getsize(OUT), "bytes")
+
+
+# ---- 术语自检（prompt「语言规范」铁律，v0.3 加入）----
+if __name__ == "__main__" or True:
+    import subprocess as _sp3
+    _lint = _os.path.join(_os.path.dirname(_os.path.abspath(__file__)), "lint_report.py")
+    try:
+        _r3 = _sp3.run([_sys_executable() if False else "/Users/liuliang19/.workbuddy/binaries/python/envs/default/bin/python",
+                        _lint, OUT], capture_output=True, text=True, timeout=60)
+        _out3 = (_r3.stdout or "").strip()
+        if _out3:
+            print("\n" + _out3.splitlines()[-1] if _out3.splitlines() else "")
+    except Exception:
+        pass

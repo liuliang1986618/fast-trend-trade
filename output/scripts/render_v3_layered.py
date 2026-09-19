@@ -88,6 +88,12 @@ def pct(v):
         return "—"
 
 
+def load_hist_tracking():
+    import json as _j
+    p = ROOT / "output" / "history.json"
+    return _j.loads(p.read_text(encoding="utf-8")).get("pool_tracking", {})
+
+
 def H_(v):
     return str(v).replace('<', '&lt;').replace('>', '&gt;')
 
@@ -310,6 +316,43 @@ def render() -> str:
         f'<div class="ci-r">纪律：机动仓≤5% · 快进快出</div></div>'
         '</div></div>')
 
+    # ---------- 三池跟踪统计（台账 pool_tracking）----------
+    stats_card = ""
+    try:
+        _pt = load_hist_tracking()
+        _en = _pt.get("entries", [])
+        if _en:
+            _h = [3, 5, 10, 20]
+            _rows = ""
+            for _pool in ("A", "B", "C"):
+                _r = [e for e in _en if e["pool"] == _pool]
+                if not _r:
+                    continue
+                _cells = []
+                _done_any = False
+                for _n in _h:
+                    _vals = [e["follow"][f"t{_n}"]["ret_pct"] for e in _r if e["follow"].get(f"t{_n}")]
+                    if _vals:
+                        _done_any = True
+                        _win = sum(1 for v in _vals if v > 0) / len(_vals) * 100
+                        _cells.append(f"{sum(_vals)/len(_vals):+.1f}% / {_win:.0f}%")
+                    else:
+                        _cells.append("—")
+                _cells.append(f"{sum(1 for e in _r if any(e['follow'].values()))}/{len(_r)}")
+                _rows += (f'<tr><td>{_pool} 池</td><td class="num">{len(_r)}</td>'
+                          + "".join(f'<td class="num">{c}</td>' for c in _cells) + "</tr>")
+            if _rows:
+                stats_card = ('<div class="layer" style="border-left:5px solid #7F77DD">'
+                    '<div class="layer-title">三池跟踪 · 台账统计'
+                    '<span class="layer-sub">T+N 均收益 / 胜率 · 已回填/样本 · 20 交易日后数据裁决</span></div>'
+                    '<table class="mini2"><tr><th>池</th><th>样本</th>'
+                    + "".join(f"<th>T+{n}</th>" for n in _h) + "<th>已回填</th></tr>"
+                    + _rows + '</table>'
+                    '<div class="bp-note">裁决规则：B 池跑赢 A 池 → 原 PE 硬闸在误伤，应放宽；'
+                    'B 池跑输 → 硬闸正确。数据裁决，不凭感觉改纪律。</div></div>')
+    except Exception:
+        stats_card = ""
+
     b_rows = ""
     for x in bp[:20]:
         t = x.get("tech") or {}
@@ -397,6 +440,9 @@ def render() -> str:
  .etfh td{{padding:6px;border-bottom:1px solid #f4f7fb;vertical-align:top}}
  .prec-yes{{background:#e6f5ee;color:#0f6e56;border-radius:999px;padding:1px 7px;font-size:11px}}
  .prec-approx{{background:#fdf1e2;color:#d97b1c;border-radius:999px;padding:1px 7px;font-size:11px}}
+ .mini2{{width:100%;border-collapse:collapse;font-size:11.5px}}
+ .mini2 th{{text-align:left;color:#8a94a8;font-weight:500;font-size:10.5px;padding:5px 6px;border-bottom:1px solid #eef2f8;background:#fafcfe}}
+ .mini2 td{{padding:6px;border-bottom:1px solid #f4f7fb}}
  .clinic{{border-left:5px solid #EF9F27}}
  .clinic-grid{{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}}
  .clinic-item{{border-radius:9px;padding:9px 12px;border:1px solid #eef2f8}}
@@ -491,6 +537,7 @@ def render() -> str:
 {merge_layer}
 
 {overview}
+{stats_card}
 
 <div class="cols">
  <div class="col">
