@@ -59,12 +59,12 @@ class DataProvider:
 
 | 命令 | 用途 |
 |---|---|
-| `python3 output/scripts/daily_pipeline.py` | **每日全流程**（三池 + 台账 + 四层日报）|
-| `python3 output/scripts/lint_report.py` | 术语自检（黑话/内部编号/必需区块）|
-| `python3 output/scripts/track_pools.py stats` | 三池跟踪统计 |
-| `python3 output/scripts/score_stable.py` | A 池五维规则分 |
+| `python3 scripts/daily_pipeline.py` | **每日全流程**（三池 + 台账 + 四层日报）|
+| `python3 scripts/lint_report.py` | 术语自检（黑话/内部编号/必需区块）|
+| `python3 scripts/track_pools.py stats` | 三池跟踪统计 |
+| `python3 scripts/score_stable.py` | A 池五维规则分 |
 | `python3 tests/test_smoke.py` | **冒烟测试（提交前必跑，10 秒）**|
-| `python3 output/scripts/push_via_api.py` | 推送远端（自动读 `.env` token）|
+| `python3 scripts/push_via_api.py` | 推送远端（自动读 `.env` token）|
 
 ## 目录
 
