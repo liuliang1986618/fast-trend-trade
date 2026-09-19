@@ -48,18 +48,31 @@ def num(v):
 
 
 def load_cap_rank() -> dict:
-    """读取全市场资金榜缓存（cap5d.md，由 westock_cli 生成）。"""
-    p = TMP / "cap5d.md"
-    if not p.exists():
-        return {}
-    import re
+    """全市场主力5日净流入排名（filter 口径：MainNetFlow5D，单位「元」）。
+
+    ⚠️ 不用 ranking cap_main_5d：2026-09-19 实测存在缺票问题
+    （中天科技 filter 排第 4 / 16.86 亿，但榜内前 1489 名查无此票），
+    且两源数值系统性不一致（中材 19.21 vs 21.63；新易盛 11.79 vs 5.53，方向都不固定）。
+    统一用 filter 口径，保证评分内部一致。
+    """
+    import subprocess
+    WT = "/Users/liuliang19/.workbuddy/plugins/cache/cb_teams_marketplace/finance-data/1.5.0/skills/westock-tool/scripts/index.js"
+    out = subprocess.run(["node", WT, "filter", "intersect([MainNetFlow5D > -9999])",
+                          "--orderby", "MainNetFlow5D", "--desc", "--limit", "1500"],
+                         capture_output=True, text=True, timeout=180).stdout
     rank = {}
-    for line in p.read_text(encoding="utf-8").splitlines():
-        m = re.match(r"^\| (\d+) \| (\S+) \| (\S+) \|", line)
-        if m:
-            vals = [x.strip() for x in line.strip("|").split("|")]
-            if len(vals) >= 9:
-                rank[vals[1]] = {"rank": int(vals[0]), "sum5d_wan": num(vals[8])}
+    i = 0
+    for line in out.splitlines():
+        line = line.strip()
+        if not line.startswith("|") or "---" in line:
+            continue
+        cells = [c.strip() for c in line.strip("|").split("|")]
+        if cells[0] in ("code", "") or len(cells) < 3:
+            continue
+        if not cells[0][:2] in ("sh", "sz", "bj"):
+            continue
+        i += 1
+        rank[cells[0]] = {"rank": i, "sum5d_yi": round((num(cells[2]) or 0) / 1e8, 2)}
     return rank
 
 
@@ -124,7 +137,7 @@ def main() -> int:
 
         # 2. 板块内地位（个股资金/板块资金，cap 20）
         rank_info = cap_rank.get(code, {})
-        fund5d = (rank_info.get("sum5d_wan") or 0) / 10000          # 亿元
+        fund5d = rank_info.get("sum5d_yi") or 0                     # 亿元（filter 口径）
         sec = _sector_of(code, D)
         sec_flow = _sector_flow_val(sector_flow, sec)
         if sec_flow and sec_flow > 0:
