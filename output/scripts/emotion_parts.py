@@ -51,6 +51,10 @@ def render_tier_list(data: dict, title: str = "情绪梯队名册 · 非趋势 �
         note_html = "".join(f'<span class="note-item">{H.escape(n)}</span>' for n in notes)
         link_cls = LINKAGE_CLS.get(p.get("linkage", ""), "lk-none")
         role_cls = ROLE_CLS.get(p.get("role", ""), "r-tier")
+        _seal = p.get("seal_time")
+        _eod = p.get("seal_eod")
+        _eod_tag = ('<span class="seal-ok">尾盘封死</span>' if _eod
+                    else ('<span class="seal-broken">炸板</span>' if _seal else ''))
         cards.append(
             f'<div class="tier-card{" has-flag" if flags else ""}">'
             f'<div class="tier-l1">'
@@ -59,14 +63,8 @@ def render_tier_list(data: dict, title: str = "情绪梯队名册 · 非趋势 �
             f'<span class="role {role_cls}">{p["role"]}</span>'
             f'<span class="lk {link_cls}">{H.escape(p.get("linkage", "—"))}</span>'
             f'</div>'
-            _seal = p.get('seal_time')
-            _seal_tag = (f'<span class="muted">首封 {_seal}</span>' if _seal
-                         else '<span class="muted">首封 —</span>')
-            _eod = p.get('seal_eod')
-            _eod_tag = ('<span class="seal-ok">尾盘封死</span>' if _eod
-                        else ('<span class="seal-broken">炸板</span>' if _seal else ''))
             f'<div class="tier-l2"><span>{H.escape(p.get("sector", "—"))}</span>'
-            f'{_seal_tag}{_eod_tag}'
+            f'<span class="muted">首封 {_seal or "—"}</span>{_eod_tag}'
             f'<span class="muted">现价 {_num(p.get("close"))}</span>'
             f'<span class="muted">换手 {_num(p.get("turnover"), ".1f", "%")}</span>'
             f'<span class="muted">市值 {_num(p.get("market_cap_yi"), ".0f", "亿")}</span></div>'
