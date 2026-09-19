@@ -75,6 +75,16 @@
       第二段 ◀ ETF 趋势→龙头个股（anchor-card neg）：ETF 榜 + 重点ETF→龙头个股反查表（权重%/当日涨跌/**形态标签**；数据 rotation.etf_holdings）。
       第三段 ⇄ 双向交叉验证（anchor-card cross）：互证表（含锚定校验/方向闸/资金四象限/**形态分布**列）+ 四象限图例。
    e. 轮动叙事：主线阶段变化 + ETF 关键行情 + 板块体检跨日变化 + ETF 资金通道变化 + 连板结构变化 + **形态分布变化**（如主线内趋势票清零），必须给日期和数字。
+9.5 **v0.3 三池流水线（2026-09-19 新增，在步骤 9 之后、步骤 10 之前运行）**：用托管 python 依次执行（cwd=仓库根）：
+   a. `python output/scripts/build_growth_pool.py` —— B 预期驱动池（全市场财务筛+技术面买点，输出 output/tmp/growth_pool_<台账日>.json）
+   b. `python output/scripts/build_etf_holdings.py` —— ETF 持仓反查（双来源，输出 etf_holdings_<台账日>.json）
+   c. `python output/scripts/build_emotion_pool.py` —— 情绪票池（温度计+梯队+红旗）
+   d. `python output/scripts/track_pools.py` —— 三池跟踪台账（record+price+backfill；**20 日裁决的数据来源，不可跳过**）
+   e. `python output/scripts/score_stable.py --json` —— A 池规则分（供 f 引用，须在 f 之前）
+   f. `python output/scripts/render_v3_layered.py` —— 四层架构日报 output/daily/<台账日>-layered.html（末尾自动跑术语自检，不过=不能提交）
+   产物核对：growth_pool / etf_holdings / emotion_pool 三个 JSON + layered.html；台账 pool_tracking.entries 应包含当日 A/B/C 全部标的。
+   注：脚本日期用 data_day()（台账最后快照日），跨零点运行不错位。资金类判据统一 filter 口径（MainNetFlow5D，单位元；ranking 榜实测存在缺票）。
+
 10. present_files 展示日报，简版摘要（含补跑情况、漏斗、主线记分与阶段、板块体检行、各主线 ETF 资金通道四象限结论、连板温度、**形态分布**、稳做名单、互证要点、ETF搭档、蓄势观察、追踪台与曲线变化、预警、指数档位）。
 ```
 
