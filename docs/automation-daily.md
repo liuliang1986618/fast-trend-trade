@@ -134,6 +134,7 @@
 | 3 | build_etf_holdings.py | etf_holdings_<date>.json | ETF 持仓反查（双来源） |
 | 4 | build_emotion_pool.py | emotion_pool_<date>.json | 情绪池（温度计+梯队） |
 | 5 | track_pools.py | history.json pool_tracking | 三池跟踪台账（20 日裁决数据源） |
+| 5.5 | score_stable.py --json | a_pool_scored.json | A 池五维规则分（四层日报引用） |
 | 6 | render_v3_layered.py | <date>-layered.html | 四层架构日报（内含术语自检） |
 
 ### 数据通道

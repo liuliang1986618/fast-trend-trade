@@ -105,6 +105,12 @@ data_sector(mode="list", scope="sw1")          # 申万一级清单
 **⚠️ 单位陷阱（同日修复）**：`westock quote` 的 `total_market_cap` 单位是**元**（长电科技 130,627,000,000 = 1306.27 亿），不是「亿」。
 脚本统一用 `to_yi()` 自动判断（>1e6 视为元）。此前按「亿」处理导致两个校验**静默失效**：情绪池「小市值庄股」红旗、分诊台 B 池「市值≥100亿」。
 
+**⚠️ ranking cap_main_5d 缺票实测（2026-09-19）**：
+中天科技（filter 排第 4 / MainNetFlow5D 16.86 亿）在 `ranking cap_main_5d --limit 1500` 榜内
+**前 1489 名查无此票**；且两源数值系统性不一致且方向不固定（中材 19.21 vs 21.63 亿、
+新易盛 11.79 vs 5.53 亿）。→ **资金类判据统一用 filter 口径**（MainNetFlow5D，单位「元」），
+ranking 榜仅作参考且需核对覆盖性。根因待查。
+
 **封装**：`output/scripts/westock_cli.py` —— quote / kline / finance / sector_list / sector_members / filter_stocks / ranking / build_sector_map
 
 **结论**：板块维度在日常自动化中**全程走 MCP 路径**（第一、二节）；纯 Python `run_daily` 若需板块能力，
