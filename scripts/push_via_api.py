@@ -54,7 +54,7 @@ def load_token(explicit=None) -> str:
     """token 取值优先级：命令行参数 > 仓库根 .env 的 GITHUB_TOKEN。"""
     if explicit:
         return explicit
-    env_path = Path(__file__).resolve().parents[2] / ".env"   # 仓库根/.env
+    env_path = Path(__file__).resolve().parents[1] / ".env"   # 仓库根/.env
     if env_path.exists():
         for line in env_path.read_text(encoding="utf-8").splitlines():
             if line.strip().startswith("GITHUB_TOKEN="):
@@ -74,7 +74,7 @@ def main() -> int:
 
     repo = args.repo
     tok = args.token
-    root = Path(__file__).resolve().parents[2]
+    root = Path(__file__).resolve().parents[1]
     subprocess.run(["git", "-C", str(root), "rev-parse", "--git-dir"], check=True, capture_output=True)
 
     def git(*a, binary=False):

@@ -12,7 +12,7 @@ from pathlib import Path
 
 import pandas as pd
 
-ROOT = Path(__file__).resolve().parents[2]
+ROOT = Path(__file__).resolve().parents[1]
 KLINE = ROOT / "output" / "tmp" / "kline"
 
 CODES = sys.argv[1:] or [

@@ -17,7 +17,7 @@ import shutil
 from datetime import datetime
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[2]
+ROOT = Path(__file__).resolve().parents[1]
 DAY = "2026-09-18"
 HIST = ROOT / "output" / "history.json"
 OUT = ROOT / "output" / "daily" / f"{DAY}.html"

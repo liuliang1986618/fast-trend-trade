@@ -51,7 +51,7 @@
 ## 连带同步（本次一并处理）
 
 - **自动化 prompt**：① 新增"参数权威"段——prompt 与 `settings.json` 冲突时以配置为准；② 确认层筛选命令 `Chg20D < 90` → `< 60`；③ 主线阶段用 `lifecycle.stages` 四词
-- **代码引用检查**：`position_tiers` / `pe_ttm_reject` / `r_unit` / `lifecycle` / `chg20d_max` 在 `src/` 与 `output/scripts/` 中**均无引用**（run_daily 未实现），重构零风险
+- **代码引用检查**：`position_tiers` / `pe_ttm_reject` / `r_unit` / `lifecycle` / `chg20d_max` 在 `src/` 与 `scripts/` 中**均无引用**（run_daily 未实现），重构零风险
 
 ## 未完成 / 后续（按路线图 §7 顺序）
 

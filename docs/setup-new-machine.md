@@ -52,7 +52,7 @@ cp config/local.example.json config/local.json
 
 | 想做什么 | 命令 |
 |---|---|
-| 重建驾驶舱（读 history.json 渲染追踪台） | `<托管python> output/scripts/build_dashboard.py` |
+| 重建驾驶舱（读 history.json 渲染追踪台） | `<托管python> scripts/build_dashboard.py` |
 | 看策略手册 | 浏览器打开 `docs/strategy-handbook.html` |
 | 看趋势曲线（滑卷/全貌） | `output/trend-lines.svg` / `output/trend-lines-annual.svg` |
 

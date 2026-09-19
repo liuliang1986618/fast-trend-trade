@@ -14,7 +14,7 @@ CODES = [
     "sh600183", "sz002436", "sh603186", "sh603601", "sz300398",
 ]
 
-ROOT = Path(__file__).resolve().parents[2]          # 仓库根
+ROOT = Path(__file__).resolve().parents[1]          # 仓库根
 OUT = ROOT / "output" / "tmp" / "kline"
 OUT.mkdir(parents=True, exist_ok=True)
 

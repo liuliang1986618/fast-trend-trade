@@ -111,7 +111,7 @@ data_sector(mode="list", scope="sw1")          # 申万一级清单
 新易盛 11.79 vs 5.53 亿）。→ **资金类判据统一用 filter 口径**（MainNetFlow5D，单位「元」），
 ranking 榜仅作参考且需核对覆盖性。根因待查。
 
-**封装**：`output/scripts/westock_cli.py` —— quote / kline / finance / sector_list / sector_members / filter_stocks / ranking / build_sector_map
+**封装**：`scripts/westock_cli.py` —— quote / kline / finance / sector_list / sector_members / filter_stocks / ranking / build_sector_map
 
 **结论**：板块维度在日常自动化中**全程走 MCP 路径**（第一、二节）；纯 Python `run_daily` 若需板块能力，
 `screen_by_sector` 用「本地按成分过滤」实现，其余按上表。实现时遵守 `providers/README.md` 的 checklist。

@@ -25,7 +25,7 @@ import re
 import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[2]
+ROOT = Path(__file__).resolve().parents[1]
 
 # prompt「统一用语对照」表 —— 左为禁用词，右为规范用语
 JARGON = {

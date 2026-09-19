@@ -20,14 +20,14 @@ import subprocess
 import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[2]
+ROOT = Path(__file__).resolve().parents[1]
 STEPS = [
-    ("B 预期驱动池", ["output/scripts/build_growth_pool.py"]),
-    ("ETF 持仓反查", ["output/scripts/build_etf_holdings.py"]),
-    ("情绪票池", ["output/scripts/build_emotion_pool.py"]),
-    ("三池跟踪台账", ["output/scripts/track_pools.py"]),
-    ("A 池规则分", ["output/scripts/score_stable.py", "--json"]),
-    ("四层架构日报", ["output/scripts/render_v3_layered.py"]),
+    ("B 预期驱动池", ["scripts/build_growth_pool.py"]),
+    ("ETF 持仓反查", ["scripts/build_etf_holdings.py"]),
+    ("情绪票池", ["scripts/build_emotion_pool.py"]),
+    ("三池跟踪台账", ["scripts/track_pools.py"]),
+    ("A 池规则分", ["scripts/score_stable.py", "--json"]),
+    ("四层架构日报", ["scripts/render_v3_layered.py"]),
 ]
 
 
