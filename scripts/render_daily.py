@@ -331,11 +331,14 @@ def render() -> str:
         '</div></div>')
 
     # ---------- 驾驶舱区块（趋势曲线/轮动热力/叙事/形态分布/追踪台）----------
+    # 趋势线 SVG 为文本文件——直接内嵌（<img> 的相对路径在预览环境会 404）
+    _sv_detail = (ROOT / "output" / "charts" / "trend-lines.svg").read_text(encoding="utf-8")
+    _sv_annual = (ROOT / "output" / "charts" / "trend-lines-annual.svg").read_text(encoding="utf-8")
     trend_img = ('<div class="rot"><h3>主线趋势强度曲线——两条线的交叉就是接力棒交接的时刻</h3>'
-             '<img src="../charts/trend-lines.svg" style="width:100%;background:#fff;border-radius:8px">'
-             '<img src="../charts/trend-lines-annual.svg" style="width:100%;margin-top:10px;background:#fff;border-radius:8px">'
-             + legend +
-             '<div class="note">趋势线由 build_dashboard_full.py 生成（自动化每日更新）。</div></div>')
+                 '<div style="overflow-x:auto;background:#fff;border-radius:8px">' + _sv_detail + '</div>'
+                 '<div style="margin-top:10px;background:#fff;border-radius:8px">' + _sv_annual + '</div>'
+                 + legend +
+                 '<div class="note">趋势线由 build_dashboard_full.py 生成（自动化每日更新）。</div></div>')
     STAGE_CLS = {"启动":"c-启动","刚起步":"c-刚起步","主升":"c-主升","尾声":"c-尾声","退潮":"c-退潮","蓄势":"c-蓄势","埋伏":"c-埋伏","退出":"c-退出"}
     heat_rows = []
     for line in rot["lines"]:
