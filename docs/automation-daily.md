@@ -119,7 +119,7 @@
 | 驾驶舱 | `output/dashboard.html` | ❌ 本地生成（gitignore） |
 | 观察池台账 | `output/history.json` | ✅ 入库（跨日状态机的数据源） |
 | 趋势曲线（滑卷/全貌） | `output/trend-lines.svg`、`output/trend-lines-annual.svg` | ✅ 入库 |
-| 驾驶舱重建脚本 | `output/scripts/build_dashboard.py` | ✅ 入库 |
+| 驾驶舱重建脚本 | `scripts/build_dashboard.py` | ✅ 入库 |
 
 
 ---
