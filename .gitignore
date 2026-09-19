@@ -17,3 +17,6 @@ output/tmp/
 output/daily/*-full.html
 # 台账本地备份
 output/history.json.bak-*
+
+# 旧结构一次性归档（v3.1 迁移前产物，本机留存不入库）
+output_archive_pre_v31/
