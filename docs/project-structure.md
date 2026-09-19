@@ -49,21 +49,48 @@ fast-trend-trade/
 
 ---
 
-## 二、output/ 明细与入库策略
+## 二、output/ 结构与职责（v3.1 按日历组织）—— 以后按此设计日渐积累
 
-| 路径 | 内容 | 入库 |
-|---|---|---|
-| `output/history.json` | ★ 台账：days 快照（90 天）+ rotation（250 天）+ pool_tracking（三池跟踪） | ✅ |
-| `output/dashboard.html` | 驾驶舱 | ✅ |
-| `output/daily/<date>.html` | 单列版日报 | ✅ |
-| `output/daily/<date>-layered.html` | 四层架构日报（定版） | ✅ |
-| `output/daily-run/` | run_daily 官方产物 | ✅ |
-| `output/snapshots/` | 驾驶舱按日快照 | ✅ |
-| `output/trend-lines*.svg` | 趋势线图 | ✅ |
-| `output/tmp/` | 中间数据（三池 JSON / 财务缓存 / sector_map / K线缓存 / 涨停池） | ❌ gitignore（可重建） |
-| `output/*.bak-*`、`*-full.html` | 本地备份 / 预览副本 | ❌ gitignore |
+### 2.1 顶层一览
 
----
+```
+output/
+├── daily/<date>/     一天 = 一个目录（当天页面 + 过程数据全部在内）
+├── ledger/           跨日台账（唯一按天演化的活资产）
+├── cache/            与天无关的基础设施（可重建/覆盖更新）
+├── charts/           趋势线 SVG（由 index 页内嵌引用）
+├── archive/          本地备份（手动）
+└── dashboard.html    驾驶舱独立版（兼容副本；主页面为 daily/<最新>/index.html）
+```
+
+### 2.2 每目录职责与积累规则
+
+| 路径 | 职责 | 积累方式 | 入库 |
+|---|---|---|---|
+| `daily/<date>/index.html` | **当天唯一页面**：四层架构 + 驾驶舱全景合并（26 区块） | 每交易日 1 份（render_daily.py） | ✅ |
+| `daily/<date>/dashboard.html` | 当日驾驶舱快照（独立版，历史回看用） | 每交易日 1 份（build_dashboard_full.py） | ✅ |
+| `daily/<date>/data/growth_pool.json` | 当日 B 预期驱动池（含买点四档） | 每交易日覆盖写入 | ✅ |
+| `daily/<date>/data/emotion_pool.json` | 当日情绪池（温度计/梯队/封板时间/红旗） | 每交易日覆盖写入 | ✅ |
+| `daily/<date>/data/etf_holdings.json` | 当日 ETF 持仓反查（双来源） | 每交易日覆盖写入 | ✅ |
+| `daily/<date>/data/a_pool_scored.json` | 当日 A 池五维规则分 | 每交易日覆盖写入（score_stable） | ✅ |
+| `daily/<date>/data/screen/*` | 当日筛选中间产物（证据链：探测/确认/榜单 md） | 每交易日新增 | ✅ |
+| `daily/<date>/report.html`、`layered.html` | 单列版/旧四层版（**已退役**，存量归位） | 不再新增 | ✅ 存量 |
+| `ledger/history.json` | ★ 跨日台账：days 快照（滚动 90 天）+ rotation（滚动 250 天）+ pool_tracking（三池跟踪，append-only） | 每交易日更新 | ✅ |
+| `cache/sector_map.json` | 板块成分映射（124 板块/5542 只，行业排除与板块标签依赖） | 建一次，板块变动时重建 | ❌ |
+| `cache/kline/` | K线/榜单缓存（避免重复拉取） | 覆盖更新 | ❌ |
+| `cache/cap5d.md` / `finance_cache.json` | 资金榜/财务缓存 | 每次重拉覆盖 | ❌ |
+| `charts/trend-lines*.svg` | 趋势强度曲线（每日粒度）+ 一年全貌——index 页内嵌 | 每交易日覆盖更新（build_dashboard_full） | ✅ |
+| `archive/` | 本地备份（.bak 等） | 偶发手动 | ❌ |
+| `dashboard.html` | 驾驶舱独立版副本（兼容入口；与当日 index 同源不同排版） | 每交易日覆盖 | ✅ |
+
+### 2.3 积累与滚动规则（设计约定）
+
+1. **每交易日新增**：`output/daily/<当日>/` 一个目录（index.html + dashboard.html + data/）
+2. **每交易日更新**：`ledger/history.json`、`cache/*`（覆盖）、`charts/*`（覆盖）、`dashboard.html`（覆盖）
+3. **滚动**：台账 days 快照滚动保留 90 天；rotation 序列滚动 250 天（由 daily_run 的 update_history 执行）
+4. **append-only**：`pool_tracking`（三池跟踪）不滚动、不覆盖——20 日裁决后按结论决定去留
+5. **不自动清理**：daily/<date>/ 的历史档案全保留（约 200 KB/天，一年 ≈ 50 MB 可接受）；archive/ 手动管理
+6. **已取消**：`tmp/`（过程数据归位到所属日期目录）；`daily-run/`（官方引擎冒烟产物已删）
 
 ## 三、scripts/ 脚本清单（22 个，4 类）
 
