@@ -334,6 +334,44 @@ def render() -> str:
     # 趋势线 SVG 为文本文件——直接内嵌（<img> 的相对路径在预览环境会 404）
     _sv_detail = (ROOT / "output" / "charts" / "trend-lines.svg").read_text(encoding="utf-8")
     _sv_annual = (ROOT / "output" / "charts" / "trend-lines-annual.svg").read_text(encoding="utf-8")
+    # ---------- 左侧日期导航 + 总览入口页 ----------
+    _all_days = sorted([d.name for d in (ROOT / "output" / "daily").iterdir()
+                        if d.is_dir() and d.name[:4].isdigit()], reverse=True)
+
+    def _day_href(d):
+        """该日可打开的页面：index > report > layered。"""
+        dd = ROOT / "output" / "daily" / d
+        for cand in ("index.html", "report.html", "layered.html"):
+            if (dd / cand).exists():
+                return f"../{d}/{cand}"
+        return f"../{d}/"
+
+    _nav_items = "".join(
+        f'<a class="nav-d{" cur" if d == DAY else ""}" href="{_day_href(d)}">{d[5:]}</a>'
+        for d in _all_days)
+    nav_bar = f'<div class="date-nav"><div class="nav-t">复盘档案</div>{_nav_items}</div>'
+
+    try:
+        _ov_rows = []
+        for _d in reversed(_all_days):
+            _st = "；".join(f'{ln["name"]}·{ln["stages"].get(_d, "·")}'
+                            for ln in rot.get("lines", []) if ln["stages"].get(_d))
+            _ov_rows.append(f'<a class="ov-row" href="{_day_href(_d)}">'
+                            f'<span class="ov-d">{_d}</span><span class="ov-s">{_st or "…"}</span></a>')
+        _ov_css = ('<style>body{font-family:"PingFang SC",sans-serif;background:#f7f8fa;color:#1c2330;'
+                   'max-width:860px;margin:40px auto;padding:0 20px}'
+                   'h1{font-size:20px}a{display:flex;gap:16px;padding:10px 14px;margin:6px 0;'
+                   'background:#fff;border-radius:9px;text-decoration:none;color:#1c2330;'
+                   'box-shadow:0 1px 3px rgba(26,58,107,.06)}a:hover{background:#eef4ff}'
+                   '.ov-d{font-weight:700;min-width:92px}.ov-s{color:#5b6472;font-size:13.5px}</style>')
+        (ROOT / "output" / "index.html").write_text(
+            f'<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8">'
+            f'<title>复盘档案 · 总览</title>{_ov_css}</head><body>'
+            f'<h1>复盘档案 · 总览（点击进入当日页面）</h1>' + "".join(_ov_rows) + "</body></html>",
+            encoding="utf-8")
+    except Exception as _e:
+        print(f"  ⚠️ 总览页生成失败：{_e}")
+
     trend_img = ('<div class="rot"><h3>主线趋势强度曲线——两条线的交叉就是接力棒交接的时刻</h3>'
                  '<div style="overflow-x:auto;background:#fff;border-radius:8px">' + _sv_detail + '</div>'
                  '<div style="margin-top:10px;background:#fff;border-radius:8px">' + _sv_annual + '</div>'
@@ -515,7 +553,7 @@ def render() -> str:
 <style>
  body{{font-family:-apple-system,"PingFang SC","Helvetica Neue",sans-serif;background:#f2f5f9;color:#1c2333;
       margin:0;padding:0;line-height:1.65}}
- .shell{{max-width:1900px;height:100vh;margin:0 auto;padding:14px 18px 0;display:flex;flex-direction:column;box-sizing:border-box}}
+ .date-nav{{position:fixed;left:0;top:0;bottom:0;width:88px;overflow-y:auto;background:#16202e;padding:12px 6px;z-index:50}}.date-nav .nav-t{{color:#5b6b80;font-size:11px;font-weight:700;padding:4px 6px;margin-bottom:6px}}.date-nav a{{display:block;color:#9fb0c8;text-decoration:none;font-size:12.5px;padding:5px 7px;border-radius:6px;margin-bottom:2px;text-align:center}}.date-nav a.cur{{background:#2b5fad;color:#fff;font-weight:700}}.date-nav a:hover{{background:#243244}}.shell{{max-width:1900px;height:100vh;margin:0 auto 0 88px;padding:14px 18px 0;display:flex;flex-direction:column;box-sizing:border-box}}
  .fixed{{flex:0 0 auto}}
  h1{{font-size:20px;margin:0 0 2px;color:#1a3a6b}}
  .meta{{font-size:11.5px;color:#8a94a8;margin-bottom:10px}}
@@ -629,7 +667,7 @@ def render() -> str:
    .shell{{height:auto}} body{{overflow:auto}}
    .cols{{display:block}} .col{{overflow:visible;height:auto}}
  }}
-</style></head><body><div class="shell">
+</style></head><body>{nav_bar}<div class="shell">
 <div class="fixed">
 <h1>趋势候选日报 · 四层架构 {DAY}</h1>
 <div class="meta">数据时点 {DAY} 收盘（ETF 区间榜为 09-17 口径）｜数据来源 腾讯自选股（westock）｜
