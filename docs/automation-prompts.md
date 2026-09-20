@@ -2,7 +2,7 @@
 
 > **用途**：换机器 / 重建自动化时**复制即用**。这些 prompt 原本只存在于 WorkBuddy 客户端，
 > 不在仓库里——2026-09-17 发现此缺口后导出落盘。
-> **导出时间**：2026-09-17（含当日新增：日报标的链接化 / T1 计数剔除红线票 / 形态标注必带资格）　｜　**同步方式**：改完 prompt 后需重新导出本文件（见文末方法）
+> **导出时间**：2026-09-20（v3.1 结构版：脚本移至根 scripts/ · 产物按日历目录 output/daily/<日期>/ · 含 v0.3 三池流水线步骤 9.5 · 数据通道优先 CLI · data_day 禁 today）　｜　**同步方式**：改完 prompt 后需重新导出本文件（见文末方法）
 > ⚠️ prompt 内的绝对路径为本机值，换机时按 `docs/automation-daily.md` 的「路径替换表」调整。
 
 ## 任务一：每日盘后趋势候选扫描（主任务）
@@ -104,15 +104,16 @@
 权威逻辑见 /Users/liuliang19/Desktop/fast-trend-trade/docs/automation-daily.md 的「二·补：补跑检查」章节——**执行前先读该章节**。
 
 执行（务必静默优先）：
-1) 按该章节规则计算「缺失交易日清单」：用 `westock trade-calendar --start <history.json 中最早快照日期> --end <最近应有报告日> --trading-only` 列出区间全部交易日，与 /Users/liuliang19/Desktop/fast-trend-trade/output/history.json 的 days 日期集合**做差**（注意是区间比对，不是只比最后一个日期——09-11 就夹在 09-10 与 09-14 之间）。
+1) 计算「缺失交易日清单」：用 `westock trade-calendar --start <output/ledger/history.json 中最早快照日期> --end <最近应有报告日> --trading-only` 列出区间全部交易日，与 /Users/liuliang19/Desktop/fast-trend-trade/output/ledger/history.json 的 days 日期集合**做差**（区间比对，不是只比最后一个日期——中间缺失同样要抓出来）。
 2) 清单为空 → **立即静默结束**：不产出任何文件、不发送任何消息、不改动任何数据。
 3) 清单非空 → 逐个补跑缺失交易日：
-   - 数据一律用**目标交易日**的收盘口径（CLI 命令加 `--date <该日>`；MCP data_kline/data_quote 用 `date` 参数）
-   - 产物落 /Users/liuliang19/Desktop/fast-trend-trade/output/daily/<该日>.html，结构对齐盘后扫描的十节（漏斗/词典/主线体检/互证/稳做/ETF反查/连板/蓄势/跨日/免责声明）
-   - 在 history.json 的 days 数组**按日期顺序补记**该日快照（字段与既有快照一致）；只补报告与台账，**不重算后续日期的状态机**
+   - 优先执行 `python3 /Users/liuliang19/Desktop/fast-trend-trade/scripts/backfill_daily.py <日期>`（拉目标交易日收盘数据 + 生成产物 + 补记台账）
+   - 补跑后核对 v3.1 目录结构：`output/daily/<该日>/` 下应有 `report.html` / `dashboard.html` / `index.html` / `data/` / `screen/`；若缺失，再执行 `python3 /Users/liuliang19/Desktop/fast-trend-trade/scripts/daily_pipeline.py` 补齐（四层日报 layered.html 与三池产物）
+   - 数据一律用**目标交易日**收盘口径（CLI 命令加 `--date <该日>`；MCP 用 date 参数）；**优先 CLI**（westock / westock-tool），MCP 仅兜底
+   - 在 `output/ledger/history.json` 的 days 数组**按日期顺序补记**该日快照（字段与既有快照一致）；只补报告与台账，**不重算后续日期的状态机**
    - 补完后简要汇报：补了哪几天、原因、数据口径
 4) 若今天是交易日且当前时间 <15:30 → 只补历史缺口，不生成今日报告（今日报告由 15:30 的盘后扫描负责）。
-5) 阈值与判据一律以 config/settings.json 为准；生成的 Python 脚本须兼容 Python 3.9+（禁止 f-string 表达式内使用反斜杠转义）。
+5) 阈值与判据一律以 config/settings.json 为准；生成的 Python 脚本须兼容 Python 3.9+（禁止 f-string 表达式内使用反斜杠转义）；脚本内日期用 `data_day()`（台账最后快照日），**禁止 today()**；报告须通过术语自检（`python3 scripts/lint_report.py`）——不过不算完成。
 ```
 
 ## 如何重新导出本文件（改完 prompt 后必做）
@@ -128,7 +129,9 @@
 
 ---
 
-## v0.3 增补（2026-09-18/19）：三池分诊 + 数据通道变更 —— 待合并进下次 prompt 更新
+## v0.3 增补（2026-09-18/19）—— ✅ 已于 2026-09-20 合并进上述任务一 prompt（步骤 9.5）
+
+以下为合并前的原始记录，保留作为设计依据：
 
 ### 每日流程新增步骤（在现有 run_daily 之后按序执行）
 1. `build_growth_pool.py` —— B 预期驱动池（全市场财务筛 + 技术面买点，产出 growth_pool_<date>.json）
