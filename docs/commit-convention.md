@@ -6,6 +6,24 @@
 
 ---
 
+## 〇、提交前检查（强制，2026-09-20 立）
+
+**任何涉及 `scripts/` `src/` `tests/` 的改动，提交前必须跑：**
+
+```bash
+python3 tests/test_smoke.py     # 必须 5/5 通过
+```
+
+未通过 = 不允许提交。**触发原因**：`f-string 表达式内反斜杠`（PEP 701 属 Python 3.12+）
+这类跨版本语法错误已第三次出现（本机 3.9 直接 SyntaxError），
+`test_syntax_all` 是目前唯一能自动抓住它的关卡。
+
+> 排查提示：生成脚本后若 `py_compile` 报
+> `SyntaxError: f-string expression part cannot include a backslash`，
+> 把内嵌引号的 HTML 片段提取为模块常量（如 `_GATE_OK = '<span class="gate-ok">…</span>'`）。
+
+---
+
 ## 一、格式
 
 ```
