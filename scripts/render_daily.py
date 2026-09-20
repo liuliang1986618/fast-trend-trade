@@ -25,6 +25,13 @@ import daily_run_20260918 as D                      # noqa: E402  当日数据�
 from emotion_section import CSS as EMO_CSS, render_guide  # noqa: E402
 from emotion_parts import CSS_EXTRA, render_thermometer, render_tier_list  # noqa: E402
 
+# ——— 兼容 Python 3.9+：f-string 表达式内禁止反斜杠转义（PEP 701 属 3.12+），
+#     需内嵌引号的 HTML 片段一律预先定义为模块常量。修复：2026-09-20 冒烟测试抓获。
+_GATE_OK = '<span class="gate-ok">✅ 过闸</span>'
+_GATE_NO = '<span class="gate-no">❌ 深跌</span>'
+_B_EMPTY = '<tr><td colspan=9 class="muted">（今日无）</td></tr>'
+
+
 DAY = D.DAY
 OUT = ROOT / "output" / "daily" / DAY / "index.html"
 EP = ROOT / "output" / "daily" / DAY / "data" / "emotion_pool.json"
@@ -269,7 +276,7 @@ def render() -> str:
     anchor_rows = "".join(
         f'<tr><td>{link(a[0], a[1])}</td><td>{a[2]}</td><td class="num">{a[3]}</td>'
         f'<td class="num">{a[4]}</td>'
-        f'<td>{"<span class=\'gate-ok\'>✅ 过闸</span>" if a[5] else "<span class=\'gate-no\'>❌ 深跌</span>"}</td>'
+        f'<td>{_GATE_OK if a[5] else _GATE_NO}</td>'
         f'<td class="num">{a[6]} 亿</td></tr>' for a in ETF_ANCHORS)
     link_rows = "".join(
         f'<tr><td>{s[0]}</td><td class="num">{s[1]}</td><td class="num">{s[2]}</td>'
@@ -528,7 +535,7 @@ def render() -> str:
         '<table class="bp-table"><thead><tr>'
         '<th>标的</th><th>板块</th><th>营收增速</th><th>毛利率</th><th>研发占比</th>'
         '<th>蓄势分</th><th>买点状态</th><th>突破价</th><th>认错价</th>'
-        f'</tr></thead><tbody>{b_rows or "<tr><td colspan=9 class=\"muted\">（今日无）</td></tr>"}</tbody></table>'
+        f'</tr></thead><tbody>{b_rows or _B_EMPTY}</tbody></table>'
         f'<div class="bp-note">入口：{gp.get("entry_expr", "—")}　｜　'
         f'入口 {gp.get("stats", {}).get("entry", 0)} 只 → 反闸剔除 {gp.get("stats", {}).get("rejected", 0)} 只 '
         f'→ B 池 {len(bp)} 只　｜　依据：CANSLIM + Rule of 40 + 创业板第四套标准</div></div>')
